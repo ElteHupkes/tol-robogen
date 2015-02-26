@@ -8,8 +8,8 @@
 #include <iostream>
 #include <sstream>
 
-#include <tol_robogen/robogen/evolution/representation/PartRepresentation.h>
-#include <tol_robogen/robogen/PartList.h>
+#include <tol_robogen/evolution/representation/PartRepresentation.h>
+#include <tol_robogen/evolution/representation/PartList.h>
 
 namespace tol_robogen {
 
@@ -89,11 +89,11 @@ std::string &PartRepresentation::getType() {
 	return type_;
 }
 
-boost::shared_ptr<PartRepresentation> PartRepresentation::getChild(unsigned int n) {
+PartRepresentationPtr PartRepresentation::getChild(unsigned int n) {
 	if (n  >= arity_ ) {
 		std::cout << "Attempt to access non-existing slot " << n << " of part "
 				<< this->getId() << " with arity " << arity_ << std::endl;
-		return boost::shared_ptr<PartRepresentation>();
+		return PartRepresentationPtr();
 	}
 	return children_[n];
 }
@@ -142,7 +142,7 @@ boost::shared_ptr<PartRepresentation> PartRepresentation::create(char type,
 }
 
 
-void PartRepresentation::addSubtreeToRobot(RobotPtr robot, bool amIRoot) {
+void PartRepresentation::addSubtreeToRobot(RobotPtr robot, ModelPtr parent, int fromSlot, int toSlot) {
 	//convert parameters from [0,1] back to valid range
 	// TODO Check: where are they converted in the first place?
 	auto params = params_;
@@ -154,13 +154,33 @@ void PartRepresentation::addSubtreeToRobot(RobotPtr robot, bool amIRoot) {
 				ranges.first;
 	}
 
+	// TODO Check for error
 	ModelPtr model = PartFactory::getComponent(this->getType(), id_, params);
 
 	// TODO Check for error
+	// TODO Do we need to do this even if we are root?
 	model->setOrientationToParentSlot(orientation_);
+	robot->addBodyPart(model);
 
-	// TODO Add Model
+	if (parent) {
+		// Not the root node, create a connection
+		ConnectionPtr conn(new Connection(parent, fromSlot, model, toSlot));
+		robot->addBodyConnection(conn);
+	}
+
 	// TODO Add Connections
+	// Create children (they will create their own connections)
+	for (unsigned int i = 0; i < arity_; i++) {
+		auto child = this->getChild(i);
+		if (child) {
+			int fromSlot = this->getType().compare(PART_TYPE_CORE_COMPONENT) == 0 ?
+				i : i + 1;
+
+			int toSlot = 0;
+
+			child->addSubtreeToRobot(robot, model, fromSlot, toSlot);
+		}
+	}
 }
 
 void PartRepresentation::addSubtreeToBodyMessage(

@@ -49,14 +49,14 @@ public:
  */
 class Connection {
 public:
-	Connection(std::shared_ptr<Model> from, int fromSlot,
-			std::shared_ptr<Model> to, int toSlot);
+	Connection(ModelPtr from, int fromSlot,
+			ModelPtr to, int toSlot);
 
 	/**
 	 * TODO remove once toOde is in place
 	 * @return from body part
 	 */
-	boost::shared_ptr<Model> getFrom();
+	ModelPtr getFrom();
 
 	/**
 	 * TODO remove once toOde is in place
@@ -68,7 +68,7 @@ public:
 	 * TODO remove once toOde is in place
 	 * @return to body part
 	 */
-	boost::shared_ptr<Model> getTo();
+	ModelPtr getTo();
 
 	/**
 	 * TODO remove once toOde is in place
@@ -80,7 +80,7 @@ private:
 	/**
 	 * Parent body part
 	 */
-	std::shared_ptr<Model> from_;
+	ModelPtr from_;
 
 	/**
 	 * Slot used for connection at parent body part
@@ -90,7 +90,7 @@ private:
 	/**
 	 * Child body part
 	 */
-	std::shared_ptr<Model> to_;
+	ModelPtr to_;
 
 	/**
 	 * Slot used for connection at child body part

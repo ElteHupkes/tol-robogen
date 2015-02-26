@@ -111,7 +111,7 @@ public:
 	/**
 	 * @param n slot of the child part to get
 	 */
-	boost::shared_ptr<PartRepresentation> getChild(unsigned int n);
+	PartRepresentationPtr getChild(unsigned int n);
 
 	/**
 	 * @param n slot of the child part to be set/replaced
@@ -141,9 +141,11 @@ public:
 	 * Add subtree represented by this part to the given robot.
 	 *
 	 * @param The robot to add self to
-	 * @param Whether or not this is the root node
+	 * @param Parent node
+	 * @param Connection slot on the parent node
+	 * @param Connection slot on this node
 	 */
-	void addSubtreeToRobot(RobotPtr robot, bool amIRoot);
+	void addSubtreeToRobot(RobotPtr robot, ModelPtr parent = ModelPtr(), int fromSlot = -1, int toSlot = -1);
 
 	/**
 	 * @param parent parent to be set

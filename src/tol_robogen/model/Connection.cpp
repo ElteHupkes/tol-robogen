@@ -33,11 +33,14 @@
 
 namespace tol_robogen{
 
-Connection::Connection(std::shared_ptr<Model> from, int fromSlot,
-			std::shared_ptr<Model> to, int toSlot):from_(from),
-					fromSlot_(fromSlot), to_(to), toSlot_(toSlot) {}
+Connection::Connection(ModelPtr from, int fromSlot, ModelPtr to, int toSlot):
+		from_(from),
+		fromSlot_(fromSlot),
+		to_(to),
+		toSlot_(toSlot)
+{}
 
-boost::shared_ptr<Model> Connection::getFrom(){
+ModelPtr Connection::getFrom(){
 	return from_;
 }
 
@@ -45,7 +48,7 @@ int Connection::getFromSlot(){
 	return fromSlot_;
 }
 
-boost::shared_ptr<Model> Connection::getTo(){
+ModelPtr Connection::getTo(){
 	return to_;
 }
 
