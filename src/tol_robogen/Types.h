@@ -5,12 +5,16 @@
  */
 #include <memory>
 
-namespace sdf_builder {
+namespace tol_robogen {
 	class Robot;
 	class Model;
+	class Connection;
+	class PartRepresentation;
 
 	typedef std::shared_ptr< Robot > RobotPtr;
 	typedef std::shared_ptr< Model > ModelPtr;
+	typedef std::shared_ptr< Connection > ConnectionPtr;
+	typedef std::shared_ptr< PartRepresentation > PartRepresentationPtr;
 }
 
 #endif

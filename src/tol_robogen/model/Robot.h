@@ -8,9 +8,9 @@
 #ifndef TOL_ROBOGEN_ROBOT_H_
 #define TOL_ROBOGEN_ROBOT_H_
 
-#include <sdf_builder/Parts.h>
-
-//#include "robogen.pb.h"
+#include <tol_robogen/tol.h>
+#include <tol_robogen/model/Model.h>
+#include <tol_robogen/model/Connection.h>
 
 namespace tol_robogen {
 
@@ -20,15 +20,43 @@ public:
 	virtual ~Robot();
 
 	/**
-	 * Initializes the robot
+	 *  @return  the body parts of which the robot is composed of
 	 */
-//	bool Robot::init(const robogenMessage::Robot& robotSpec);
+	const std::vector< ModelPtr >& getBodyParts()
+			const;
+
+	/**
+	 * @return The connections between body parts
+	 */
+	const std::vector< ConnectionPtr >& getBodyConnections()
+			const;
+
+	/**
+	 * Adds a new body part
+	 */
+	void addBodyPart(ModelPtr bodyPart);
+
+	/**
+	 * Adds a new body connection
+	 */
+	void addBodyConnection(ConnectionPtr connection);
 
 protected:
 	/**
-	 *
+	 * Robot body parts
 	 */
-//	bool decodeBody(const robogenMessage::Body& robotBody);
+	std::vector< std::shared_ptr<Model> > bodyParts_;
+
+	/**
+	 * Connections between the body parts.
+	 */
+	std::vector<std::shared_ptr<Connection> > bodyConnections_;
+
+	/**
+	 * The core component of the robot
+	 */
+	std::shared_ptr<Model> coreComponent_;
+
 };
 
 } /* namespace sdf_builder */

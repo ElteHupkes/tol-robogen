@@ -5,20 +5,23 @@ cmake_minimum_required (VERSION 2.8)
 project (ToLRobogen)
 
 # Add customized CMAKE modules
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../cmake/")
 include(CustomPath)
 
 # Pass source dir to preprocessor
 add_definitions(-DSOURCE_DIR=${CMAKE_SOURCE_DIR})
 
-# Include Eigen3, added FindEigen3 in cmake folder
+# Find Eigen3, added FindEigen3 in cmake folder
 find_package(Eigen3 REQUIRED)
 
+# Find Boost
+find_package(Boost REQUIRED)
+
 # Include SdfBuilder and Eigen3
-include_directories(${CMAKE_SOURCE_DIR} ${SDFBUILDER_INCLUDE_PATH} ${EIGEN3_INCLUDE_DIR})
+include_directories(${CMAKE_SOURCE_DIR} ${SDFBUILDER_INCLUDE_PATH} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 
 # Set dependency list
-set(TOL_DEPS ${SDFBUILDER_LIBRARIES})
+set(TOL_DEPS ${SDFBUILDER_LIBRARIES} ${Boost_LIBRARIES})
 
 # All files for the SDF builder
 file(GLOB_RECURSE
@@ -48,4 +51,4 @@ target_link_libraries(tolrobogen ${TOL_DEPS})
 
 # Test executable
 add_executable(test tol_robogen/test/test.cpp)
-target_link_libraries(test tolrobogen ${SDFB_DEPS})
+target_link_libraries(test tolrobogen ${TOL_DEPS})

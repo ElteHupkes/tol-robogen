@@ -18,7 +18,7 @@ int main() {
 	component.initModel();
 
 	sb::Model model("temp_bot");
-	const std::vector< sb::PosablePtr > &posables = component.getPosables();
+	auto posables = component.getPosables();
 	for (unsigned int i = 0; i < posables.size(); ++i) {
 		model.addPosable(posables[i]);
 	}
@@ -27,6 +27,16 @@ int main() {
 	std::cout << "<sdf version=\"1.5\">" << '\n';
 	std::cout << model.toXML();
 	std::cout << "</sdf>" << std::endl;
+
+	/**
+	 * Plan of attack for creating the Gazebo bots:
+	 * - File is read into RobotRepresentation (or random bot is created)
+	 * - Instead of turning that representation into protobuf, I make my
+	 *   own robot class, where body parts and connections will be added
+	 *   to instead.
+	 * - This will then be converted to the SDF bot using functionality
+	 *   similar to RobogenUtils::connect().
+	 */
 
 //	if (argc != 2) {
 //		std::cout << "Call with robot reference file only for now." << std::endl;

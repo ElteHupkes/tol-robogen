@@ -5,9 +5,9 @@
 #ifndef TOL_H_
 #define TOL_H_
 
-#include <tol/Types.h>
+#include <tol_robogen/Types.h>
 
-namespace tol {
+namespace tol_robogen {
 
 }
 

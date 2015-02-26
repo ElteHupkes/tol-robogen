@@ -9,13 +9,24 @@
 
 namespace tol_robogen {
 
-Robot::Robot() {
-	// TODO Auto-generated constructor stub
+Robot::Robot() {}
 
+Robot::~Robot() {}
+
+const std::vector< ModelPtr >& Robot::getBodyParts() {
+	return bodyParts_;
 }
 
-Robot::~Robot() {
-	// TODO Auto-generated destructor stub
+const std::vector< ConnectionPtr >& Robot::getBodyConnections() {
+	return bodyConnections_;
 }
 
-} /* namespace sdf_builder */
+void Robot::addBodyPart(ModelPtr bodyPart) {
+	bodyParts_.push_back(bodyPart);
+}
+
+void Robot::addBodyConnection(ConnectionPtr connection) {
+	bodyConnections_.push_back(connection);
+}
+
+} /* namespace tol_robogen */
