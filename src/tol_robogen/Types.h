@@ -10,11 +10,17 @@ namespace tol_robogen {
 	class Model;
 	class Connection;
 	class PartRepresentation;
+	class NeuralNetworkRepresentation;
+	class NeuronRepresentation;
 
 	typedef std::shared_ptr< Robot > RobotPtr;
 	typedef std::shared_ptr< Model > ModelPtr;
 	typedef std::shared_ptr< Connection > ConnectionPtr;
 	typedef std::shared_ptr< PartRepresentation > PartRepresentationPtr;
+	typedef std::weak_ptr< PartRepresentation > WeakPartRepresentationPtr;
+	typedef std::shared_ptr< NeuralNetworkRepresentation > NeuralNetworkRepresentationPtr;
+	typedef std::shared_ptr< NeuronRepresentation > NeuronRepresentationPtr;
+	typedef std::weak_ptr< NeuronRepresentation > WeakNeuronRepresentationPtr;
 }
 
 #endif

@@ -27,18 +27,20 @@
  * @(#) $Id$
  */
 
-#include "evolution/representation/RobotRepresentation.h"
-#ifndef FAKEROBOTREPRESENTATION_H
+#include <tol_robogen/evolution/representation/RobotRepresentation.h>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stack>
 #include <queue>
-#include <boost/regex.hpp>
+#include <utility>
+#include <regex>
+
 #include <boost/algorithm/string.hpp>
-#include "evolution/representation/PartRepresentation.h"
-#include "PartList.h"
+
+#include <tol_robogen/evolution/representation/PartRepresentation.h>
+#include <tol_robogen/evolution/representation/PartList.h>
 
 namespace tol_robogen {
 
@@ -58,25 +60,24 @@ RobotRepresentation::RobotRepresentation(const RobotRepresentation &r) {
 	// our body parts
 	bodyTree_ = r.bodyTree_->cloneSubtree();
 	// neural network pointer needs to be reset to a copy-constructed instance
-	neuralNetwork_.reset(
-			new NeuralNetworkRepresentation(*(r.neuralNetwork_.get())));
+
+	neuralNetwork_.reset(new NeuralNetworkRepresentation(*(r.neuralNetwork_.get())));
+
 	// rebuild ID to part map
 	idToPart_.clear();
-	std::queue<boost::shared_ptr<PartRepresentation> > q;
+	std::queue<PartRepresentationPtr > q;
 	q.push(bodyTree_);
 	while (!q.empty()) {
-		boost::shared_ptr<PartRepresentation> cur = q.front();
+		PartRepresentationPtr cur = q.front();
 		q.pop();
-		idToPart_[cur->getId()] = boost::weak_ptr<PartRepresentation>(cur);
+		idToPart_[cur->getId()] = WeakPartRepresentationPtr(cur);
 		for (unsigned int i = 0; i < cur->getArity(); ++i) {
 			if (cur->getChild(i)) {
 				q.push(cur->getChild(i));
 			}
 		}
 	}
-	// fitness and associated flag are same
-	fitness_ = r.fitness_;
-	evaluated_ = r.evaluated_;
+
 	maxid_ = r.maxid_;
 }
 
@@ -89,12 +90,12 @@ bool robotTextFileReadPartLine(std::ifstream &file, unsigned int &indent,
 		char &type, std::string &id, unsigned int &orientation,
 		std::vector<double> &params) {
 	// match (0 or more tabs)(digit) (type) (id) (orientation) (parameters)
-	static const boost::regex rx(
+	static const std::regex rx(
 			"^(\\t*)(\\d) ([A-Z]|(?:[A-Z][a-z]*)+) ([^\\s]+) (\\d)([ \\d\\.-]*)$");
-	boost::cmatch match;
+	std::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (boost::regex_match(line.c_str(), match, rx)) {
+	if (std::regex_match(line.c_str(), match, rx)) {
 		// match[0]:whole string, match[1]:tabs, match[2]:slot, match[3]:type,
 		// match[4]:id, match[5]:orientation, match[6]:parameters
 		indent = match[1].length();
@@ -156,8 +157,8 @@ bool robotTextFileReadPartLine(std::ifstream &file, unsigned int &indent,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const boost::regex spacex("^\\s*$");
-		if (!boost::regex_match(line.c_str(), spacex)) {
+		static const std::regex spacex("^\\s*$");
+		if (!std::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading body part from text file. Received:\n"
 					<< line << "\nbut expected format:\n"
 					<< "<0 or more tabs><slot index digit> "
@@ -178,12 +179,12 @@ bool robotTextFileReadPartLine(std::ifstream &file, unsigned int &indent,
 bool robotTextFileReadWeightLine(std::ifstream &file, std::string &from,
 		int &fromIoId, std::string &to, int &toIoId, double &value) {
 
-	static const boost::regex rx(
+	static const std::regex rx(
 			"^([^\\s]+) (\\d+) ([^\\s]+) (\\d+) (-?\\d*\\.?\\d*)$");
-	boost::cmatch match;
+	std::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (boost::regex_match(line.c_str(), match, rx)) {
+	if (std::regex_match(line.c_str(), match, rx)) {
 		// match[0]:whole string, match[1]:from, match[2]:from IO id,
 		// match[3]:to, match[4]:to IO id, match[5]:value
 		from.assign(match[1]);
@@ -194,8 +195,8 @@ bool robotTextFileReadWeightLine(std::ifstream &file, std::string &from,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const boost::regex spacex("^\\s*$");
-		if (!boost::regex_match(line.c_str(), spacex)) {
+		static const std::regex spacex("^\\s*$");
+		if (!std::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading weight from text file. Received:\n"
 					<< line << "\nbut expected format:\n"
 					<< "<source part id string> <source part io id> "
@@ -233,11 +234,11 @@ void parseTypeString(std::string typeString, unsigned int &type) {
 bool robotTextFileReadAddNeuronLine(std::ifstream &file, std::string &partId,
 		unsigned int &type) {
 
-	static const boost::regex rx("^([^\\s]+) ([^\\s]+)$");
-	boost::cmatch match;
+	static const std::regex rx("^([^\\s]+) ([^\\s]+)$");
+	std::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (boost::regex_match(line.c_str(), match, rx)) {
+	if (std::regex_match(line.c_str(), match, rx)) {
 		// match[0]:whole string, match[1]:partId match[2]:type string
 		partId.assign(match[1]);
 		std::string typeString = match[2];
@@ -245,8 +246,8 @@ bool robotTextFileReadAddNeuronLine(std::ifstream &file, std::string &partId,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const boost::regex spacex("^\\s*$");
-		if (!boost::regex_match(line.c_str(), spacex)) {
+		static const std::regex spacex("^\\s*$");
+		if (!std::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading hidden neuron descriptor from text file. Received:\n"
 					<< line << "\nbut expected format:\n"
 					<< "<part id string> <type string>" << std::endl;
@@ -263,13 +264,13 @@ bool robotTextFileReadAddNeuronLine(std::ifstream &file, std::string &partId,
 bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 		int &ioId,  unsigned int &type, std::vector<double> &params) {
 
-	static const boost::regex generalRx("^([^\\s]+) (\\d+) ([^\\s]+)((?: -?\\d*\\.?\\d*)+)$");
+	static const std::regex generalRx("^([^\\s]+) (\\d+) ([^\\s]+)((?: -?\\d*\\.?\\d*)+)$");
 
-	static const boost::regex biasRx("^([^\\s]+) (\\d+) (-?\\d*\\.?\\d*)$");
-	boost::cmatch match;
+	static const std::regex biasRx("^([^\\s]+) (\\d+) (-?\\d*\\.?\\d*)$");
+	std::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (boost::regex_match(line.c_str(), match, generalRx)) {
+	if (std::regex_match(line.c_str(), match, generalRx)) {
 		node.assign(match[1]);
 		ioId = std::atoi(match[2].first);
 		std::string typeString = match[3];
@@ -282,7 +283,7 @@ bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 			params.push_back(std::atof(strs[i].c_str()));
 		}
 		return true;
-	} else if (boost::regex_match(line.c_str(), match, biasRx)) {
+	} else if (std::regex_match(line.c_str(), match, biasRx)) {
 		for (unsigned int i=0; i < match.size(); i++) {
 			std::cout << i << " " << match[i] << std::endl;
 		}
@@ -294,8 +295,8 @@ bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const boost::regex spacex("^\\s*$");
-		if (!boost::regex_match(line.c_str(), spacex)) {
+		static const std::regex spacex("^\\s*$");
+		if (!std::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading brain params from text file. Received:\n"
 					<< line << "\nbut expected either format:\n"
 					<< "<part id string> <part io id> <bias>\nor\n"
@@ -307,36 +308,26 @@ bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 	}
 }
 
-RobotRepresentation &RobotRepresentation::operator=(
-		const RobotRepresentation &r) {
-	// same as copy constructor, see there for explanations
-	bodyTree_ = r.bodyTree_->cloneSubtree();
-	neuralNetwork_.reset(
-			new NeuralNetworkRepresentation(*(r.neuralNetwork_.get())));
-	// rebuild ID to part map
-	idToPart_.clear();
-	std::queue<boost::shared_ptr<PartRepresentation> > q;
-	q.push(bodyTree_);
-	while (!q.empty()) {
-		boost::shared_ptr<PartRepresentation> cur = q.front();
-		q.pop();
-		idToPart_[cur->getId()] = boost::weak_ptr<PartRepresentation>(cur);
-		for (unsigned int i = 0; i < cur->getArity(); ++i) {
-			if (cur->getChild(i)) {
-				q.push(cur->getChild(i));
-			}
-		}
-	}
-	fitness_ = r.fitness_;
-	evaluated_ = r.evaluated_;
-	maxid_ = r.maxid_;
+// Assignment operator using swap and copy constructor,
+// keeps us from having to duplicate the copy constructor.
+RobotRepresentation &RobotRepresentation::operator=(RobotRepresentation r) {
+	swap(*this, r);
 	return *this;
+}
+
+void swap(RobotRepresentation & a, RobotRepresentation & b) {
+	using std::swap;
+
+	swap(a.bodyTree_, b.bodyTree_);
+	swap(a.neuralNetwork_, b.neuralNetwork_);
+	swap(a.maxid_, b.maxid_);
+	swap(a.idToPart_, b.idToPart_);
 }
 
 bool RobotRepresentation::init() {
 
 	// Generate a core component
-	boost::shared_ptr<PartRepresentation> corePart = PartRepresentation::create(
+	PartRepresentationPtr corePart = PartRepresentation::create(
 			INVERSE_PART_TYPE_MAP.at(PART_TYPE_CORE_COMPONENT),
 			PART_TYPE_CORE_COMPONENT, 0, std::vector<double>());
 	if (!corePart) {
@@ -344,7 +335,7 @@ bool RobotRepresentation::init() {
 		return false;
 	}
 	bodyTree_ = corePart;
-	idToPart_[PART_TYPE_CORE_COMPONENT] = boost::weak_ptr<PartRepresentation>(
+	idToPart_[PART_TYPE_CORE_COMPONENT] = WeakPartRepresentationPtr(
 			corePart);
 
 	// TODO abstract this to a different function so it doesn't
@@ -355,7 +346,7 @@ bool RobotRepresentation::init() {
 	// create neural network: create map from body id to ioId for all sensor and
 	// motor body parts
 	std::map<std::string, int> sensorMap, motorMap;
-	for (std::map<std::string, boost::weak_ptr<PartRepresentation> >::iterator it =
+	for (std::map<std::string, WeakPartRepresentationPtr >::iterator it =
 			idToPart_.begin(); it != idToPart_.end(); it++) {
 
 		// omitting weak pointer checks, as this really shouldn't go wrong here!
@@ -385,8 +376,8 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 	}
 
 	// prepare body processing
-	boost::shared_ptr<PartRepresentation> current;
-	std::stack<boost::shared_ptr<PartRepresentation> > parentStack;
+	PartRepresentationPtr current;
+	std::stack<PartRepresentationPtr > parentStack;
 	unsigned int slot, orientation, indent;
 	char type;
 	std::string line, id;
@@ -410,7 +401,7 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 		return false;
 	}
 	bodyTree_ = current;
-	idToPart_[id] = boost::weak_ptr<PartRepresentation>(current);
+	idToPart_[id] = WeakPartRepresentationPtr(current);
 
 	// process other body parts
 	try {
@@ -445,7 +436,7 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 				std::cout << "Failed to set child." << std::endl;
 				return false;
 			}
-			idToPart_[id] = boost::weak_ptr<PartRepresentation>(current);
+			idToPart_[id] = WeakPartRepresentationPtr(current);
 		}
 	} catch (std::runtime_error &e) {
 		std::cout << "Error parsing robot body\n";
@@ -458,7 +449,7 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 	// create neural network: create map from body id to ioId for all sensor and
 	// motor body parts
 	std::map<std::string, int> sensorMap, motorMap;
-	for (std::map<std::string, boost::weak_ptr<PartRepresentation> >::iterator it =
+	for (std::map<std::string, WeakPartRepresentationPtr >::iterator it =
 			idToPart_.begin(); it != idToPart_.end(); it++) {
 
 		// omitting weak pointer checks, as this really shouldn't go wrong here!
@@ -511,15 +502,21 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 	return true;
 }
 
-robogenMessage::Robot RobotRepresentation::serialize() const {
-	robogenMessage::Robot message;
-	// id - this can probably be removed
-	message.set_id(1);
-	// body
-	bodyTree_->addSubtreeToBodyMessage(message.mutable_body(), true);
-	// brain
-	*(message.mutable_brain()) = neuralNetwork_->serialize();
-	return message;
+//robogenMessage::Robot RobotRepresentation::serialize() const {
+//	robogenMessage::Robot message;
+//	// id - this can probably be removed
+//	message.set_id(1);
+//	// body
+//	bodyTree_->addSubtreeToBodyMessage(message.mutable_body(), true);
+//	// brain
+//	*(message.mutable_brain()) = neuralNetwork_->serialize();
+//	return message;
+//}
+
+RobotPtr toRobot() const {
+	RobotPtr robot();
+
+	// TODO implement
 }
 
 
@@ -529,7 +526,7 @@ void RobotRepresentation::getBrainGenome(std::vector<double*> &weights,
 	neuralNetwork_->getGenome(weights, types, params);
 }
 
-boost::shared_ptr<NeuralNetworkRepresentation> RobotRepresentation::getBrain() const {
+NeuralNetworkRepresentationPtr RobotRepresentation::getBrain() const {
 	return neuralNetwork_;
 }
 
@@ -541,67 +538,8 @@ const std::string& RobotRepresentation::getBodyRootId() {
 	return bodyTree_->getId();
 }
 
-void RobotRepresentation::evaluate(TcpSocket *socket,
-		boost::shared_ptr<RobogenConfig> robotConf) {
-
-	// 1. Prepare message to simulator
-	boost::shared_ptr<robogenMessage::EvaluationRequest> evalReq(
-			new robogenMessage::EvaluationRequest());
-	robogenMessage::Robot* evalRobot = evalReq->mutable_robot();
-	robogenMessage::SimulatorConf* evalConf = evalReq->mutable_configuration();
-	*evalRobot = serialize();
-	*evalConf = robotConf->serialize();
-
-	ProtobufPacket<robogenMessage::EvaluationRequest> robotPacket(evalReq);
-	std::vector<unsigned char> forgedMessagePacket;
-	robotPacket.forge(forgedMessagePacket);
-
-	// 2. send message to simulator
-	socket->write(forgedMessagePacket);
-
-	// 3. receive message from simulator
-	ProtobufPacket<robogenMessage::EvaluationResult> resultPacket(
-			boost::shared_ptr<robogenMessage::EvaluationResult>(
-					new robogenMessage::EvaluationResult()));
-	std::vector<unsigned char> responseMessage;
-	socket->read(responseMessage,
-			ProtobufPacket<robogenMessage::EvaluationResult>::HEADER_SIZE);
-
-	// Decode the Header and read the payload-message-size
-	size_t msgLen = resultPacket.decodeHeader(responseMessage);
-	responseMessage.clear();
-
-	// Read the fitness payload message
-	socket->read(responseMessage, msgLen);
-
-	// Decode the packet
-	resultPacket.decodePayload(responseMessage);
-
-	// 4. write fitness to individual TODO exception
-	if (!resultPacket.getMessage()->has_fitness()) {
-		std::cerr << "Fitness field not set by Simulator!!!" << std::endl;
-		exit(EXIT_FAILURE);
-	} else {
-		fitness_ = resultPacket.getMessage()->fitness();
-		evaluated_ = true;
-	}
-
-}
-
-double RobotRepresentation::getFitness() const {
-	return fitness_;
-}
-
-bool RobotRepresentation::isEvaluated() const {
-	return evaluated_;
-}
-
-void RobotRepresentation::setDirty() {
-	evaluated_ = false;
-}
-
 void RobotRepresentation::recurseNeuronRemoval(
-		boost::shared_ptr<PartRepresentation> part) {
+		PartRepresentationPtr part) {
 	neuralNetwork_->removeNeurons(part->getId());
 	for (unsigned int i = 0; i < part->getArity(); i++) {
 		if (part->getChild(i)) {
@@ -624,7 +562,7 @@ bool RobotRepresentation::trimBodyAt(const std::string& id) {
 	}
 	std::cout << "Has references: " << idToPart_[id].lock().use_count()
 			<< std::endl;
-	if (!parent->setChild(position, boost::shared_ptr<PartRepresentation>())) {
+	if (!parent->setChild(position, PartRepresentationPtr())) {
 		std::cout << "Failed trimming robot body!" << std::endl;
 		return false;
 	}
@@ -656,13 +594,13 @@ std::string RobotRepresentation::generateUniqueIdFromSomeId() {
 }
 
 bool RobotRepresentation::addClonesToMap(
-		boost::shared_ptr<PartRepresentation> part,
+		PartRepresentationPtr part,
 		std::map<std::string, std::string> &neuronReMapping) {
 	std::string oldId = part->getId();
 	std::string newUniqueId = this->generateUniqueIdFromSomeId();
 	part->setId(newUniqueId);
 	// insert part in map
-	idToPart_[newUniqueId] = boost::weak_ptr<PartRepresentation>(part);
+	idToPart_[newUniqueId] = WeakPartRepresentationPtr(part);
 	// clone neurons, save mapping
 	neuralNetwork_->cloneNeurons(oldId, part->getId(), neuronReMapping);
 
@@ -682,9 +620,9 @@ bool RobotRepresentation::duplicateSubTree(const std::string& subtreeRootPartId,
 		const std::string& subtreeDestPartId, unsigned int slotId) {
 
 	// find src part and dest part by id
-	boost::shared_ptr<PartRepresentation> src =
+	PartRepresentationPtr src =
 			idToPart_[subtreeRootPartId].lock();
-	boost::shared_ptr<PartRepresentation> dst =
+	PartRepresentationPtr dst =
 			idToPart_[subtreeDestPartId].lock();
 
 	// If source is root node, then return
@@ -692,7 +630,7 @@ bool RobotRepresentation::duplicateSubTree(const std::string& subtreeRootPartId,
 		return false;
 	}
 
-	boost::shared_ptr<PartRepresentation> clone = src->cloneSubtree();
+	PartRepresentationPtr clone = src->cloneSubtree();
 	dst->setChild(slotId, clone);
 
 	std::map<std::string, std::string> neuronReMapping;
@@ -711,9 +649,9 @@ bool RobotRepresentation::swapSubTrees(const std::string& subtreeRoot1,
 		const std::string& subtreeRoot2) {
 
 	// Get roots of the subtrees
-	boost::shared_ptr<PartRepresentation> root1 =
+	PartRepresentationPtr root1 =
 			idToPart_[subtreeRoot1].lock();
-	boost::shared_ptr<PartRepresentation> root2 =
+	PartRepresentationPtr root2 =
 			idToPart_[subtreeRoot2].lock();
 
 	// Check none of them is the root node
@@ -760,7 +698,7 @@ bool RobotRepresentation::swapSubTrees(const std::string& subtreeRoot1,
 
 bool RobotRepresentation::insertPart(const std::string& parentPartId,
 		unsigned int parentPartSlot,
-		boost::shared_ptr<PartRepresentation> newPart,
+		PartRepresentationPtr newPart,
 		unsigned int newPartSlot) {
 
 	// Set new ID for the inserted node
@@ -781,9 +719,9 @@ bool RobotRepresentation::insertPart(const std::string& parentPartId,
 	}
 
 	// find dst part by id
-	boost::shared_ptr<PartRepresentation> parentPart =
+	PartRepresentationPtr parentPart =
 			idToPart_[parentPartId].lock();
-	boost::shared_ptr<PartRepresentation> childPart = parentPart->getChild(
+	PartRepresentationPtr childPart = parentPart->getChild(
 			parentPartSlot);
 
 	// Check the arity of the new part
@@ -797,7 +735,7 @@ bool RobotRepresentation::insertPart(const std::string& parentPartId,
 		newPart->setChild(newPartSlot, childPart);
 
 	// Add to the map
-	idToPart_[newUniqueId] = boost::weak_ptr<PartRepresentation>(newPart);
+	idToPart_[newUniqueId] = WeakPartRepresentationPtr(newPart);
 
 	return true;
 
@@ -805,7 +743,7 @@ bool RobotRepresentation::insertPart(const std::string& parentPartId,
 
 bool RobotRepresentation::removePart(const std::string& partId) {
 
-	boost::shared_ptr<PartRepresentation> nodeToRemove =
+	PartRepresentationPtr nodeToRemove =
 			idToPart_[partId].lock();
 
 	// If root node, return
@@ -834,7 +772,7 @@ bool RobotRepresentation::removePart(const std::string& partId) {
 		if (parent->getChild(i) != NULL &&
 				parent->getChild(i)->getId().compare(nodeToRemove->getId())
 				== 0) {
-			parent->setChild(i, boost::shared_ptr<PartRepresentation>());
+			parent->setChild(i, PartRepresentationPtr());
 			break;
 		}
 	}
@@ -872,7 +810,7 @@ bool RobotRepresentation::check() {
 
 	// 1. Check that every body part in the body tree is in the idBodyPart map and there are no dangling references
 	std::vector<std::string> bodyPartIdsFromMap;
-	for (std::map<std::string, boost::weak_ptr<PartRepresentation> >::iterator it = idToPart_.begin(); it != idToPart_.end(); ++it) {
+	for (std::map<std::string, WeakPartRepresentationPtr >::iterator it = idToPart_.begin(); it != idToPart_.end(); ++it) {
 		bodyPartIdsFromMap.push_back(it->first);
 	}
 
@@ -919,7 +857,7 @@ bool RobotRepresentation::check() {
 	for (unsigned int i = 0; i < bodyIds.size(); ++i) {
 
 		bool hasNeurons = true;
-		boost::weak_ptr<PartRepresentation> part = idToPart_[bodyIds[i]];
+		WeakPartRepresentationPtr part = idToPart_[bodyIds[i]];
 		if (part.lock()->getSensors().size() > 0) {
 			netInputs[bodyIds[i]] = part.lock()->getSensors().size();
 		}
@@ -930,7 +868,7 @@ bool RobotRepresentation::check() {
 
 		if (hasNeurons) {
 
-			std::vector<boost::weak_ptr<NeuronRepresentation> > neurons = neuralNetwork_->getBodyPartNeurons(bodyIds[i]);
+			std::vector<WeakNeuronRepresentationPtr > neurons = neuralNetwork_->getBodyPartNeurons(bodyIds[i]);
 			int totInputs = 0;
 			int totOutputs = 0;
 			for (unsigned int j = 0; j < neurons.size(); ++j) {
@@ -966,5 +904,3 @@ std::string RobotRepresentation::toString() {
 }
 
 }
-
-#endif /* usage of fake robot representation */

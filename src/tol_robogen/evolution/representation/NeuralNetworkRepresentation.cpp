@@ -26,7 +26,7 @@
  * @(#) $Id$
  */
 
-#include "evolution/representation/NeuralNetworkRepresentation.h"
+#include <tol_robogen/evolution/representation/NeuralNetworkRepresentation.h>
 #include <queue>
 #include <iostream>
 #include <sstream>
@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace robogen {
+namespace tol_robogen {
 
 NeuralNetworkRepresentation &NeuralNetworkRepresentation::operator =(
 		const NeuralNetworkRepresentation &original) {
@@ -299,7 +299,7 @@ void NeuralNetworkRepresentation::generateCloneWeights(
 }
 
 void NeuralNetworkRepresentation::removeIncomingConnections(
-		boost::shared_ptr<NeuronRepresentation> neuron) {
+		NeuronRepresentationPtr neuron) {
 	// remove all incoming weights of the neuron
 	WeightMap::iterator it = weights_.begin();
 	while (it != weights_.end()) {
@@ -312,7 +312,7 @@ void NeuralNetworkRepresentation::removeIncomingConnections(
 	}
 }
 void NeuralNetworkRepresentation::removeOutgoingConnections(
-		boost::shared_ptr<NeuronRepresentation> neuron) {
+		NeuronRepresentationPtr neuron) {
 	// remove all outgoing weights of the neuron
 	WeightMap::iterator it = weights_.begin();
 	while (it != weights_.end()) {
@@ -327,11 +327,11 @@ void NeuralNetworkRepresentation::removeOutgoingConnections(
 
 
 void NeuralNetworkRepresentation::removeNeurons(std::string bodyPartId) {
-	std::vector<boost::weak_ptr<NeuronRepresentation> > neurons =
+	std::vector<WeakNeuronRepresentationPtr > neurons =
 			getBodyPartNeurons(bodyPartId);
 
 	for (unsigned int i = 0; i < neurons.size(); ++i) {
-		boost::shared_ptr<NeuronRepresentation> neuron = neurons[i].lock();
+		NeuronRepresentationPtr neuron = neurons[i].lock();
 		assert(neuron);
 		removeIncomingConnections(neuron);
 		removeOutgoingConnections(neuron);
@@ -341,16 +341,16 @@ void NeuralNetworkRepresentation::removeNeurons(std::string bodyPartId) {
 
 }
 
-std::vector<boost::weak_ptr<NeuronRepresentation> >
+std::vector<WeakNeuronRepresentationPtr >
 		NeuralNetworkRepresentation::getBodyPartNeurons(std::string bodyPart) {
 
-	std::vector<boost::weak_ptr<NeuronRepresentation> > ret;
+	std::vector<WeakNeuronRepresentationPtr > ret;
 
 	// go through neurons, check body part id
 	int ioId = 0;
 	while (neurons_.find(ioPair(bodyPart, ioId)) != neurons_.end()) {
 		ret.push_back(
-				boost::weak_ptr<NeuronRepresentation>(
+				WeakNeuronRepresentationPtr(
 						neurons_[ioPair(bodyPart, ioId)]));
 		ioId++;
 	}
@@ -423,30 +423,30 @@ bool NeuralNetworkRepresentation::getLinearRepresentation(
 	return true;
 }
 */
-robogenMessage::Brain NeuralNetworkRepresentation::serialize() {
-	robogenMessage::Brain serialization;
-
-	// neurons
-	for (NeuronMap::iterator it = neurons_.begin(); it != neurons_.end();
-			++it) {
-		robogenMessage::Neuron *neuron = serialization.add_neuron();
-		*neuron = it->second->serialize();
-	}
-	// connections
-	for (std::map<std::pair<std::string, std::string>, double>::iterator it =
-			weights_.begin(); it != weights_.end(); it++) {
-		robogenMessage::NeuralConnection *connection =
-				serialization.add_connection();
-		// required string src = 1;
-		connection->set_src(it->first.first);
-		// required string dest = 2;
-		connection->set_dest(it->first.second);
-		// required float weight = 3;
-		connection->set_weight(it->second);
-	}
-	return serialization;
-
-}
+//robogenMessage::Brain NeuralNetworkRepresentation::serialize() {
+//	robogenMessage::Brain serialization;
+//
+//	// neurons
+//	for (NeuronMap::iterator it = neurons_.begin(); it != neurons_.end();
+//			++it) {
+//		robogenMessage::Neuron *neuron = serialization.add_neuron();
+//		*neuron = it->second->serialize();
+//	}
+//	// connections
+//	for (std::map<std::pair<std::string, std::string>, double>::iterator it =
+//			weights_.begin(); it != weights_.end(); it++) {
+//		robogenMessage::NeuralConnection *connection =
+//				serialization.add_connection();
+//		// required string src = 1;
+//		connection->set_src(it->first.first);
+//		// required string dest = 2;
+//		connection->set_dest(it->first.second);
+//		// required float weight = 3;
+//		connection->set_weight(it->second);
+//	}
+//	return serialization;
+//
+//}
 
 std::string NeuralNetworkRepresentation::toString() {
 

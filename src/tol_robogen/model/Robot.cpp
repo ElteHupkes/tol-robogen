@@ -13,11 +13,11 @@ Robot::Robot() {}
 
 Robot::~Robot() {}
 
-const std::vector< ModelPtr >& Robot::getBodyParts() {
+const std::vector< ModelPtr >& Robot::getBodyParts() const {
 	return bodyParts_;
 }
 
-const std::vector< ConnectionPtr >& Robot::getBodyConnections() {
+const std::vector< ConnectionPtr >& Robot::getBodyConnections() const {
 	return bodyConnections_;
 }
 

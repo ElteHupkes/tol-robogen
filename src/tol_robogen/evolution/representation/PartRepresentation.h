@@ -71,7 +71,7 @@ public:
 	 * @return new derived instance of the part
 	 * @todo recursive pattern robust for bigger robots?
 	 */
-	boost::shared_ptr<PartRepresentation> cloneSubtree();
+	PartRepresentationPtr cloneSubtree();
 
 	/**
 	 * Destructor
@@ -118,12 +118,12 @@ public:
 	 * @param part shared pointer to a part which is to be included at the slot
 	 * @return true if successful
 	 */
-	bool setChild(unsigned int n, boost::shared_ptr<PartRepresentation> part);
+	bool setChild(unsigned int n, PartRepresentationPtr part);
 
 	/**
 	 * Factory pattern to create derived classes, i.e. body part representations
 	 */
-	static boost::shared_ptr<PartRepresentation> create(char type,
+	static PartRepresentationPtr create(char type,
 			std::string id, unsigned int orientation,
 			std::vector<double> params);
 
@@ -237,7 +237,7 @@ private:
 	/**
 	 * Children of this part in the body tree
 	 */
-	std::vector<boost::shared_ptr<PartRepresentation> > children_;
+	std::vector<PartRepresentationPtr > children_;
 
 	/**
 	 * Parent body part - raw pointer as present (or NULL) by design

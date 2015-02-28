@@ -26,14 +26,15 @@
  * @(#) $Id$
  */
 
-#ifndef NEURONREPRESENTATION_H_
-#define NEURONREPRESENTATION_H_
+#ifndef TOL_NEURONREPRESENTATION_H_
+#define TOL_NEURONREPRESENTATION_H_
 
+#include <tol_robogen/tol.h>
+
+#include <vector>
 #include <string>
-#include <boost/shared_ptr.hpp>
-#include "robogen.pb.h"
 
-namespace robogen {
+namespace tol_robogen {
 
 /**
  * Body part Id, IO Id
@@ -114,18 +115,11 @@ public:
 
 	ioPair getIoPair();
 
-	/**
-	 * Transfer to proto buffer message.
-	 */
-	robogenMessage::Neuron serialize();
-
 private:
 	/**
 	 * Code common to all constructors
 	 */
 	void init(ioPair identification, unsigned int layer, unsigned int type);
-
-
 
 	/**
 	 * Identification (body part id, IO ID) of neuron

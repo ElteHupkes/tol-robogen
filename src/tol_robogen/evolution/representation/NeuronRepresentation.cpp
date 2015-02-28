@@ -26,10 +26,10 @@
  * @(#) $Id$
  */
 
-#include "evolution/representation/NeuronRepresentation.h"
+#include <tol_robogen/evolution/representation/NeuronRepresentation.h>
 #include <sstream>
 #include <iostream>
-namespace robogen {
+namespace tol_robogen {
 
 void NeuronRepresentation::init(ioPair identification, unsigned int layer,
 		unsigned int type) {
@@ -125,35 +125,37 @@ ioPair NeuronRepresentation::getIoPair(){
 	return identification_;
 }
 
-robogenMessage::Neuron NeuronRepresentation::serialize(){
-	robogenMessage::Neuron serialization;
-	serialization.set_id(id_);
-	if(layer_ == OUTPUT)
-		serialization.set_layer("output");
-	else if(layer_ == INPUT)
-		serialization.set_layer("input");
-	else if(layer_ == HIDDEN)
-		serialization.set_layer("hidden");
-	serialization.set_bodypartid(identification_.first);
-	serialization.set_ioid(identification_.second);
-	if (type_ == SIMPLE) {
-		serialization.set_type("simple");
-	}
-	else if(type_ == SIGMOID) {
-		serialization.set_type("sigmoid");
-		serialization.set_bias(bias_);
-	}
-	else if (type_ == CTRNN_SIGMOID) {
-		serialization.set_type("ctrnn_sigmoid");
-		serialization.set_bias(bias_);
-		serialization.set_tau(tau_);
-	} else if (type_ == OSCILLATOR) {
-		serialization.set_type("oscillator");
-		serialization.set_period(period_);
-		serialization.set_phaseoffset(phaseOffset_);
-	}
-	serialization.set_gain(gain_);
-	return serialization;
-}
+// Don't fully delete this just yet; serialization could be
+// useful to see how we can implement this later.
+//robogenMessage::Neuron NeuronRepresentation::serialize(){
+//	robogenMessage::Neuron serialization;
+//	serialization.set_id(id_);
+//	if(layer_ == OUTPUT)
+//		serialization.set_layer("output");
+//	else if(layer_ == INPUT)
+//		serialization.set_layer("input");
+//	else if(layer_ == HIDDEN)
+//		serialization.set_layer("hidden");
+//	serialization.set_bodypartid(identification_.first);
+//	serialization.set_ioid(identification_.second);
+//	if (type_ == SIMPLE) {
+//		serialization.set_type("simple");
+//	}
+//	else if(type_ == SIGMOID) {
+//		serialization.set_type("sigmoid");
+//		serialization.set_bias(bias_);
+//	}
+//	else if (type_ == CTRNN_SIGMOID) {
+//		serialization.set_type("ctrnn_sigmoid");
+//		serialization.set_bias(bias_);
+//		serialization.set_tau(tau_);
+//	} else if (type_ == OSCILLATOR) {
+//		serialization.set_type("oscillator");
+//		serialization.set_period(period_);
+//		serialization.set_phaseoffset(phaseOffset_);
+//	}
+//	serialization.set_gain(gain_);
+//	return serialization;
+//}
 
 } /* namespace robogen */

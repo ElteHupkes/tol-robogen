@@ -26,12 +26,8 @@
  * @(#) $Id$
  */
 
-#ifndef ROBOTREPRESENTATION_H
-#define ROBOTREPRESENTATION_H
-
-#if 0 // set to 1 to use fake robots for evolution algorithm benchmark
-#include "evolution/representation/FakeRobotRepresentation.h"
-#else
+#ifndef TOL_ROBOTREPRESENTATION_H
+#define TOL_ROBOTREPRESENTATION_H
 
 #include <string>
 #include <set>
@@ -57,7 +53,7 @@ public:
 	/**
 	 * Map from an id string to a weak pointer of a part representation
 	 */
-	typedef std::map<std::string, std::weak_ptr<PartRepresentation> > IdPartMap;
+	typedef std::map<std::string, WeakPartRepresentationPtr > IdPartMap;
 
 	/**
 	 * Copy constructor: Deep copy body parts and Neural network
@@ -70,10 +66,15 @@ public:
 	RobotRepresentation();
 
 	/**
-	 * assignment operator: Deep copy body parts and Neural network
+	 * assignment operator: Deep copy body parts and Neural network,
+	 * using copy-swap.
 	 */
-	RobotRepresentation &operator=(const RobotRepresentation &r);
+	RobotRepresentation &operator=(RobotRepresentation r);
 
+	/**
+	 * Swap function for copy-swap
+	 */
+	friend void swap(RobotRepresentation & a, RobotRepresentation & b);
 
 	/**
 	 * Constructs a robot representation from nothing.
@@ -107,7 +108,7 @@ public:
 	/**
 	 * @return a shared pointer to the robots brain
 	 */
-	//std::shared_ptr<NeuralNetworkRepresentation> getBrain() const;
+	NeuralNetworkRepresentationPtr getBrain() const;
 
 	/**
 	 * @return a shared pointer to the robots body
@@ -158,7 +159,7 @@ public:
 	 */
 	bool insertPart(const std::string& parentPartId,
 			unsigned int parentPartSlot,
-			boost::shared_ptr<PartRepresentation> newPart,
+			PartRepresentationPtr newPart,
 			unsigned int newPartSlot);
 
 	/**
@@ -168,6 +169,12 @@ public:
 	 * @return true if the operation completed successfully, false otherwise
 	 */
 	bool removePart(const std::string& partId);
+
+	/**
+	 * Creates a robot that can be converted to SDF from
+	 * this representation.
+	 */
+	RobotPtr toRobot() const;
 
 	/**
 	 * @return the id of the root body part
@@ -190,7 +197,7 @@ private:
 	/**
 	 *
 	 */
-	void recurseNeuronRemoval(boost::shared_ptr<PartRepresentation> part);
+	void recurseNeuronRemoval(PartRepresentationPtr part);
 
 	/**
 	 * Insert parts to the body id-parts map
@@ -198,7 +205,7 @@ private:
 	 * @param part the root of the subtree to be inserted into the body id to parts map
 	 * @return true if the operation completed successfully, false otherwise
 	 */
-	bool addClonesToMap(boost::shared_ptr<PartRepresentation> part,
+	bool addClonesToMap(PartRepresentationPtr part,
 			std::map<std::string, std::string> &neuronReMapping);
 
 	/**
@@ -209,7 +216,7 @@ private:
 	/**
 	 * Neural network representation of the robot
 	 */
-	//boost::shared_ptr<NeuralNetworkRepresentation> neuralNetwork_;
+	NeuralNetworkRepresentationPtr neuralNetwork_;
 
 	/**
 	 * Map from part id to part representation
@@ -218,29 +225,10 @@ private:
 	IdPartMap idToPart_;
 
 	/**
-	 * Fitness of robot, once evaluated.
-	 */
-	double fitness_;
-
-	/**
 	 * Counter for unique ID.
 	 */
 	int maxid_;
 
-	/**
-	 * Indicates whether robot evaluated
-	 */
-	bool evaluated_;
-
 };
 
-/**
- * Operator > returns true if fitness of a exceeds fitness of b
- */
-bool operator >(const RobotRepresentation &a, const RobotRepresentation &b);
-
-}
-
-#endif /* use of fake robot benchmark */
-
-#endif /* ROBOTREPRESENTATION_H */
+#endif /* TOL_ROBOTREPRESENTATION_H */

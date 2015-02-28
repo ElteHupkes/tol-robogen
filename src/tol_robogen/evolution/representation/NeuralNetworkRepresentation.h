@@ -25,8 +25,8 @@
  *
  * @(#) $Id$
  */
-#ifndef NEURALNETWORKREPRESENTATION_H_
-#define NEURALNETWORKREPRESENTATION_H_
+#ifndef TOL_NEURALNETWORKREPRESENTATION_H_
+#define TOL_NEURALNETWORKREPRESENTATION_H_
 
 #include <map>
 #include <string>
@@ -35,14 +35,13 @@
 #include <set>
 #include <map>
 #include <stdexcept>
-#include <boost/shared_ptr.hpp>
+#include <tol_robogen/Types.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
-#include "evolution/representation/PartRepresentation.h"
-#include "evolution/representation/NeuronRepresentation.h"
-#include "robogen.pb.h"
+#include <tol_robogen/evolution/representation/PartRepresentation.h>
+#include <tol_robogen/evolution/representation/NeuronRepresentation.h>
 
-namespace robogen {
+namespace tol_robogen {
 
 class NeuralNetworkRepresentation {
 public:
@@ -56,8 +55,7 @@ public:
 	/**
 	 * Maps from IO identifier pair to a neuron shared pointer
 	 */
-	typedef std::map<ioPair,
-			boost::shared_ptr<NeuronRepresentation> > NeuronMap;
+	typedef std::map<ioPair, NeuronRepresentationPtr > NeuronMap;
 
 	/**
 	 * Assignment operator: Deep copy neurons!
@@ -135,7 +133,7 @@ public:
 	/**
 	 * Returns all neurons attached to the supplied part
 	 */
-	std::vector<boost::weak_ptr<NeuronRepresentation> >
+	std::vector<WeakNeuronRepresentationPtr >
 		getBodyPartNeurons(std::string bodyPart);
 
 	/**
@@ -161,11 +159,6 @@ public:
 			std::vector<ioPair> &outputs, std::vector<double> &weights,
 			std::vector<double> &biases);
 	 */
-	/**
-	 * Serialize brain into message that can be appended to the robot message
-	 * @return protobuf message of brain
-	 */
-	robogenMessage::Brain serialize();
 
 	/**
 	 * @return a string representation of the neural network
@@ -186,8 +179,8 @@ private:
 	 */
 	WeightMap weights_;
 
-	void removeIncomingConnections(boost::shared_ptr<NeuronRepresentation> neuron);
-	void removeOutgoingConnections(boost::shared_ptr<NeuronRepresentation> neuron);
+	void removeIncomingConnections(NeuronRepresentationPtr neuron);
+	void removeOutgoingConnections(NeuronRepresentationPtr neuron);
 
 	// DONT FORGET TO COMPLETE ASSIGNMENT OPERATOR WHEN ADDING NEW PROPERTIES!!!
 };

@@ -18,10 +18,10 @@ PartRepresentation::PartRepresentation(std::string id, unsigned int orientation,
 		const std::vector<double>& params,
 		const std::vector<std::string>& motors,
 		const std::vector<std::string>& sensors) :
-		id_(id), orientation_(orientation), arity_(arity), type_(type),
+		id_(id), orientation_(orientation), arity_(arity), type_(type), position_(0),
 		parent_(NULL), params_(params), motors_(motors), sensors_(sensors) {
 
-	children_.resize(arity_, boost::shared_ptr<PartRepresentation>());
+	children_.resize(arity_, PartRepresentationPtr());
 }
 
 PartRepresentation::~PartRepresentation() {
@@ -99,7 +99,7 @@ PartRepresentationPtr PartRepresentation::getChild(unsigned int n) {
 }
 
 bool PartRepresentation::setChild(unsigned int n,
-		boost::shared_ptr<PartRepresentation> part) {
+		PartRepresentationPtr part) {
 
 	if (n  >= arity_ ) {
 		std::cout << "Attempt to access non-existing slot " << n << " of part "
@@ -116,12 +116,12 @@ bool PartRepresentation::setChild(unsigned int n,
 
 }
 
-boost::shared_ptr<PartRepresentation> PartRepresentation::create(char type,
+PartRepresentationPtr PartRepresentation::create(char type,
 		std::string id, unsigned int orientation, std::vector<double> params) {
 
 	if (PART_TYPE_MAP.count(type) == 0) {
 		std::cout << "Unknown part type '" << type << "'" << std::endl;
-		return boost::shared_ptr<PartRepresentation>();
+		return PartRepresentationPtr();
 	}
 
 	std::string partType = PART_TYPE_MAP.at(type);
@@ -130,10 +130,10 @@ boost::shared_ptr<PartRepresentation> PartRepresentation::create(char type,
 				<< ") does not equal the requested parameter count ("
 				<< PART_TYPE_PARAM_COUNT_MAP.at(partType) << ") for the part: '"
 				<< id << "'" << std::endl;
-		return boost::shared_ptr<PartRepresentation>();
+		return PartRepresentationPtr();
 	}
 
-	return boost::shared_ptr<PartRepresentation>(
+	return PartRepresentationPtr(
 			new PartRepresentation(id, orientation,
 					PART_TYPE_ARITY_MAP.at(partType), partType, params,
 					PART_TYPE_MOTORS_MAP.at(partType),
@@ -183,57 +183,6 @@ void PartRepresentation::addSubtreeToRobot(RobotPtr robot, ModelPtr parent, int 
 	}
 }
 
-void PartRepresentation::addSubtreeToBodyMessage(
-		robogenMessage::Body *bodyMessage, bool amIRoot) {
-
-	// first, insert self
-	robogenMessage::BodyPart* serialization = bodyMessage->add_part();
-
-	// required string id = 1;
-	serialization->set_id(id_);
-
-	// required string type = 2;
-	serialization->set_type(this->getType());
-
-	// required bool root = 3;
-	serialization->set_root(amIRoot);
-
-	// repeated EvolvableParameter evolvableParam = 4;
-	for (unsigned int i = 0; i < params_.size(); ++i) {
-		robogenMessage::EvolvableParameter *param =
-				serialization->add_evolvableparam();
-
-		//convert parameters from [0,1] back to valid range
-		std::pair<double, double> ranges = PART_TYPE_PARAM_RANGE_MAP.at(
-				std::make_pair(this->getType(), i));
-		double paramValue = (params_[i] * (ranges.second - ranges.first)) +
-				ranges.first;
-		param->set_paramvalue(paramValue);
-	}
-
-	// required int32 orientation = 5;
-	serialization->set_orientation(orientation_);
-
-	// treat children, including connection
-	for (unsigned int i = 0; i < arity_; i++) {
-		if (this->getChild(i)) {
-			robogenMessage::BodyConnection *connection =
-					bodyMessage->add_connection();
-			connection->set_src(id_);
-
-			if (this->getType().compare(PART_TYPE_CORE_COMPONENT) == 0) {
-				connection->set_srcslot(i);
-			} else {
-				connection->set_srcslot(i+1);
-			}
-			connection->set_dest(this->getChild(i)->getId());
-			connection->set_destslot(0);
-			this->getChild(i)->addSubtreeToBodyMessage(bodyMessage, false);
-		}
-	}
-
-}
-
 std::vector<std::string> PartRepresentation::getAncestorsIds() {
 
 	std::vector<std::string> ids;
@@ -265,9 +214,9 @@ std::vector<std::string> PartRepresentation::getDescendantsIds() {
 
 }
 
-boost::shared_ptr<PartRepresentation> PartRepresentation::cloneSubtree() {
+PartRepresentationPtr PartRepresentation::cloneSubtree() {
 
-	boost::shared_ptr<PartRepresentation> theClone(
+	PartRepresentationPtr theClone(
 			new PartRepresentation(this->getId(), this->getOrientation(),
 					this->getArity(), this->getType(), this->getParams(),
 					this->getMotors(), this->getSensors()));
