@@ -27,8 +27,6 @@
  * @(#) $Id$
  */
 
-#include <tol_robogen/evolution/representation/RobotRepresentation.h>
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -39,6 +37,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <tol_robogen/evolution/representation/RobotRepresentation.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 #include <tol_robogen/evolution/representation/PartList.h>
 #include <tol_robogen/model/Robot.h>
@@ -515,9 +514,8 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 //}
 
 RobotPtr RobotRepresentation::toRobot() const {
-	return RobotPtr(new Robot);
+	return RobotPtr(new Robot(bodyTree_));
 }
-
 
 void RobotRepresentation::getBrainGenome(std::vector<double*> &weights,
 		std::vector<unsigned int> &types,

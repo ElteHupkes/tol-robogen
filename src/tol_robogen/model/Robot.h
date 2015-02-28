@@ -11,13 +11,31 @@
 #include <tol_robogen/tol.h>
 #include <tol_robogen/model/Model.h>
 #include <tol_robogen/model/Connection.h>
+#include <tol_robogen/evolution/representation/PartRepresentation.h>
 
 namespace tol_robogen {
 
 class Robot {
 public:
+	/**
+	 * Initialize empty robot
+	 */
 	Robot();
+
+	/**
+	 * Initialize robot from core component part
+	 * representation.
+	 */
+	Robot(PartRepresentationPtr core);
+
 	virtual ~Robot();
+
+	/**
+	 * Initializes the robot with the given core.
+	 */
+	void init(PartRepresentationPtr core);
+
+	// TODO copy constructor, assignment operator
 
 	/**
 	 *  @return  the body parts of which the robot is composed of
@@ -45,17 +63,17 @@ protected:
 	/**
 	 * Robot body parts
 	 */
-	std::vector< std::shared_ptr<Model> > bodyParts_;
+	std::vector< ModelPtr > bodyParts_;
 
 	/**
 	 * Connections between the body parts.
 	 */
-	std::vector<std::shared_ptr<Connection> > bodyConnections_;
+	std::vector< ConnectionPtr > bodyConnections_;
 
 	/**
 	 * The core component of the robot
 	 */
-	std::shared_ptr<Model> coreComponent_;
+	ModelPtr coreComponent_;
 
 };
 

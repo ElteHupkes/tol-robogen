@@ -146,7 +146,7 @@ PartRepresentationPtr PartRepresentation::create(char type,
 }
 
 
-void PartRepresentation::addSubtreeToRobot(RobotPtr robot, ModelPtr parent, int fromSlot, int toSlot) {
+ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent, int fromSlot, int toSlot) {
 	//convert parameters from [0,1] back to valid range
 	// TODO Check: where are they converted in the first place?
 	auto params = params_;
@@ -185,6 +185,8 @@ void PartRepresentation::addSubtreeToRobot(RobotPtr robot, ModelPtr parent, int 
 			child->addSubtreeToRobot(robot, model, fromSlot, toSlot);
 		}
 	}
+
+	return model;
 }
 
 std::vector<std::string> PartRepresentation::getAncestorsIds() {

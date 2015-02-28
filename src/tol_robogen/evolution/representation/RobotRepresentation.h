@@ -31,6 +31,7 @@
 
 #include <string>
 #include <set>
+#include <map>
 #include <stdexcept>
 #include <memory>
 #include <boost/random/mersenne_twister.hpp>

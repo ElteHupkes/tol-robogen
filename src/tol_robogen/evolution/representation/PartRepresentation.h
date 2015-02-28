@@ -128,24 +128,15 @@ public:
 			std::vector<double> params);
 
 	/**
-	 * Add subtree to given body message.
-	 * @param bodyMessage message of the body to be completed with the subtree
-	 * @param amIRoot if set to true, will dsignate itself as root part
-	 * @todo recursive pattern robust for bigger robots?
-	 */
-//	void addSubtreeToBodyMessage(robogenMessage::Body *bodyMessage,
-//			bool amIRoot);
-
-
-	/**
 	 * Add subtree represented by this part to the given robot.
 	 *
 	 * @param The robot to add self to
-	 * @param Parent node
-	 * @param Connection slot on the parent node
-	 * @param Connection slot on this node
+	 * @param Parent node. Leave empty if this node is the root node
+	 * @param Connection slot on the parent node, -1 if this node is the root node
+	 * @param Connection slot on this node, -1 if this node is the root node
+	 * @return The model created for this part
 	 */
-	void addSubtreeToRobot(RobotPtr robot, ModelPtr parent = ModelPtr(), int fromSlot = -1, int toSlot = -1);
+	ModelPtr addSubtreeToRobot(Robot* robot, ModelPtr parent = ModelPtr(), int fromSlot = -1, int toSlot = -1);
 
 	/**
 	 * @param parent parent to be set

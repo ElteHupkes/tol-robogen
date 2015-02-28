@@ -30,6 +30,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 #include <stdexcept>
 
 // Utility defines taken from Robogen.h
@@ -127,22 +128,22 @@ public:
 	/**
 	 * @return the position of the root part
 	 */
-	sdf_builder::Vector3 getRootPosition();
+	const sdf_builder::Vector3 & getRootPosition();
 
 	/**
 	 * @return the attitude of the root part (a quaternion)
 	 */
-	sdf_builder::Quaternion getRootAttitude();
+	const sdf_builder::Quaternion & getRootAttitude();
 
 	/**
 	 * @return the position of the specified body
 	 */
-	sdf_builder::Vector3 getBodyPosition(int id);
+	const sdf_builder::Vector3 & getBodyPosition(int id);
 
 	/**
 	 * @return the attitude of the specified body
 	 */
-	sdf_builder::Quaternion getBodyAttitude(int id);
+	const sdf_builder::Quaternion & getBodyAttitude(int id);
 
 	/**
 	 * Sets the position of the root part.
@@ -163,24 +164,9 @@ public:
 	void setRootAttitude(const sdf_builder::Quaternion& quat);
 
 	/**
-	 * @return the position of the given body
-	 */
-	sdf_builder::Vector3 getPosition(sdf_builder::LinkPtr body);
-
-	/**
-	 * @return the attitude of the given body
-	 */
-	sdf_builder::Quaternion getAttitude(sdf_builder::LinkPtr body);
-
-	/**
 	 * @return the specified body
 	 */
 	sdf_builder::LinkPtr getLink(int id);
-
-	/**
-	 * @return all the bodies belonging to this model
-	 */
-	std::vector<sdf_builder::LinkPtr> getLinks();
 
 	/**
 	 * Create the specified body
@@ -211,7 +197,7 @@ public:
 	/**
 	 * @return A list of all posables in this model
 	 */
-	const std::vector< sdf_builder::PosablePtr > & getPosables();
+	const sdf_builder::PosableGroupPtr & getPosableGroup();
 
 	/**
 	 * Adds a joint to this model.
@@ -297,10 +283,9 @@ protected:
 	std::vector< sdf_builder::JointPtr > joints_;
 
 	/**
-	 * List of all posables (joints and links) in this model.
+	 * The posable group that holds all joints and links
 	 */
-	std::vector< sdf_builder::PosablePtr > posables_;
-
+	sdf_builder::PosableGroupPtr posableGroup_;
 };
 
 }

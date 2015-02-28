@@ -18,10 +18,7 @@ int main() {
 	component.initModel();
 
 	sb::Model model("temp_bot");
-	auto posables = component.getPosables();
-	for (unsigned int i = 0; i < posables.size(); ++i) {
-		model.addPosable(posables[i]);
-	}
+	model.addPosable(component.getPosableGroup());
 
 	std::cout << "<?xml version=\"1.0\"?>" << '\n';
 	std::cout << "<sdf version=\"1.5\">" << '\n';

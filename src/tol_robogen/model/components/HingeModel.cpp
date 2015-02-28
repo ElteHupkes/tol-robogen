@@ -70,7 +70,7 @@ bool HingeModel::initModel() {
 	// Connection part A needs to be positioned
 	double xPartA = SLOT_THICKNESS / 2 + separation
 			+ CONNECTION_PART_LENGTH / 2;
-	connectionPartA->setPosition(sb::Vector3(xPartA, 0, 0));
+	connectionPartA->position(sb::Vector3(xPartA, 0, 0));
 	connectionPartA->makeBox(MASS_FRAME, CONNECTION_PART_LENGTH,
 			CONNECTION_PART_THICKNESS, CONNECTION_PART_HEIGHT);
 
@@ -79,14 +79,14 @@ bool HingeModel::initModel() {
 			+ (CONNECTION_PART_LENGTH / 2
 					- (CONNECTION_PART_LENGTH - CONNECTION_ROTATION_OFFSET))
 					* 2;
-	connectionPartB->setPosition(sb::Vector3(xPartB, 0, 0));
+	connectionPartB->position(sb::Vector3(xPartB, 0, 0));
 	connectionPartB->makeBox(MASS_FRAME, CONNECTION_PART_LENGTH, CONNECTION_PART_THICKNESS,
 			CONNECTION_PART_HEIGHT);
 
 	// Finally the tail, also with a position
 	double xTail = xPartB + CONNECTION_PART_LENGTH / 2 + separation
 			+ SLOT_THICKNESS / 2;
-	hingeTail_->setPosition(sb::Vector3(xTail, 0, 0));
+	hingeTail_->position(sb::Vector3(xTail, 0, 0));
 	hingeTail_->makeBox(MASS_SLOT, SLOT_THICKNESS, SLOT_WIDTH, SLOT_WIDTH);
 
 	// Create joints to hold pieces in position
@@ -102,7 +102,7 @@ bool HingeModel::initModel() {
 	// position.
 	sb::JointPtr revolve(new sb::RevoluteJoint(connectionPartA, connectionPartB));
 	revolve->axis->xyz(sb::Vector3(0, 0, 1));
-	revolve->setPosition(sb::Vector3(
+	revolve->position(sb::Vector3(
 			CONNECTION_PART_LENGTH / 2 - CONNECTION_ROTATION_OFFSET, 0, 0));
 	this->addJoint(revolve);
 
@@ -136,13 +136,13 @@ sb::Vector3 HingeModel::getSlotPosition(unsigned int i) {
 	sb::Vector3 slotPos;
 	if (i == SLOT_A) {
 
-		sb::Vector3 curPos = this->getPosition(hingeRoot_);
+		sb::Vector3 curPos = hingeRoot_->position();
 		sb::Vector3 slotAxis = this->getSlotAxis(i);
 		return curPos + slotAxis * (SLOT_THICKNESS / 2);
 
 	} else {
 
-		sb::Vector3 curPos = this->getPosition(hingeTail_);
+		sb::Vector3 curPos = hingeTail_->position();
 		sb::Vector3 slotAxis = this->getSlotAxis(i);
 		return curPos + slotAxis * (SLOT_THICKNESS / 2);
 
@@ -164,14 +164,14 @@ sb::Vector3 HingeModel::getSlotAxis(unsigned int i) {
 
 	if (i == SLOT_A) {
 
-		quat = this->getAttitude(this->hingeRoot_);
+		quat = hingeRoot_->rotation();
 		axis[0] = -1;
 		axis[1] = 0;
 		axis[2] = 0;
 
 	} else if (i == SLOT_B) {
 
-		quat = this->getAttitude(this->hingeTail_);
+		quat = hingeTail_->rotation();
 		axis[0] = 1;
 		axis[1] = 0;
 		axis[2] = 0;
@@ -194,12 +194,12 @@ sb::Vector3 HingeModel::getSlotOrientation(unsigned int i) {
 
 	if (i == SLOT_A) {
 
-		quat = this->getAttitude(this->hingeRoot_);
+		quat = hingeRoot_->rotation();
 		axis[0] = 0; axis[1] = 1; axis[2] = 0;
 
 	} else if (i == SLOT_B) {
 
-		quat = this->getAttitude(this->hingeTail_);
+		quat = hingeTail_->rotation();
 		axis[0] = 0; axis[1] = 1; axis[2] = 0;
 
 	}

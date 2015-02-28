@@ -13,8 +13,9 @@ namespace sb = sdf_builder;
 
 Model::Model(std::string id) :
 		orientationToParentSlot_(0), // To get rid of the warning
-		id_(id) {
-}
+		id_(id),
+		posableGroup_(sb::PosableGroupPtr(new sb::PosableGroup("group_"+id)))
+{}
 
 Model::~Model() {
 
@@ -24,25 +25,16 @@ const std::string &Model::getId(){
 	return id_;
 }
 
-sb::Vector3 Model::getRootPosition() {
-	return this->getPosition(this->getRoot());
+const sb::Vector3 & Model::getRootPosition() {
+	return posableGroup_->position();
 }
 
-sb::Quaternion Model::getRootAttitude() {
-	return this->getAttitude(this->getRoot());
+const sb::Quaternion & Model::getRootAttitude() {
+	return posableGroup_->rotation();
 }
 
 void Model::setRootPosition(const sb::Vector3& pos) {
-
-	sb::Vector3 curPosition = this->getRootPosition();
-	sb::Vector3 translation = pos - curPosition;
-
-	std::map<int, sb::LinkPtr>::iterator it = this->links_.begin();
-	for (; it != this->links_.end(); ++it) {
-		sb::Vector3 curBodyPos = this->getPosition(it->second);
-		curBodyPos += translation;
-		it->second->pose()->setPosition(curBodyPos);
-	}
+	posableGroup_->position(pos);
 }
 
 void Model::translateRootPosition(const sb::Vector3& translation) {
@@ -53,66 +45,7 @@ void Model::translateRootPosition(const sb::Vector3& translation) {
 }
 
 void Model::setRootAttitude(const sb::Quaternion& quat) {
-
-	sb::Vector3 rootPosition = this->getRootPosition();
-
-	std::map<int, sb::LinkPtr>::iterator it = this->links_.begin();
-	for (; it != this->links_.end(); ++it) {
-		sb::Vector3 curPosition = this->getPosition(it->second);
-		sb::Vector3 relPosition = curPosition - rootPosition;
-
-		// Rotate relPosition
-		sb::Vector3 newPosition = quat * relPosition;
-		it->second->setPosition(newPosition);
-
-		sb::Quaternion curBodyAttitude = this->getAttitude(it->second);
-		curBodyAttitude *= quat;
-		it->second->setRotation(curBodyAttitude);
-	}
-
-	this->setRootPosition(rootPosition);
-
-}
-
-sb::Vector3 Model::getPosition(sb::LinkPtr link) {
-	return link->pose()->position();
-}
-
-sb::Quaternion Model::getAttitude(sb::LinkPtr link) {
-	return link->pose()->rotation();
-}
-
-sb::Vector3 Model::getBodyPosition(int id) {
-	return this->getPosition(this->getLink(id));
-}
-
-sb::Quaternion Model::getBodyAttitude(int id) {
-	return this->getAttitude(this->getLink(id));
-}
-
-sb::LinkPtr Model::getLink(int id) {
-	std::map<int, sb::LinkPtr>::iterator it = this->links_.find(id);
-	if (it == this->links_.end()) {
-		std::cout
-				<< "[Model] Error: The specified body does not exists in this model"
-				<< std::endl;
-		assert(it != this->links_.end());
-
-		// Return empty link pointer
-		return sb::LinkPtr();
-	}
-	return links_[id];
-}
-
-std::vector<sb::LinkPtr> Model::getLinks() {
-
-	std::vector<sb::LinkPtr> bodies;
-	std::map<int, sb::LinkPtr>::iterator it = this->links_.begin();
-	for (; it != this->links_.end(); ++it) {
-		bodies.push_back(it->second);
-	}
-	return bodies;
-
+	this->posableGroup_->rotation(quat);
 }
 
 void Model::addLink(sb::LinkPtr body, int id) {
@@ -125,8 +58,8 @@ sb::LinkPtr Model::createLink(int label) {
 		this->addLink(b, label);
 	}
 
-	// Add the model to the posables anyway
-	posables_.push_back(b);
+	// Add the model to the posable group
+	this->posableGroup_->addPosable(b);
 	return b;
 }
 
@@ -138,19 +71,19 @@ const std::vector< sb::JointPtr > & Model::getJoints() {
 	return joints_;
 }
 
-const std::vector< sb::PosablePtr > & Model::getPosables() {
-	return posables_;
+const sb::PosableGroupPtr & Model::getPosableGroup() {
+	return posableGroup_;
 }
 
 void Model::addJoint(sb::JointPtr joint) {
 	joints_.push_back(joint);
-	posables_.push_back(joint);
+	posableGroup_->addPosable(joint);
 }
 
 sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
 		const sb::Vector3& axis, const sb::Vector3& anchor) {
 	sb::JointPtr joint(new sb::FixedJoint(parent, child));
-	joint->setPosition(anchor);
+	joint->position(anchor);
 	joint->axis->xyz(axis);
 	this->addJoint(joint);
 	return joint;
