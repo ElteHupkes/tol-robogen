@@ -34,7 +34,7 @@
 
 namespace tol_robogen{
 
-Connection::Connection(ModelPtr from, int fromSlot, ModelPtr to, int toSlot):
+Connection::Connection(ModelPtr from, ModelPtr to, int toSlot, int fromSlot,):
 		from_(from),
 		fromSlot_(fromSlot),
 		to_(to),

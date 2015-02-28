@@ -57,7 +57,7 @@ public:
 	/**
 	 * Adds a new body connection
 	 */
-	void addBodyConnection(ConnectionPtr connection);
+	void addBodyConnection(ModelPtr from, ModelPtr to, int fromSlot, int toSlot);
 
 protected:
 	/**

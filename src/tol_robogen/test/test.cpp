@@ -9,6 +9,7 @@
 
 #include <tol_robogen/model/components/HingeModel.h>
 #include <sdf_builder/Parts.h>
+#include <sdf_builder/Types.h>
 
 using namespace tol_robogen;
 namespace sb = sdf_builder;

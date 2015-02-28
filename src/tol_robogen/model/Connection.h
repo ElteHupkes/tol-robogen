@@ -51,8 +51,8 @@ public:
  */
 class Connection {
 public:
-	Connection(ModelPtr from, int fromSlot,
-			ModelPtr to, int toSlot);
+	Connection(ModelPtr from, ModelPtr to,
+			int fromSlot, int toSlot);
 
 	/**
 	 * TODO remove once toOde is in place

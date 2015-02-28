@@ -168,8 +168,7 @@ ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent, in
 
 	if (parent) {
 		// Not the root node, create a connection
-		ConnectionPtr conn(new Connection(parent, fromSlot, model, toSlot));
-		robot->addBodyConnection(conn);
+		robot->addBodyConnection(parent, model, fromSlot, toSlot);
 	}
 
 	// TODO Add Connections

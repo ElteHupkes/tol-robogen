@@ -9,6 +9,7 @@
 
 #include <tol_robogen/tol.h>
 #include <tol_robogen/model/Robot.h>
+#include <tol_robogen/model/Connection.h>
 
 namespace tol_robogen {
 
@@ -26,6 +27,9 @@ void Robot::init(PartRepresentationPtr core) {
 	}
 
 	coreComponent_ = core->addSubtreeToRobot(this);
+
+	// Now start putting the body parts in position
+
 }
 
 Robot::~Robot() {}
@@ -42,8 +46,10 @@ void Robot::addBodyPart(ModelPtr bodyPart) {
 	bodyParts_.push_back(bodyPart);
 }
 
-void Robot::addBodyConnection(ConnectionPtr connection) {
-	bodyConnections_.push_back(connection);
+void Robot::addBodyConnection(ModelPtr from, ModelPtr to, int fromSlot, int toSlot) {
+	bodyConnections_.push_back(ConnectionPtr(new Connection(from, to, fromSlot, toSlot)));
+
+	// TODO Build the actual connection, i.e. move the bodies
 }
 
 } /* namespace tol_robogen */
