@@ -41,6 +41,7 @@
 
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 #include <tol_robogen/evolution/representation/PartList.h>
+#include <tol_robogen/model/Robot.h>
 
 namespace tol_robogen {
 
@@ -513,10 +514,8 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 //	return message;
 //}
 
-RobotPtr toRobot() const {
-	RobotPtr robot();
-
-	// TODO implement
+RobotPtr RobotRepresentation::toRobot() const {
+	return RobotPtr(new Robot);
 }
 
 

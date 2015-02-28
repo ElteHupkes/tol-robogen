@@ -32,6 +32,8 @@
 #include <map>
 #include <stdexcept>
 #include <memory>
+
+#include <tol_robogen/Types.h>
 #include <tol_robogen/model/Model.h>
 
 namespace tol_robogen {

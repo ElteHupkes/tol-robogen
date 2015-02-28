@@ -8,8 +8,12 @@
 #include <iostream>
 #include <sstream>
 
+#include <tol_robogen/tol.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 #include <tol_robogen/evolution/representation/PartList.h>
+
+#include <tol_robogen/model/PartFactory.h>
+#include <tol_robogen/model/Robot.h>
 
 namespace tol_robogen {
 
@@ -18,9 +22,9 @@ PartRepresentation::PartRepresentation(std::string id, unsigned int orientation,
 		const std::vector<double>& params,
 		const std::vector<std::string>& motors,
 		const std::vector<std::string>& sensors) :
-		id_(id), orientation_(orientation), arity_(arity), type_(type), position_(0),
-		parent_(NULL), params_(params), motors_(motors), sensors_(sensors) {
-
+		position_(0), id_(id), orientation_(orientation), arity_(arity), type_(type),
+		parent_(nullptr), params_(params), motors_(motors), sensors_(sensors)
+{
 	children_.resize(arity_, PartRepresentationPtr());
 }
 

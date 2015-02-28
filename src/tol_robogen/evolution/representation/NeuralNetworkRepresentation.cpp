@@ -36,31 +36,30 @@
 
 namespace tol_robogen {
 
-NeuralNetworkRepresentation &NeuralNetworkRepresentation::operator =(
-		const NeuralNetworkRepresentation &original) {
-	// deep copy neurons
-	neurons_.clear();
-	for (NeuronMap::const_iterator it = original.neurons_.begin();
-			it != original.neurons_.end(); ++it) {
-		neurons_[it->first] = boost::shared_ptr<NeuronRepresentation>(
-				new NeuronRepresentation(*(it->second.get())));
-	}
-	// replace weight map
-	weights_ = original.weights_;
-	return *this;
-}
-
 NeuralNetworkRepresentation::NeuralNetworkRepresentation(
 		const NeuralNetworkRepresentation &original) {
 	// deep copy neurons
 	neurons_.clear();
 	for (NeuronMap::const_iterator it = original.neurons_.begin();
 			it != original.neurons_.end(); ++it) {
-		neurons_[it->first] = boost::shared_ptr<NeuronRepresentation>(
+		neurons_[it->first] = NeuronRepresentationPtr(
 				new NeuronRepresentation(*(it->second.get())));
 	}
 	// replace weight map
 	weights_ = original.weights_;
+}
+
+// Assignment operator using copy constructor
+NeuralNetworkRepresentation &NeuralNetworkRepresentation::operator=(NeuralNetworkRepresentation original) {
+	// deep copy neurons
+	swap(*this, original);
+	return *this;
+}
+
+void swap(NeuralNetworkRepresentation & a, NeuralNetworkRepresentation & b) {
+	using std::swap;
+	swap(a.neurons_, b.neurons_);
+	swap(a.weights_, b.weights_);
 }
 
 NeuralNetworkRepresentation::NeuralNetworkRepresentation(
@@ -220,9 +219,7 @@ void NeuralNetworkRepresentation::getGenome(std::vector<double*> &weights,
 
 std::string NeuralNetworkRepresentation::insertNeuron(ioPair identification,
 		unsigned int layer, unsigned int type) {
-	boost::shared_ptr<NeuronRepresentation> neuron = boost::shared_ptr<
-			NeuronRepresentation>(
-			new NeuronRepresentation(identification, layer, type));
+	NeuronRepresentationPtr neuron(new NeuronRepresentation(identification, layer, type));
 	// insert into map
 	if (neurons_.count(identification)) {
 		std::cout << "ATTENTION: attempting to insert a neuron with id " <<
@@ -248,11 +245,11 @@ std::string NeuralNetworkRepresentation::insertNeuron(ioPair identification,
 
 void NeuralNetworkRepresentation::cloneNeurons(std::string oldPartId,
 		std::string newPartId, std::map<std::string, std::string> &oldNew) {
-	std::vector<boost::weak_ptr<NeuronRepresentation> > neurons =
+	std::vector<WeakNeuronRepresentationPtr > neurons =
 			getBodyPartNeurons(oldPartId);
 	for (unsigned int i = 0; i < neurons.size(); ++i) {
 		// remove all weights of the neuron
-		boost::shared_ptr<NeuronRepresentation> neuron = neurons[i].lock();
+		NeuronRepresentationPtr neuron = neurons[i].lock();
 		oldNew[neuron->getId()] = insertNeuron(
 				ioPair(newPartId, neuron->getIoPair().second),
 				neuron->getLayer(), neuron->getType());

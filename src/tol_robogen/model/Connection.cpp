@@ -25,10 +25,11 @@
  *
  * @(#) $Id$
  */
-#include "model/Connection.h"
 #include <map>
 #include <sstream>
 #include <stdexcept>
+
+#include <tol_robogen/model/Connection.h>
 #include <tol_robogen/model/Model.h>
 
 namespace tol_robogen{

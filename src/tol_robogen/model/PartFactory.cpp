@@ -15,7 +15,7 @@ PartFactory::PartFactory() {}
 
 PartFactory::~PartFactory() {}
 
-static ModelPtr PartFactory::getComponent(std::string type, std::string id, const std::vector<double> & params) {
+ModelPtr PartFactory::getComponent(std::string type, std::string id, const std::vector<double> & params) {
 	ModelPtr model;
 
 	if (type == PART_TYPE_CORE_COMPONENT) {

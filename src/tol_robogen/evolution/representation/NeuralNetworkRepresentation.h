@@ -60,13 +60,17 @@ public:
 	/**
 	 * Assignment operator: Deep copy neurons!
 	 */
-	NeuralNetworkRepresentation &operator=(const NeuralNetworkRepresentation
-			&original);
+	NeuralNetworkRepresentation &operator=(NeuralNetworkRepresentation original);
 
 	/**
 	 * Copy constructor: Deep copy neurons!
 	 */
 	NeuralNetworkRepresentation(const NeuralNetworkRepresentation &original);
+
+	/**
+	 * Copy-swap helper
+	 */
+	friend void swap(NeuralNetworkRepresentation & a, NeuralNetworkRepresentation & b);
 
 	/**
 	 * Creates a new neural network representation. The sensor and motor cache

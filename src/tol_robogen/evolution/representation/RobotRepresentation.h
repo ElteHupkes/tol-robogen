@@ -90,12 +90,6 @@ public:
 	bool init(std::string robotTextFile);
 
 	/**
-	 * @return robot message of this robot to be transmitted to simulator
-	 * or stored as population checkpoint
-	 */
-	//robogenMessage::Robot serialize() const;
-
-	/**
 	 * Provides weight and bias handles for a mutator.
 	 * @param weights reference to a vector to be filled with weight pointers
 	 * @param types reference to a vector to be filled with types of neurons
@@ -231,4 +225,5 @@ private:
 
 };
 
+} /* Namespace tol_robogen */
 #endif /* TOL_ROBOTREPRESENTATION_H */
