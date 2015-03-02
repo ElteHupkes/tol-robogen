@@ -59,7 +59,8 @@ public:
 	/**
 	 * Adds a new body connection
 	 */
-	void addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot, unsigned int toSlot);
+	void addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot,
+			unsigned int toSlot, unsigned int orientation);
 
 	/**
 	 * Output SDF for this robot

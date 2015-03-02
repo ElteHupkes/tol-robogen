@@ -21,24 +21,43 @@ int main(int argc, char *argv[]) {
 	ModelPtr core(new CoreComponentModel("my_core", true));
 	core->initModel();
 
-	ModelPtr component(new ActiveHingeModel("my_cc"));
+	ModelPtr component(new ActiveHingeModel("my_hinge"));
 	component->initModel();
-	component->setRootPosition(sb::Vector3(1, 1, 1));
 
-	std::cerr << component->getPosableGroup()->posables().size() << std::endl;
-//	component->attachTo(core, CoreComponentModel::RIGHT_FACE_SLOT, ActiveHingeModel::SLOT_A);
+	ModelPtr brick(new CoreComponentModel("my_brick", false));
+	brick->initModel();
+
+	core->setRootPosition(sb::Vector3(1, 1, 1));
+	component->attach(core, 0, 0, 0);
+	//brick->attach(component, 1, 0, 0);
 
 	sb::Model model("temp_bot");
+
+	auto joints = component->joints();
+	auto itb = joints.begin();
+	for (; itb != joints.end(); ++itb) {
+		model.addJoint(*itb);
+	}
+
+//	joints = brick->joints();
+//	itb = joints.begin();
+//	for (; itb != joints.end(); ++itb) {
+//		model.addJoint(*itb);
+//	}
+
 	model.addPosable(component->getPosableGroup());
-//	model.addPosable(core->getPosableGroup());
-//	model.position(sb::Vector3(0, 0, 1));
-//	model.rotateAround(sb::Vector3(0, 1, 0), 0.5);
+	model.addPosable(core->getPosableGroup());
+	//model.addPosable(brick->getPosableGroup());
+	model.position(sb::Vector3(0, 0, 1));
+
+	//model.rotateAround(sb::Vector3(0, 1, 0), 0.5);
 
 	std::cout << "<?xml version=\"1.0\"?>" << '\n';
 	std::cout << "<sdf version=\"1.5\">" << '\n';
 	std::cout << model.toXML();
 	std::cout << "</sdf>" << std::endl;
-//
+
+////  Full robot test
 //	if (argc != 3) {
 //		std::cout << "Call with robot reference file and output file." << std::endl;
 //		return EXIT_FAILURE;
@@ -66,5 +85,5 @@ int main(int argc, char *argv[]) {
 //	out << "</sdf>" << std::endl;
 //
 //	out.close();
-	return 0;
+//	return 0;
 }

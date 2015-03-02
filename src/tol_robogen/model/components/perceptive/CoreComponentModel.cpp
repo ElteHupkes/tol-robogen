@@ -51,7 +51,7 @@ sb::LinkPtr CoreComponentModel::getSlot(unsigned int /*i*/) {
 sb::Vector3 CoreComponentModel::getSlotPosition(unsigned int i) {
 
 	if (i > 5) {
-		std::cout << "[CoreComponentModel] Invalid slot: " << i << std::endl;
+		std::cerr << "[CoreComponentModel] Invalid slot: " << i << std::endl;
 		assert(i <= 5);
 	}
 
@@ -66,7 +66,7 @@ sb::Vector3 CoreComponentModel::getSlotPosition(unsigned int i) {
 sb::Vector3 CoreComponentModel::getSlotAxis(unsigned int i) {
 
 	if (i > 5) {
-		std::cout << "[CoreComponentModel] Invalid slot: " << i << std::endl;
+		std::cerr << "[CoreComponentModel] Invalid slot: " << i << std::endl;
 		assert(i <= 5);
 	}
 
@@ -105,6 +105,10 @@ sb::Vector3 CoreComponentModel::getSlotAxis(unsigned int i) {
 
 	}
 
+//	std::cerr << quat.w() << ' ' << quat.x() << ' ' << quat.y() << ' ' << quat.z() << std::endl;
+//	std::cerr << axis << std::endl;
+//	sb::Vector3 tst = quat * axis;
+//	std::cerr << tst << std::endl;
 	return quat * axis;
 
 }

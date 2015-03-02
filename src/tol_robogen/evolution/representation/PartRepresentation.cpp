@@ -167,14 +167,10 @@ ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent,
 		throw std::runtime_error("");
 	}
 
-	// TODO Check for error
-	// TODO Do we need to do this even if we are root?
-	model->setOrientationToParentSlot(orientation_);
 	robot->addBodyPart(model);
-
 	if (parent) {
 		// Not the root node, create a connection
-		robot->addBodyConnection(parent, model, fromSlot, toSlot);
+		robot->addBodyConnection(parent, model, fromSlot, toSlot, orientation_);
 	}
 
 	// TODO Add Connections

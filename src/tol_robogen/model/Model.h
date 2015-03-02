@@ -208,9 +208,20 @@ public:
 	void addJoint(sdf_builder::JointPtr joint);
 
 	/**
-	 * Attaches this model to the given model.
+	 * Get the joints in this model
 	 */
-	void attachTo(ModelPtr to, unsigned int fromSlot, unsigned int toSlot);
+	const std::vector< sdf_builder::JointPtr > & joints();
+
+	/**
+	 * Positions this model to align its slot `toSlot` with the
+	 * parent slot `fromSlot`, using the given orientation.
+	 *
+	 * @param The parent model to attach to
+	 * @param The slot on the parent model
+	 * @param The slot on this model
+	 * @param The orientation, increments of 90 degrees
+	 */
+	bool attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation);
 
 	/**
 	 * Create a capsule geometry for the body
@@ -245,20 +256,6 @@ public:
 	 */
 //	dJointID fixBodies(dBodyID b1, dBodyID b2, const osg::Vec3& axis);
 
-	/**
-	 * Set orientation to parent slot with increments of 90 degrees
-	 * @param orientation integer between 0 and 3, specifying the amount of
-	 * additional 90 degree increments after attaching the part to its parent.
-	 */
-	bool setOrientationToParentSlot(int orientation);
-
-	/**
-	 * Get orientation to parent slot.
-	 * @return a number specifying the amount of additional 90 degree increments
-	 * after attaching the part to its parent.
-	 */
-	int getOrientationToParentSlot();
-
 protected:
 
 	/**
@@ -271,12 +268,6 @@ protected:
 	 * User-defined identifier of the part
 	 */
 	const std::string id_;
-
-	/**
-	 * Orientation at parent slot: 0-3, where the number stands for
-	 * increments of 90 degrees when attaching to the parent part.
-	 */
-	int orientationToParentSlot_;
 
 	/**
 	 * Map of links in SDF (previously bodies in Robogen).

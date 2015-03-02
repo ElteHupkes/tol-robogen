@@ -4,6 +4,9 @@
 #include <stdexcept>
 #include <sstream>
 #include <string>
+#include <cmath>
+
+#include <iostream>
 
 #include <tol_robogen/model/Model.h>
 
@@ -12,7 +15,6 @@ namespace tol_robogen {
 namespace sb = sdf_builder;
 
 Model::Model(std::string id) :
-		orientationToParentSlot_(0), // To get rid of the warning
 		id_(id),
 		posableGroup_(sb::PosableGroupPtr(new sb::PosableGroup("group_"+id)))
 {}
@@ -77,8 +79,15 @@ const sb::PosableGroupPtr & Model::getPosableGroup() {
 
 void Model::addJoint(sb::JointPtr joint) {
 	joints_.push_back(joint);
-	posableGroup_->addPosable(joint);
+
+	// Do *NOT* add the joint to the posables, its pose is relative
+	// to the child frame.
 }
+
+const std::vector< sb::JointPtr > & Model::joints() {
+	return joints_;
+}
+
 
 sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
 		const sb::Vector3& anchor, const sb::Vector3& axis) {
@@ -89,17 +98,33 @@ sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
 	return joint;
 }
 
-void Model::attachTo(ModelPtr to, unsigned int fromSlot, unsigned int toSlot) {
-	auto toPosable = to->getPosableGroup();
+bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation) {
+	if (orientation > 3){
+		std::cerr << "Specified orientation to parent slot is not"\
+				" between 0 and 3." << std::endl;
+		return false;
+	}
 
-	sb::Vector3 aSlotPosition = getSlotPosition(fromSlot);
-	sb::Vector3 bSlotPosition = to->getSlotPosition(toSlot);
+	std::cerr << fromSlot << ':' << toSlot << std::endl;
 
-	sb::Vector3 aSlotNormal = getSlotAxis(fromSlot);
-	sb::Vector3 bSlotNormal = to->getSlotAxis(toSlot);
+	auto toPosable = from->getPosableGroup();
 
-	sb::Vector3 aSlotTangent = getSlotOrientation(fromSlot);
-	sb::Vector3 bSlotTangent = to->getSlotOrientation(toSlot);
+	// Beware that here "toSlot" belongs to self
+	sb::Vector3 aSlotPosition = getSlotPosition(toSlot);
+	sb::Vector3 bSlotPosition = from->getSlotPosition(fromSlot);
+
+	sb::Vector3 aSlotNormal = getSlotAxis(toSlot);
+	sb::Vector3 bSlotNormal = from->getSlotAxis(fromSlot);
+
+	sb::Vector3 aSlotTangent = getSlotOrientation(toSlot);
+	sb::Vector3 bSlotTangent = from->getSlotOrientation(fromSlot);
+
+	std::cerr << aSlotPosition << '\n' << std::endl;
+	std::cerr << bSlotPosition << '\n' << std::endl;
+//	std::cerr << aSlotNormal << '\n' << std::endl;
+//	std::cerr << bSlotNormal << '\n' << std::endl;
+//	std::cerr << aSlotTangent << '\n' << std::endl;
+//	std::cerr << bSlotTangent << '\n' << std::endl;
 
 	posableGroup_->align(
 		aSlotPosition,
@@ -115,6 +140,13 @@ void Model::attachTo(ModelPtr to, unsigned int fromSlot, unsigned int toSlot) {
 		// for convenience.
 		sb::Posable::RELATIVE_TO_PARENT_FRAME
 	);
+
+	// TODO Set orientation
+	//posableGroup_->rotateAround(getSlotAxis(toSlot), 0.5 * orientation * M_PI);
+
+	// TODO Create a fixed link
+
+	return true;
 }
 
 //dxGeom* Model::createCylinderGeom(dBodyID body, float mass,
@@ -204,19 +236,5 @@ void Model::attachTo(ModelPtr to, unsigned int fromSlot, unsigned int toSlot) {
 //	return joint;
 //
 //}
-
-bool Model::setOrientationToParentSlot(int orientation){
-	if (orientation < 0 || orientation > 3){
-		std::cout << "Specified orientation to parent slot is not"\
-				" between 0 and 3." << std::endl;
-		return false;
-	}
-	this->orientationToParentSlot_ = orientation;
-	return true;
-}
-
-int Model::getOrientationToParentSlot(){
-	return this->orientationToParentSlot_;
-}
 
 }
