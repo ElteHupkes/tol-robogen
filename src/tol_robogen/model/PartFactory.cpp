@@ -8,6 +8,8 @@
 #include <iostream>
 
 #include <tol_robogen/model/PartFactory.h>
+#include <tol_robogen/evolution/representation/PartList.h>
+#include <tol_robogen/model/Models.h>
 
 namespace tol_robogen {
 
@@ -18,12 +20,14 @@ PartFactory::~PartFactory() {}
 ModelPtr PartFactory::getComponent(std::string type, std::string id, const std::vector<double> & params) {
 	ModelPtr model;
 
-	if (type == PART_TYPE_CORE_COMPONENT) {
+	if (PART_TYPE_CORE_COMPONENT == type) {
 		model.reset(new CoreComponentModel(id, true));
-	} else if (type == PART_TYPE_FIXED_BRICK) {
+	} else if (PART_TYPE_FIXED_BRICK == type) {
 		model.reset(new CoreComponentModel(id, false));
-	} else if (type == PART_TYPE_PASSIVE_HINGE) {
+	} else if (PART_TYPE_PASSIVE_HINGE == type) {
 		model.reset(new HingeModel(id));
+	} else if (PART_TYPE_ACTIVE_HINGE == type) {
+		model.reset(new ActiveHingeModel(id));
 	}
 
 	// TODO Add other models
@@ -34,6 +38,8 @@ ModelPtr PartFactory::getComponent(std::string type, std::string id, const std::
 		throw std::runtime_error("");
 	}
 
+	// Initialize the model
+	model->initModel();
 	return model;
 }
 

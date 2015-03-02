@@ -182,13 +182,14 @@ public:
 	 *
 	 * @param Parent link
 	 * @param Child link
-	 * @param Axis of the joint
 	 * @param Anchor of the joint; since the joint's position is
 	 * 		  expressed in the child frame I need to know the anchor point.
+	 * @param Axis of the joint, specify if this is different from (1, 0, 0)
 	 * @return The joint created to connect the links
 	 */
 	sdf_builder::JointPtr fixLinks(sdf_builder::LinkPtr parent, sdf_builder::LinkPtr child,
-			const sdf_builder::Vector3& axis, const sdf_builder::Vector3& anchor);
+			const sdf_builder::Vector3& anchor,
+			const sdf_builder::Vector3& axis = sdf_builder::Vector3(1, 0, 0));
 
 	/**
 	 * @return A list of all joints in this model

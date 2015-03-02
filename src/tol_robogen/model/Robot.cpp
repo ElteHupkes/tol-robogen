@@ -34,8 +34,7 @@ void Robot::init(PartRepresentationPtr core) {
 
 	coreComponent_ = core->addSubtreeToRobot(this);
 
-	// Now start putting the body parts in position
-
+	// TODO Initialize brain
 }
 
 Robot::~Robot() {}

@@ -81,7 +81,7 @@ void Model::addJoint(sb::JointPtr joint) {
 }
 
 sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
-		const sb::Vector3& axis, const sb::Vector3& anchor) {
+		const sb::Vector3& anchor, const sb::Vector3& axis) {
 	sb::JointPtr joint(new sb::FixedJoint(parent, child));
 	joint->position(anchor);
 	joint->axis->xyz(axis);

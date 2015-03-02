@@ -162,6 +162,11 @@ ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent,
 	// TODO Check for error
 	ModelPtr model = PartFactory::getComponent(this->getType(), id_, params);
 
+	if (!model) {
+		std::cerr << "Error generating model part." << std::endl;
+		throw std::runtime_error("");
+	}
+
 	// TODO Check for error
 	// TODO Do we need to do this even if we are root?
 	model->setOrientationToParentSlot(orientation_);

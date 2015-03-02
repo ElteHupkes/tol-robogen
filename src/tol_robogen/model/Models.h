@@ -10,6 +10,7 @@
 
 #include <tol_robogen/model/Model.h>
 #include <tol_robogen/model/components/HingeModel.h>
+#include <tol_robogen/model/components/actuated/ActiveHingeModel.h>
 #include <tol_robogen/model/components/perceptive/CoreComponentModel.h>
 
 #endif /* TOL_ROBOGEN_MODEL_MODELS_H_ */

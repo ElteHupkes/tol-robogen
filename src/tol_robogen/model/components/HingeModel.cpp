@@ -92,7 +92,7 @@ bool HingeModel::initModel() {
 	// Create joints to hold pieces in position
 	// root <-> connectionPartA
 	this->fixLinks(hingeRoot_, connectionPartA,
-			sb::Vector3(1, 0, 0), sb::Vector3(-CONNECTION_PART_LENGTH / 2, 0, 0));
+			sb::Vector3(-CONNECTION_PART_LENGTH / 2, 0, 0));
 
 	// connectionPartA <(hinge)> connectionPArtB
 	// Hinge joint axis should point straight up, and anchor the
@@ -107,8 +107,7 @@ bool HingeModel::initModel() {
 	this->addJoint(revolve);
 
 	// connectionPartB <-> tail
-	this->fixLinks(connectionPartB, hingeTail_,
-			sb::Vector3(1, 0, 0), sb::Vector3(-SLOT_THICKNESS / 2, 0, 0));
+	this->fixLinks(connectionPartB, hingeTail_, sb::Vector3(-SLOT_THICKNESS / 2, 0, 0));
 
 	return true;
 
@@ -165,16 +164,12 @@ sb::Vector3 HingeModel::getSlotAxis(unsigned int i) {
 	if (i == SLOT_A) {
 
 		quat = hingeRoot_->rotation();
-		axis[0] = -1;
-		axis[1] = 0;
-		axis[2] = 0;
+		axis[0] = -1; axis[1] = 0; axis[2] = 0;
 
 	} else if (i == SLOT_B) {
 
 		quat = hingeTail_->rotation();
-		axis[0] = 1;
-		axis[1] = 0;
-		axis[2] = 0;
+		axis[0] = 1; axis[1] = 0; axis[2] = 0;
 
 	}
 

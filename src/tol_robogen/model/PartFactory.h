@@ -9,8 +9,8 @@
 #define TOL_ROBOGEN_MODEL_PARTFACTORY_H_
 
 #include <tol_robogen/tol.h>
-#include <tol_robogen/evolution/representation/PartList.h>
-#include <tol_robogen/model/Models.h>
+#include <vector>
+#include <string>
 
 namespace tol_robogen {
 
