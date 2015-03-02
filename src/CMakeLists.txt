@@ -15,12 +15,12 @@ add_definitions(-DSOURCE_DIR=${CMAKE_SOURCE_DIR})
 find_package(Eigen3 REQUIRED)
 
 # Find Boost
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS regex)
 
-# Include SdfBuilder and Eigen3
+# Include SdfBuilder, Eigen3 and Boost
 include_directories(${CMAKE_SOURCE_DIR} ${SDFBUILDER_INCLUDE_PATH} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 
-# Set dependency list
+# Set dependency list (Eigen3 is header only)
 set(TOL_DEPS ${SDFBUILDER_LIBRARIES} ${Boost_LIBRARIES})
 
 # All files for the SDF builder

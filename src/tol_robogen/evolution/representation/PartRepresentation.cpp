@@ -146,7 +146,8 @@ PartRepresentationPtr PartRepresentation::create(char type,
 }
 
 
-ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent, int fromSlot, int toSlot) {
+ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent,
+		unsigned int fromSlot, unsigned int toSlot) {
 	//convert parameters from [0,1] back to valid range
 	// TODO Check: where are they converted in the first place?
 	auto params = params_;

@@ -40,6 +40,7 @@
 #define inMm(x) (x/100.0)
 #define inGrams(x) (x/100.0)
 
+#include <tol_robogen/tol.h>
 #include <sdf_builder/Types.h>
 #include <sdf_builder/Parts.h>
 
@@ -204,6 +205,11 @@ public:
 	 * @param Joint to add to the joint list
 	 */
 	void addJoint(sdf_builder::JointPtr joint);
+
+	/**
+	 * Attaches this model to the given model.
+	 */
+	void attachTo(ModelPtr to, unsigned int fromSlot, unsigned int toSlot);
 
 	/**
 	 * Create a capsule geometry for the body

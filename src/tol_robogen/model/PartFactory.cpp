@@ -31,6 +31,7 @@ ModelPtr PartFactory::getComponent(std::string type, std::string id, const std::
 	if (!model) {
 		std::cerr << "Part type '" << type << "' could not be resolved!"
 				<< std::endl;
+		throw std::runtime_error("");
 	}
 
 	return model;

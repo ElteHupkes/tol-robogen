@@ -36,6 +36,9 @@
 #include <regex>
 
 #include <boost/algorithm/string.hpp>
+// TODO Switch to std::regex once commonly available
+// in compilers.
+#include <boost/regex.hpp>
 
 #include <tol_robogen/evolution/representation/RobotRepresentation.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
@@ -90,12 +93,12 @@ bool robotTextFileReadPartLine(std::ifstream &file, unsigned int &indent,
 		char &type, std::string &id, unsigned int &orientation,
 		std::vector<double> &params) {
 	// match (0 or more tabs)(digit) (type) (id) (orientation) (parameters)
-	static const std::regex rx(
+	static const boost::regex rx(
 			"^(\\t*)(\\d) ([A-Z]|(?:[A-Z][a-z]*)+) ([^\\s]+) (\\d)([ \\d\\.-]*)$");
-	std::cmatch match;
+	boost::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (std::regex_match(line.c_str(), match, rx)) {
+	if (boost::regex_match(line.c_str(), match, rx)) {
 		// match[0]:whole string, match[1]:tabs, match[2]:slot, match[3]:type,
 		// match[4]:id, match[5]:orientation, match[6]:parameters
 		indent = match[1].length();
@@ -157,8 +160,8 @@ bool robotTextFileReadPartLine(std::ifstream &file, unsigned int &indent,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const std::regex spacex("^\\s*$");
-		if (!std::regex_match(line.c_str(), spacex)) {
+		static const boost::regex spacex("^\\s*$");
+		if (!boost::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading body part from text file. Received:\n"
 					<< line << "\nbut expected format:\n"
 					<< "<0 or more tabs><slot index digit> "
@@ -179,12 +182,12 @@ bool robotTextFileReadPartLine(std::ifstream &file, unsigned int &indent,
 bool robotTextFileReadWeightLine(std::ifstream &file, std::string &from,
 		int &fromIoId, std::string &to, int &toIoId, double &value) {
 
-	static const std::regex rx(
+	static const boost::regex rx(
 			"^([^\\s]+) (\\d+) ([^\\s]+) (\\d+) (-?\\d*\\.?\\d*)$");
-	std::cmatch match;
+	boost::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (std::regex_match(line.c_str(), match, rx)) {
+	if (boost::regex_match(line.c_str(), match, rx)) {
 		// match[0]:whole string, match[1]:from, match[2]:from IO id,
 		// match[3]:to, match[4]:to IO id, match[5]:value
 		from.assign(match[1]);
@@ -195,8 +198,8 @@ bool robotTextFileReadWeightLine(std::ifstream &file, std::string &from,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const std::regex spacex("^\\s*$");
-		if (!std::regex_match(line.c_str(), spacex)) {
+		static const boost::regex spacex("^\\s*$");
+		if (!boost::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading weight from text file. Received:\n"
 					<< line << "\nbut expected format:\n"
 					<< "<source part id string> <source part io id> "
@@ -234,11 +237,11 @@ void parseTypeString(std::string typeString, unsigned int &type) {
 bool robotTextFileReadAddNeuronLine(std::ifstream &file, std::string &partId,
 		unsigned int &type) {
 
-	static const std::regex rx("^([^\\s]+) ([^\\s]+)$");
-	std::cmatch match;
+	static const boost::regex rx("^([^\\s]+) ([^\\s]+)$");
+	boost::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (std::regex_match(line.c_str(), match, rx)) {
+	if (boost::regex_match(line.c_str(), match, rx)) {
 		// match[0]:whole string, match[1]:partId match[2]:type string
 		partId.assign(match[1]);
 		std::string typeString = match[2];
@@ -246,8 +249,8 @@ bool robotTextFileReadAddNeuronLine(std::ifstream &file, std::string &partId,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const std::regex spacex("^\\s*$");
-		if (!std::regex_match(line.c_str(), spacex)) {
+		static const boost::regex spacex("^\\s*$");
+		if (!boost::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading hidden neuron descriptor from text file. Received:\n"
 					<< line << "\nbut expected format:\n"
 					<< "<part id string> <type string>" << std::endl;
@@ -264,13 +267,13 @@ bool robotTextFileReadAddNeuronLine(std::ifstream &file, std::string &partId,
 bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 		int &ioId,  unsigned int &type, std::vector<double> &params) {
 
-	static const std::regex generalRx("^([^\\s]+) (\\d+) ([^\\s]+)((?: -?\\d*\\.?\\d*)+)$");
+	static const boost::regex generalRx("^([^\\s]+) (\\d+) ([^\\s]+)((?: -?\\d*\\.?\\d*)+)$");
 
-	static const std::regex biasRx("^([^\\s]+) (\\d+) (-?\\d*\\.?\\d*)$");
-	std::cmatch match;
+	static const boost::regex biasRx("^([^\\s]+) (\\d+) (-?\\d*\\.?\\d*)$");
+	boost::cmatch match;
 	std::string line;
 	std::getline(file, line);
-	if (std::regex_match(line.c_str(), match, generalRx)) {
+	if (boost::regex_match(line.c_str(), match, generalRx)) {
 		node.assign(match[1]);
 		ioId = std::atoi(match[2].first);
 		std::string typeString = match[3];
@@ -283,7 +286,7 @@ bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 			params.push_back(std::atof(strs[i].c_str()));
 		}
 		return true;
-	} else if (std::regex_match(line.c_str(), match, biasRx)) {
+	} else if (boost::regex_match(line.c_str(), match, biasRx)) {
 		for (unsigned int i=0; i < match.size(); i++) {
 			std::cout << i << " " << match[i] << std::endl;
 		}
@@ -295,8 +298,8 @@ bool robotTextFileReadParamsLine(std::ifstream &file, std::string &node,
 		return true;
 	} else {
 		// additional info if poor formatting, i.e. line not empty
-		static const std::regex spacex("^\\s*$");
-		if (!std::regex_match(line.c_str(), spacex)) {
+		static const boost::regex spacex("^\\s*$");
+		if (!boost::regex_match(line.c_str(), spacex)) {
 			std::cout << "Error reading brain params from text file. Received:\n"
 					<< line << "\nbut expected either format:\n"
 					<< "<part id string> <part io id> <bias>\nor\n"
@@ -392,7 +395,7 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 			return false;
 		}
 	} catch (std::runtime_error &e) {
-		std::cout << "Error parsing robot body\n";
+		std::cout << "Error parsing robot body" << std::endl;
 		return false;
 	}
 	current = PartRepresentation::create(type, id, orientation, params);
@@ -501,17 +504,6 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 	maxid_ = 1000;
 	return true;
 }
-
-//robogenMessage::Robot RobotRepresentation::serialize() const {
-//	robogenMessage::Robot message;
-//	// id - this can probably be removed
-//	message.set_id(1);
-//	// body
-//	bodyTree_->addSubtreeToBodyMessage(message.mutable_body(), true);
-//	// brain
-//	*(message.mutable_brain()) = neuralNetwork_->serialize();
-//	return message;
-//}
 
 RobotPtr RobotRepresentation::toRobot() const {
 	return RobotPtr(new Robot(bodyTree_));

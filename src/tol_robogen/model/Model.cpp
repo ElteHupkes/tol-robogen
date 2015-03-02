@@ -89,6 +89,34 @@ sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
 	return joint;
 }
 
+void Model::attachTo(ModelPtr to, unsigned int fromSlot, unsigned int toSlot) {
+	auto toPosable = to->getPosableGroup();
+
+	sb::Vector3 aSlotPosition = getSlotPosition(fromSlot);
+	sb::Vector3 bSlotPosition = to->getSlotPosition(toSlot);
+
+	sb::Vector3 aSlotNormal = getSlotAxis(fromSlot);
+	sb::Vector3 bSlotNormal = to->getSlotAxis(toSlot);
+
+	sb::Vector3 aSlotTangent = getSlotOrientation(fromSlot);
+	sb::Vector3 bSlotTangent = to->getSlotOrientation(toSlot);
+
+	posableGroup_->align(
+		aSlotPosition,
+		aSlotNormal,
+		aSlotTangent,
+		bSlotPosition,
+		bSlotNormal,
+		bSlotTangent,
+		toPosable,
+
+		// Vectors were already calculated relative to parent frame
+		// This is redundant in many cases, but I'll leave it in now
+		// for convenience.
+		sb::Posable::RELATIVE_TO_PARENT_FRAME
+	);
+}
+
 //dxGeom* Model::createCylinderGeom(dBodyID body, float mass,
 //		const osg::Vec3& pos, int direction, float radius, float height) {
 //

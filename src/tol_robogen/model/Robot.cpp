@@ -11,6 +11,12 @@
 #include <tol_robogen/model/Robot.h>
 #include <tol_robogen/model/Connection.h>
 
+#include <sdf_builder/Model.h>
+
+#include <sstream>
+
+namespace sb = sdf_builder;
+
 namespace tol_robogen {
 
 Robot::Robot() {}
@@ -46,10 +52,28 @@ void Robot::addBodyPart(ModelPtr bodyPart) {
 	bodyParts_.push_back(bodyPart);
 }
 
-void Robot::addBodyConnection(ModelPtr from, ModelPtr to, int fromSlot, int toSlot) {
+void Robot::addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot, unsigned int toSlot) {
+	// Store the connection so we at least may have access to the geometry later
 	bodyConnections_.push_back(ConnectionPtr(new Connection(from, to, fromSlot, toSlot)));
 
-	// TODO Build the actual connection, i.e. move the bodies
+
+	// I don't see the need to setup a breadth first search to create the robot like
+	// the original robogen does, when we can just setup the body position here
+	// immediately. Model handles this
+	// TODO create fixed joint
+	from->attachTo(to, fromSlot, toSlot);
+}
+
+sb::ModelPtr Robot::toSDFModel(const std::string & name) {
+	sb::ModelPtr out(new sb::Model(name));
+
+	std::vector< ModelPtr >::iterator it = bodyParts_.begin();
+	for (; it != bodyParts_.end(); ++it) {
+		ModelPtr bodyPart = *it;
+		out->addPosable(bodyPart->getPosableGroup());
+	}
+
+	return out;
 }
 
 } /* namespace tol_robogen */

@@ -13,6 +13,8 @@
 #include <tol_robogen/model/Connection.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 
+#include <sdf_builder/Types.h>
+
 namespace tol_robogen {
 
 class Robot {
@@ -57,7 +59,12 @@ public:
 	/**
 	 * Adds a new body connection
 	 */
-	void addBodyConnection(ModelPtr from, ModelPtr to, int fromSlot, int toSlot);
+	void addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot, unsigned int toSlot);
+
+	/**
+	 * Output SDF for this robot
+	 */
+	sdf_builder::ModelPtr toSDFModel(const std::string & name);
 
 protected:
 	/**
