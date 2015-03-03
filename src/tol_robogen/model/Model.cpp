@@ -9,6 +9,8 @@
 #include <iostream>
 
 #include <tol_robogen/model/Model.h>
+#include <sdf_builder/util/Util.h>
+#include <sdf_builder/joint/FixedJoint.h>
 
 namespace tol_robogen {
 
@@ -105,8 +107,6 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 		return false;
 	}
 
-	std::cerr << fromSlot << ':' << toSlot << std::endl;
-
 	auto toPosable = from->getPosableGroup();
 
 	// Beware that here "toSlot" belongs to self
@@ -119,8 +119,8 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 	sb::Vector3 aSlotTangent = getSlotOrientation(toSlot);
 	sb::Vector3 bSlotTangent = from->getSlotOrientation(fromSlot);
 
-	std::cerr << aSlotPosition << '\n' << std::endl;
-	std::cerr << bSlotPosition << '\n' << std::endl;
+//	std::cerr << aSlotPosition << '\n' << std::endl;
+//	std::cerr << bSlotPosition << '\n' << std::endl;
 //	std::cerr << aSlotNormal << '\n' << std::endl;
 //	std::cerr << bSlotNormal << '\n' << std::endl;
 //	std::cerr << aSlotTangent << '\n' << std::endl;
@@ -142,9 +142,18 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 	);
 
 	// TODO Set orientation
-	//posableGroup_->rotateAround(getSlotAxis(toSlot), 0.5 * orientation * M_PI);
+	posableGroup_->rotateAround(getSlotAxis(toSlot), 0);
 
 	// TODO Create a fixed link
+	sb::LinkPtr child = getSlot(toSlot);
+	sb::LinkPtr parent = from->getSlot(fromSlot);
+	// Position of the link is in the child frame, take the child
+	// position and subtract the root position.
+	sb::Vector3 anchor = child->position() - getRootPosition();
+
+	// Direction vector is also in the child frame, turn to local direction
+	sb::Vector3 axis = sb::Util::toLocalDirection(getSlotAxis(toSlot), child.get());
+	this->fixLinks(parent, child, anchor, axis);
 
 	return true;
 }
