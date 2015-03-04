@@ -72,6 +72,10 @@ int main(int argc, char *argv[]) {
 	RobotPtr bot = referenceBot->toRobot();
 	sb::ModelPtr model = bot->toSDFModel("temp_bot");
 
+	// Attach our model controller plugin
+	sb::ElementPtr plugin(new sb::StringElement("<plugin name=\"control\" filename=\"libtolmodelcontrol.so\" />"));
+	model->addElement(plugin);
+
 	std::ofstream out;
 	out.open(argv[2]);
 

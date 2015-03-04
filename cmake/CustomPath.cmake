@@ -3,7 +3,7 @@
 # directory, and are called "sdf_builder" and "robogen"
 # TODO Change for more flexibility later
 # TODO Windows support if required
-set(TOL_DEP_DIR "${CMAKE_SOURCE_DIR}/../../")
+set(TOL_DEP_DIR "${CMAKE_SOURCE_DIR}/../..")
 message("Dependency base directory: ${TOL_DEP_DIR}")
 
 set(SDFBUILDER_INCLUDE_PATH "${TOL_DEP_DIR}/sdf_builder/src")

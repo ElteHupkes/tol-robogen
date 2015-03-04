@@ -15,7 +15,7 @@ add_definitions(-DSOURCE_DIR=${CMAKE_SOURCE_DIR})
 find_package(Eigen3 REQUIRED)
 
 # Find Boost
-find_package(Boost COMPONENTS regex)
+find_package(Boost COMPONENTS regex system)
 
 # Include SdfBuilder, Eigen3 and Boost
 include_directories(${CMAKE_SOURCE_DIR} ${SDFBUILDER_INCLUDE_PATH} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
@@ -26,7 +26,8 @@ set(TOL_DEPS ${SDFBUILDER_LIBRARIES} ${Boost_LIBRARIES})
 # All files for the SDF builder
 file(GLOB_RECURSE
 	 TOL_SRC
-	 *.cpp
+	 tol_robogen/evolution/*.cpp
+	 tol_robogen/model/*.cpp
 )
 
 # Compiler options
@@ -43,7 +44,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb3 -DDEBUG")
 
 # Release flags
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -funroll-loops -finline-functions -fomit-frame-pointer -DNDEBUG")
+#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -funroll-loops -finline-functions -fomit-frame-pointer -DNDEBUG")
 
 # Compile sdfbuilder library
 add_library(tolrobogen ${TOL_SRC} )
@@ -52,3 +53,14 @@ target_link_libraries(tolrobogen ${TOL_DEPS})
 # Test executable
 add_executable(test tol_robogen/test/test.cpp)
 target_link_libraries(test tolrobogen ${TOL_DEPS})
+
+# Gazebo control plugins
+# Find and include Gazebo
+include (FindPkgConfig)
+if (PKG_CONFIG_FOUND)
+  pkg_check_modules(GAZEBO gazebo)
+endif()
+include_directories(${GAZEBO_INCLUDE_DIRS})
+
+add_library(tolmodelcontrol SHARED tol_robogen/gazebo/plugin/ModelController.cpp)
+target_link_libraries(tolmodelcontrol ${GAZEBO_LIBRARIES} ${TOL_DEPS})
