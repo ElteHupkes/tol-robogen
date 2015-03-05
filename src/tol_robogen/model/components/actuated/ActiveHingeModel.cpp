@@ -2,7 +2,7 @@
  * TODO License
  */
 #include <tol_robogen/model/components/actuated/ActiveHingeModel.h>
-//#include "model/motors/ServoMotor.h"
+#include <tol_robogen/model/motors/ServoMotor.h>
 
 namespace sb = sdf_builder;
 
@@ -71,6 +71,10 @@ bool ActiveHingeModel::initModel() {
 	revolve->position(sb::Vector3(
 			SERVO_LENGTH / 2 - SERVO_ROTATION_OFFSET, 0, 0));
 	this->addJoint(revolve);
+
+	// Register this hinge as a motor
+	MotorPtr motor(new ServoMotor(revolve));
+	this->addMotor(motor);
 
 	// Servo <-> tail
 	this->fixLinks(servo, hingeTail_, sb::Vector3(-SLOT_THICKNESS / 2, 0, 0));

@@ -5,9 +5,16 @@
  *      Author: elte
  */
 
+#include <tol_robogen/gazebo/Types.h>
 #include <tol_robogen/gazebo/plugin/ModelController.h>
-#include <iostream>
+#include <tol_robogen/gazebo/motors/Motors.h>
 
+#include <iostream>
+#include <stdexcept>
+
+namespace gz = gazebo;
+
+namespace tol_robogen {
 namespace gazebo {
 
 ModelController::ModelController()
@@ -16,22 +23,62 @@ ModelController::ModelController()
 ModelController::~ModelController()
 {}
 
-void ModelController::Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/) {
+void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
   // Store the pointer to the model
   this->model = _parent;
 
   // Listen to the update event. This event is broadcast every
   // simulation iteration.
-  this->updateConnection = event::Events::ConnectWorldUpdateBegin(
+  this->updateConnection = gz::event::Events::ConnectWorldUpdateBegin(
       boost::bind(&ModelController::OnUpdate, this, _1));
 
-  std::cout << "Helloo, here I am!" << std::endl;
+  std::cout << "Plugin loaded." << std::endl;
+  loadMotors(_sdf);
 }
 
 // Called by the world update start event
-void ModelController::OnUpdate(const common::UpdateInfo & /*_info*/) {
-  // Apply a small linear velocity to the model.
-  this->model->SetLinearVel(math::Vector3(.03, 0, 0));
+void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
+  if (_info.simTime > 10.0) {
+	  motors_[0]->update(5.0);
+  }
+}
+
+
+void ModelController::loadMotors(sdf::ElementPtr sdf) {
+    auto motor = sdf->GetElement("tol:motor");
+
+    while (motor) {
+    	auto typeParam = motor->GetAttribute("type");
+    	auto jointNameParam = motor->GetAttribute("joint");
+
+    	if (!type || !jointNameParam) {
+    		std::cerr << "Motor is missing 'type' or 'joint' attributes." << std::endl;
+			throw std::runtime_error("Motor error");
+    	}
+
+    	auto jointName = jointNameParam->GetAsString();
+    	gz::physics::JointPtr joint = this->model->GetJoint(jointName);
+
+    	if (!joint) {
+    		std::cerr << "Could not locate joint  '" << jointName << "'." << std::endl;
+    		throw std::runtime_error("Motor error");
+    	}
+
+    	MotorPtr motorObj;
+    	auto type = typeParam->GetAsString();
+    	if ("servo" == type) {
+    		motorObj.reset(new ServoMotor(this->model, joint));
+    	} else {
+    		std::cerr << "Motor type '" << type <<
+    				"' is invalid." << std::endl;
+    		throw std::runtime_error("Motor error");
+    	}
+
+    	motors_.push_back(motorObj);
+    	std::cout << "Found a motor!" << std::endl;
+    	motor = motor->GetNextElement("tol:motor");
+    }
 }
 
 } /* namespace gazebo */
+} /* namespace tol_robogen */

@@ -62,5 +62,11 @@ if (PKG_CONFIG_FOUND)
 endif()
 include_directories(${GAZEBO_INCLUDE_DIRS})
 
-add_library(tolmodelcontrol SHARED tol_robogen/gazebo/plugin/ModelController.cpp)
+# Plugin CPP files
+file(GLOB_RECURSE
+	 TOL_GZ_SRC
+	 tol_robogen/gazebo/*.cpp
+)
+
+add_library(tolmodelcontrol SHARED ${TOL_GZ_SRC})
 target_link_libraries(tolmodelcontrol ${GAZEBO_LIBRARIES} ${TOL_DEPS})

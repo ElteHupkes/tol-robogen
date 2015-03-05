@@ -10,7 +10,8 @@
 #include <tol_robogen/tol.h>
 #include <tol_robogen/model/Robot.h>
 #include <tol_robogen/model/Connection.h>
-
+#include <tol_robogen/model/ActuatedComponent.h>
+#include <tol_robogen/model/motors/Motor.h>
 #include <sdf_builder/Model.h>
 
 #include <sstream>
@@ -65,17 +66,33 @@ void Robot::addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot,
 sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	sb::ModelPtr out(new sb::Model(name));
 
-	std::vector< ModelPtr >::iterator it = bodyParts_.begin();
-	for (; it != bodyParts_.end(); ++it) {
+	std::stringstream plugin;
+
+	// Attach model controller plugin with parameters
+	plugin << "<plugin name=\"control\" filename=\"libtolmodelcontrol.so\">";
+
+	for (auto it = bodyParts_.begin(); it != bodyParts_.end(); ++it) {
 		ModelPtr bodyPart = *it;
 		out->addPosable(bodyPart->getPosableGroup());
 
-		std::vector< sb::JointPtr > joints = bodyPart->joints();
-		std::vector< sb::JointPtr >::iterator itb = joints.begin();
-		for (; itb != joints.end(); ++itb) {
+		auto joints = bodyPart->joints();
+		for (auto itb = joints.begin(); itb != joints.end(); ++itb) {
 			out->addJoint(*itb);
 		}
+
+		ActuatedComponentPtr actuated = std::dynamic_pointer_cast< ActuatedComponent >(bodyPart);
+		if (actuated) {
+			// Add motor elements
+			auto motors = actuated->getMotors();
+			for (auto itb = motors.begin(); itb != motors.end(); ++itb) {
+				plugin << (*itb)->toXML();
+			}
+		}
 	}
+
+	plugin << "</plugin>\n";
+	sb::ElementPtr pluginElem(new sb::StringElement(plugin.str()));
+	out->addElement(pluginElem);
 
 	return out;
 }

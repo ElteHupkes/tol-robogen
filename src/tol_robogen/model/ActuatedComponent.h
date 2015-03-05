@@ -31,7 +31,7 @@
 #include <vector>
 
 #include <tol_robogen/model/Model.h>
-
+#include <tol_robogen/model/motors/Motor.h>
 
 namespace tol_robogen {
 
@@ -54,7 +54,22 @@ public:
 	/**
 	 * @return the available motors
 	 */
-	//virtual void getMotors(std::vector<boost::shared_ptr<Motor> >& motors) = 0;
+	virtual const std::vector< MotorPtr > & getMotors() {
+		return motors_;
+	}
+
+	/**
+	 * Adds a motor
+	 */
+	void addMotor(MotorPtr motor) {
+		motors_.push_back(motor);
+	}
+
+protected:
+	/**
+	 * Registered motors for this component
+	 */
+	std::vector< MotorPtr > motors_;
 };
 
 }
