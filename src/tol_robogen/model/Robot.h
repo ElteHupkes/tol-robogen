@@ -12,11 +12,16 @@
 #include <tol_robogen/model/Model.h>
 #include <tol_robogen/model/Connection.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
+#include <tol_robogen/evolution/representation/NeuralNetworkRepresentation.h>
 
 #include <sdf_builder/Types.h>
 
 namespace tol_robogen {
 
+/**
+ * The Robot class is the intermediary between a `RobotRepresentation`
+ * and an SDF model that can be used in Gazebo.
+ */
 class Robot {
 public:
 	/**
@@ -28,14 +33,14 @@ public:
 	 * Initialize robot from core component part
 	 * representation.
 	 */
-	Robot(PartRepresentationPtr core);
+	Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain);
 
 	virtual ~Robot();
 
 	/**
 	 * Initializes the robot with the given core.
 	 */
-	void init(PartRepresentationPtr core);
+	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain);
 
 	// TODO copy constructor, assignment operator
 
@@ -82,6 +87,12 @@ protected:
 	 * The core component of the robot
 	 */
 	ModelPtr coreComponent_;
+
+	/**
+	 * Simplest possible representation of the brain.
+	 * @todo We might need an actual brain structure instead
+	 */
+	std::string brainXML_;
 
 };
 

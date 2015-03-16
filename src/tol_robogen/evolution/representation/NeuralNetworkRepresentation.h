@@ -169,6 +169,12 @@ public:
 	 */
 	std::string toString();
 
+	/**
+	 * @return XML representation of the NN for interpretation by the
+	 *         model plugin.
+	 */
+	std::string toXML();
+
 private:
 	/**
 	 * Neurons of the neural network. This is the principal representation of

@@ -225,7 +225,7 @@ void parseTypeString(std::string typeString, unsigned int &type) {
 	else if(typeString == "oscillator")
 		type = NeuronRepresentation::OSCILLATOR;
 	else {
-		std::cout << "Invalid neuron type: " << typeString << std::endl;
+		std::cerr << "Invalid neuron type: " << typeString << std::endl;
 		throw std::runtime_error("");
 	}
 }
@@ -506,7 +506,7 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 }
 
 RobotPtr RobotRepresentation::toRobot() const {
-	return RobotPtr(new Robot(bodyTree_));
+	return RobotPtr(new Robot(bodyTree_, neuralNetwork_));
 }
 
 void RobotRepresentation::getBrainGenome(std::vector<double*> &weights,

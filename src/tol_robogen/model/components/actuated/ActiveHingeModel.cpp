@@ -72,21 +72,20 @@ bool ActiveHingeModel::initModel() {
 			SERVO_LENGTH / 2 - SERVO_ROTATION_OFFSET, 0, 0));
 	this->addJoint(revolve);
 
-	// Register this hinge as a motor
-	MotorPtr motor(new ServoMotor(revolve));
-	this->addMotor(motor);
-
 	// Servo <-> tail
 	this->fixLinks(servo, hingeTail_, sb::Vector3(-SLOT_THICKNESS / 2, 0, 0));
 
-	// Create servo
-//	this->motor_.reset(
-//			new ServoMotor(joint, ServoMotor::DEFAULT_MAX_FORCE_SERVO,
-//					ServoMotor::DEFAULT_GAIN,
-//					ioPair(this->getId(),0)));
+	// Register the hinge as a motor
+	MotorPtr motor(new ServoMotor(id_, 0, revolve));
+	this->addMotor(motor);
+
+	// TODO there was a max force / default gain here we should include
+	//	this->motor_.reset(
+	//			new ServoMotor(joint, ServoMotor::DEFAULT_MAX_FORCE_SERVO,
+	//					ServoMotor::DEFAULT_GAIN,
+	//					ioPair(this->getId(),0)));
 
 	return true;
-
 }
 
 sb::LinkPtr ActiveHingeModel::getRoot() {

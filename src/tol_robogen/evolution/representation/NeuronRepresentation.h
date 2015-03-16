@@ -115,6 +115,11 @@ public:
 
 	ioPair getIoPair();
 
+	/**
+	 * XML serialization to pass neuron information to
+	 */
+	std::string toXML();
+
 private:
 	/**
 	 * Code common to all constructors

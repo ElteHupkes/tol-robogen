@@ -57,7 +57,7 @@ void Model::addLink(sb::LinkPtr body, int id) {
 }
 
 sb::LinkPtr Model::createLink(int label) {
-	sb::LinkPtr b(new sb::Link("link_"+id_+std::to_string(label)));
+	sb::LinkPtr b(new sb::Link("link_"+id_+"_"+std::to_string(label)));
 	if (label >= 0) {
 		this->addLink(b, label);
 	}

@@ -13,12 +13,16 @@ namespace sb = sdf_builder;
 
 namespace tol_robogen {
 
-Motor::Motor(std::string type, sb::JointPtr joint):
+Motor::Motor(std::string partId, unsigned int ioId, std::string type, sdf_builder::JointPtr joint):
+	partId_(partId),
+	ioId_(ioId),
 	type_(type),
 	joint_(joint)
 {}
 
 Motor::Motor(const Motor & other):
+		partId_(other.partId_),
+		ioId_(other.ioId_),
 		type_(other.type_),
 		joint_(other.joint_)
 {}
@@ -31,9 +35,12 @@ Motor::~Motor() {}
 
 std::string Motor::toXML() {
 	std::stringstream out;
-	out << "<tol:motor type=\"" <<
-			type_ << "\" joint=\""
-			<< joint_->name() << "\" />"
+	out << "<tol:motor "
+		<< "type=\"" << type_ << "\" "
+		<< "joint=\"" << joint_->name() << "\" "
+		<< "part_id=\"" << partId_ << "\" "
+		<< "io_id=\"" << ioId_ << "\" "
+		<< " />"
 		<< std::endl;
 	return out.str();
 }

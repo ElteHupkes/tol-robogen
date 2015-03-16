@@ -23,11 +23,11 @@ namespace tol_robogen {
 
 Robot::Robot() {}
 
-Robot::Robot(PartRepresentationPtr core) {
-	init(core);
+Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain) {
+	init(core, brain);
 }
 
-void Robot::init(PartRepresentationPtr core) {
+void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain) {
 	if (coreComponent_) {
 		throw std::runtime_error("This robot has already been initialized "
 				"It is currently not possible to reinitialize a robot,"
@@ -36,7 +36,8 @@ void Robot::init(PartRepresentationPtr core) {
 
 	coreComponent_ = core->addSubtreeToRobot(this);
 
-	// TODO Initialize brain
+	// TODO Is this sufficient?
+	brainXML_ = brain->toXML();
 }
 
 Robot::~Robot() {}
@@ -88,8 +89,11 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 				plugin << (*itb)->toXML();
 			}
 		}
+
+		// TODO Add sensors
 	}
 
+	plugin << brainXML_;
 	plugin << "</plugin>\n";
 	sb::ElementPtr pluginElem(new sb::StringElement(plugin.str()));
 	out->addElement(pluginElem);

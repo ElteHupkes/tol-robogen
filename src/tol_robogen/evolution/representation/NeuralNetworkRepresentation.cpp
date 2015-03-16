@@ -445,6 +445,23 @@ bool NeuralNetworkRepresentation::getLinearRepresentation(
 //
 //}
 
+std::string NeuralNetworkRepresentation::toXML() {
+	std::stringstream out;
+	out << "<tol:brain>";
+	for (auto it = neurons_.begin(); it != neurons_.end(); ++it) {
+		out << it->second->toXML() << '\n';
+	}
+
+	for (auto it = weights_.begin(); it != weights_.end(); ++it) {
+		out << "<tol:connection src=\"" << it->first.first << "\""
+			<< " dest=\"" << it->first.second << "\""
+			<< " weight=\"" << it->second << "\" />\n";
+	}
+
+	out << "</tol:brain>";
+	return out.str();
+}
+
 std::string NeuralNetworkRepresentation::toString() {
 
 	std::stringstream str;

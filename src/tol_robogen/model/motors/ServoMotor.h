@@ -19,8 +19,8 @@ namespace tol_robogen {
  */
 class ServoMotor: public Motor {
 public:
-	ServoMotor(sb::JointPtr joint):
-		Motor("servo", joint) {};
+	ServoMotor(std::string partId, unsigned int ioId, sdf_builder::JointPtr joint):
+		Motor(partId, ioId, "servo", joint) {};
 
 	ServoMotor(const ServoMotor & other):
 		Motor(other) {};

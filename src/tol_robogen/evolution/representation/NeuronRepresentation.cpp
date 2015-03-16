@@ -125,6 +125,53 @@ ioPair NeuronRepresentation::getIoPair(){
 	return identification_;
 }
 
+// Build XML representation of the neuron
+// to pass to the controller.
+std::string NeuronRepresentation::toXML() {
+	std::stringstream out;
+	std::string type;
+	switch (type_) {
+	case SIMPLE:
+		type = "simple";
+		break;
+	case SIGMOID:
+		type = "sigmoid";
+		break;
+	case CTRNN_SIGMOID:
+		type = "ctrnn_sigmoid";
+		break;
+	case OSCILLATOR:
+	default:
+		type = "oscillator";
+	}
+
+	out << "<tol:neuron id=\"" << id_ << "\" type=\"" << type << "\">";
+
+	// Sorry for the nested ternary ;)
+	std::string layer = (layer_ == OUTPUT) ? "output"
+					: (layer_ == HIDDEN ? "hidden" : "input");
+
+	out << "<tol:layer>" << layer << "</tol:layer>";
+	out << "<tol:io_pair part_id=\"" << identification_.first
+		<< "\" io_id=\"" << identification_.second << "\" />";
+
+	if (type_ == SIGMOID || type_ == CTRNN_SIGMOID) {
+		out << "<tol:bias>" << bias_ << "</tol:bias>";
+
+		if (type_ == CTRNN_SIGMOID) {
+			out << "<tol:tau>" << tau_ << "</tol:tau>";
+		}
+	} else if (type_ == OSCILLATOR) {
+		out << "<tol:period>" << period_ << "</tol:period>";
+		out << "<tol:phase_offset>" << phaseOffset_ << "</tol:phase_offset>";
+	}
+
+	out << "<tol:gain>" << gain_ << "</tol:gain>";
+	out << "</tol:neuron>";
+
+	return out.str();
+}
+
 // Don't fully delete this just yet; serialization could be
 // useful to see how we can implement this later.
 //robogenMessage::Neuron NeuronRepresentation::serialize(){

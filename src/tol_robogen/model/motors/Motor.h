@@ -20,7 +20,7 @@ namespace tol_robogen {
  */
 class Motor : public sdf_builder::Element {
 public:
-	Motor(std::string type, sdf_builder::JointPtr joint);
+	Motor(std::string partId, unsigned int ioId, std::string type, sdf_builder::JointPtr joint);
 	Motor(const Motor & other);
 	virtual ~Motor();
 
@@ -32,9 +32,19 @@ public:
 	virtual std::string toXML();
 protected:
 	/**
+	 * ID of the parent part
+	 */
+	std::string partId_;
+
+	/**
 	 * Type of the motor
 	 */
 	std::string type_;
+
+	/**
+	 * I/O ID of the motor on the main part
+	 */
+	unsigned int ioId_;
 
 	/**
 	 * The joint representing this motor.
