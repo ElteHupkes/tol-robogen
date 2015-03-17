@@ -16,12 +16,13 @@ namespace gazebo {
 class ServoMotor: public Motor {
 public:
 	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
-			std::string partId, unsigned int ioId);
+			std::string partId, unsigned int ioId, bool velocityDriven);
 	virtual ~ServoMotor();
 
 	virtual void update(float networkOutput);
 
-	bool set = false;
+protected:
+	bool velocityDriven_;
 };
 
 } /* namespace gazebo */

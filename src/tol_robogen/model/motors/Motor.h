@@ -43,6 +43,11 @@ protected:
 	std::string type_;
 
 	/**
+	 * Extra attributes for the motor tag
+	 */
+	std::string attributes_;
+
+	/**
 	 * I/O ID of the motor on the main part
 	 */
 	unsigned int ioId_;

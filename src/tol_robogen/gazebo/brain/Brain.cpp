@@ -279,5 +279,19 @@ void Brain::neuronHelper(float* params, unsigned int* types, unsigned int paramI
 	}
 }
 
+void Brain::step(const std::vector<MotorPtr>& motors, double t) {
+	// TODO Enable sensors and feed
+	//::feed(neuralNetwork_.get(), &networkInputs_[0]);
+
+	::step(neuralNetwork_.get(), t);
+
+	::fetch(neuralNetwork_.get(), &networkOutputs_[0]);
+
+	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
+		motors[i]->update(networkOutputs_[i]);
+	}
+}
+
+
 } /* namespace gazebo */
 } /* namespace tol_robogen */

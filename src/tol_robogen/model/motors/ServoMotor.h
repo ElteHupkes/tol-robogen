@@ -23,14 +23,18 @@ public:
 	static const float DEFAULT_MAX_FORCE_SERVO;
 
 	ServoMotor(std::string partId, unsigned int ioId,
-			sdf_builder::JointPtr joint, double maxForce);
+			sdf_builder::JointPtr joint, double maxForce, bool velocityDriven);
 	ServoMotor(const ServoMotor & other):
-		Motor(other) {};
+		Motor(other),
+		velocityDriven(other.velocityDriven) {};
 
 	virtual ServoMotor * clone() const;
 
 	virtual ~ServoMotor() {};
 
+	virtual std::string toXML();
+
+	bool velocityDriven;
 };
 
 } /* namespace tol_robogen */

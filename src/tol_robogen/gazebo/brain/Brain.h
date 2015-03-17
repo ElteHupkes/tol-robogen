@@ -28,6 +28,18 @@ public:
 	Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors);
 	virtual ~Brain();
 
+	/**
+	* @param Reference to motor list
+	* TODO sensors
+	*/
+	void step(const std::vector< MotorPtr > & motors, double t);
+
+	// Input / output arrays used for the neural network,
+	// these are stored with the object so they do not need
+	// to be reallocated every time.
+	float networkInputs_[MAX_INPUT_NEURONS];
+	float networkOutputs_[MAX_OUTPUT_NEURONS];
+
 private:
 	void neuronHelper(float * params, unsigned int * types, unsigned int paramIdx,
 			unsigned int typeIdx, const std::string & type, sdf::ElementPtr neuron);

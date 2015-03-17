@@ -5,6 +5,7 @@
 #include <tol_robogen/model/motors/ServoMotor.h>
 
 #include <iostream>
+#include <sstream>
 
 namespace tol_robogen {
 
@@ -13,8 +14,9 @@ const float ServoMotor::DEFAULT_MAX_FORCE_ROTATIONAL = TOL_SCALING * 4 * 9.81 / 
 const float ServoMotor::DEFAULT_MAX_FORCE_SERVO = TOL_SCALING * 1.8 * 9.81 / 100;
 
 ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
-		sdf_builder::JointPtr joint, double maxForce):
-	Motor(partId, ioId, "servo", joint)
+		sdf_builder::JointPtr joint, double maxForce, bool velocityDriven):
+	Motor(partId, ioId, "servo", joint),
+	velocityDriven(velocityDriven)
 {
 	// TODO Does this do what I intend it to?
 	if (!joint->axis->limit) {
@@ -26,6 +28,15 @@ ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 
 ServoMotor* ServoMotor::clone() const {
 	return new ServoMotor(*this);
+}
+
+std::string ServoMotor::toXML() {
+	std::stringstream attrs;
+	attrs << "velocityDriven=\"" << velocityDriven << "\" "
+		  << attributes_;
+
+	attributes_ = attrs.str();
+	return Motor::toXML();
 }
 
 }

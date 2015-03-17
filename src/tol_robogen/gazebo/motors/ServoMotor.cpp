@@ -16,19 +16,18 @@ namespace gazebo {
 // probably add it to the joint controller.
 
 ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
-		std::string partId, unsigned int ioId):
-	Motor(model, joint, partId, ioId)
+		std::string partId, unsigned int ioId, bool velocityDriven):
+	Motor(model, joint, partId, ioId),
+	velocityDriven_(velocityDriven)
 {}
 
 ServoMotor::~ServoMotor() {}
 
 void ServoMotor::update(float networkOutput) {
-	if (!set) {
-		std::cout << "Firing first motor." << std::endl;
-		auto ctrl = model_->GetJointController();
-		std::cout << ctrl->SetVelocityTarget(joint_->GetScopedName(), networkOutput) << std::endl;
-		set = true;
-	}
+	std::cout << "Network output: " << networkOutput << std::endl;
+//		std::cout << "Firing first motor." << std::endl;
+//		auto ctrl = model_->GetJointController();
+//		std::cout << ctrl->SetVelocityTarget(joint_->GetScopedName(), networkOutput) << std::endl;
 }
 
 } /* namespace gazebo */

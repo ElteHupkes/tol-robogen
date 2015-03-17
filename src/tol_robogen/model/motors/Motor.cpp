@@ -40,6 +40,7 @@ std::string Motor::toXML() {
 		<< "joint=\"" << joint_->name() << "\" "
 		<< "part_id=\"" << partId_ << "\" "
 		<< "io_id=\"" << ioId_ << "\" "
+		<< attributes_
 		<< " />"
 		<< std::endl;
 	return out.str();
