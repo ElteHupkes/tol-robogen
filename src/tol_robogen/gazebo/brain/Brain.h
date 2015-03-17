@@ -32,7 +32,7 @@ public:
 	* @param Reference to motor list
 	* TODO sensors
 	*/
-	void step(const std::vector< MotorPtr > & motors, double t);
+	void update(const std::vector< MotorPtr > & motors, double t);
 
 	// Input / output arrays used for the neural network,
 	// these are stored with the object so they do not need

@@ -66,8 +66,8 @@ void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
 	lastActuationSec_ = _info.simTime.sec;
 	lastActuationNsec_ = _info.simTime.nsec;
 
-	// TODO Feed / update neural network
-	brain_->step(motors_, _info.simTime.Double());
+	// TODO Sensors
+	brain_->update(motors_, _info.simTime.Double());
 }
 
 
@@ -77,7 +77,6 @@ void ModelController::loadMotors(sdf::ElementPtr sdf) {
     while (motor) {
     	auto motorObj = MotorFactory::create(motor, this->model);
     	motors_.push_back(motorObj);
-    	std::cout << "Found a motor!" << std::endl;
     	motor = motor->GetNextElement("tol:motor");
     }
 }

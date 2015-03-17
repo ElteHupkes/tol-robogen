@@ -141,6 +141,10 @@ typedef struct {
 
 } NeuralNetwork;
 
+/* Note (Elte): I've prefixed all these methods with nn_, to prevent name clashes
+   (`step` in particular was causing a mysterious segfault, I'm assuming there is a
+   symbol in gazebo with the same name that takes priority). */
+
 /**
  * TODO update this doc
  * Initializes a NeuralNetwork data structure
@@ -152,7 +156,7 @@ typedef struct {
  * @param bias the bias of each output neuron
  * @param gain the gain of each output neuron
  */
-void initNetwork(NeuralNetwork* network, unsigned int nInputs,
+void nn_initNetwork(NeuralNetwork* network, unsigned int nInputs,
 		unsigned int nOutputs, unsigned int nHidden,
 		const float *weights, const float* params,
 		const unsigned int *types);
@@ -162,7 +166,7 @@ void initNetwork(NeuralNetwork* network, unsigned int nInputs,
  * @param network the neural network
  * @param input the input values, must be an array of m inputs
  */
-void feed(NeuralNetwork* network, const float *input);
+void nn_feed(NeuralNetwork* network, const float *input);
 
 /**
  * Step the neural network of 1 timestep
@@ -170,14 +174,14 @@ void feed(NeuralNetwork* network, const float *input);
  * @param time, amount of time elapsed since brain turned on
  * 				(needed for oscillators)
  */
-void step(NeuralNetwork* network, float time);
+void nn_step(NeuralNetwork* network, float time);
 
 /**
  * Read the output of the neural network
  * @param network the neural network
  * @param output the output of the neural network, must point to an area of memory of at least size n
  */
-void fetch(const NeuralNetwork* network, float *output);
+void nn_fetch(const NeuralNetwork* network, float *output);
 
 
 #endif /* ROBOGEN_NEURAL_NETWORK_H_ */

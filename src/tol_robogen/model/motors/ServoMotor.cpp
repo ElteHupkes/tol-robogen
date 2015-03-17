@@ -13,6 +13,9 @@ namespace tol_robogen {
 const float ServoMotor::DEFAULT_MAX_FORCE_ROTATIONAL = TOL_SCALING * 4 * 9.81 / 100;
 const float ServoMotor::DEFAULT_MAX_FORCE_SERVO = TOL_SCALING * 1.8 * 9.81 / 100;
 
+const float ServoMotor::MIN_POS_RAD = -(45 * M_PI / 180);
+const float ServoMotor::MAX_POS_RAD = (45 * M_PI / 180);
+
 ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 		sdf_builder::JointPtr joint, double maxForce, bool velocityDriven):
 	Motor(partId, ioId, "servo", joint),
@@ -23,7 +26,10 @@ ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 		joint->axis->limit.reset(new sdf_builder::Limit());
 	}
 
-	joint->axis->limit->effort = maxForce;
+	joint->axis->limit->lower = MIN_POS_RAD;
+	joint->axis->limit->upper = MAX_POS_RAD;
+
+//	joint->axis->limit->effort = maxForce;
 }
 
 ServoMotor* ServoMotor::clone() const {

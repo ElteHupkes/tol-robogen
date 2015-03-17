@@ -21,6 +21,8 @@ class ServoMotor: public Motor {
 public:
 	static const float DEFAULT_MAX_FORCE_ROTATIONAL;
 	static const float DEFAULT_MAX_FORCE_SERVO;
+	static const float MIN_POS_RAD;
+	static const float MAX_POS_RAD;
 
 	ServoMotor(std::string partId, unsigned int ioId,
 			sdf_builder::JointPtr joint, double maxForce, bool velocityDriven);

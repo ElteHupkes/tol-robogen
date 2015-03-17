@@ -15,6 +15,12 @@ namespace gazebo {
 
 class ServoMotor: public Motor {
 public:
+	// Physical constants
+	static const float MIN_VELOCITY;
+	static const float MAX_VELOCITY;
+	static const float DEFAULT_GAIN;
+
+
 	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
 			std::string partId, unsigned int ioId, bool velocityDriven);
 	virtual ~ServoMotor();

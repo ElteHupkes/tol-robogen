@@ -253,7 +253,8 @@ Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors) {
 
 	// Create the actual neural network
 	neuralNetwork_.reset(new NeuralNetwork);
-	::initNetwork(neuralNetwork_.get(), nInputs, nOutputs, nHidden,
+
+	::nn_initNetwork(neuralNetwork_.get(), nInputs, nOutputs, nHidden,
 		&weights[0], &params[0], &types[0]);
 }
 
@@ -281,16 +282,17 @@ void Brain::neuronHelper(float* params, unsigned int* types, unsigned int paramI
 	}
 }
 
-void Brain::step(const std::vector<MotorPtr>& motors, double t) {
+void Brain::update(const std::vector<MotorPtr>& motors, double t) {
 	// TODO Enable sensors and feed
 	//::feed(neuralNetwork_.get(), &networkInputs_[0]);
 
-	std::cout << "Step" << std::endl;
-	::step(neuralNetwork_.get(), t);
+	// Progress the neural network
+	::nn_step(neuralNetwork_.get(), t);
 
-	std::cout << "Fetch" << std::endl;
-	::fetch(neuralNetwork_.get(), &networkOutputs_[0]);
+	// Fetch the new output values
+	::nn_fetch(neuralNetwork_.get(), &networkOutputs_[0]);
 
+	// Send new signals to the motors
 	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
 		motors[i]->update(networkOutputs_[i]);
 	}

@@ -27,12 +27,13 @@
  */
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <tol_robogen/gazebo/brain/NeuralNetwork.h>
 
 #define PI 3.14159265358979323846
 
-void initNetwork(NeuralNetwork* network, unsigned int nInputs,
+void nn_initNetwork(NeuralNetwork* network, unsigned int nInputs,
 		unsigned int nOutputs, unsigned int nHidden,
 		const float *weights, const float* params,
 		const unsigned int *types) {
@@ -70,7 +71,7 @@ void initNetwork(NeuralNetwork* network, unsigned int nInputs,
 
 }
 
-void feed(NeuralNetwork* network, const float *input) {
+void nn_feed(NeuralNetwork* network, const float *input) {
 
 	unsigned int i = 0;
 	for (i = 0; i < network->nInputs; ++i) {
@@ -79,8 +80,7 @@ void feed(NeuralNetwork* network, const float *input) {
 
 }
 
-void step(NeuralNetwork* network, float time) {
-
+void nn_step(NeuralNetwork* network, float time) {
 	unsigned int nextState;
 	unsigned int i = 0;
 	unsigned int j = 0;
@@ -146,7 +146,7 @@ void step(NeuralNetwork* network, float time) {
 
 }
 
-void fetch(const NeuralNetwork* network, float *output) {
+void nn_fetch(const NeuralNetwork* network, float *output) {
 
 	unsigned int i = 0;
 	for (i = 0; i < network->nOutputs; ++i) {
