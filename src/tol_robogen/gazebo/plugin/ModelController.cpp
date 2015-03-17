@@ -67,7 +67,7 @@ void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
 	lastActuationNsec_ = _info.simTime.nsec;
 
 	// TODO Feed / update neural network
-
+	brain_->step(motors_, _info.simTime.Double());
 }
 
 

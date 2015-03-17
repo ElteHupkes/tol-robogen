@@ -23,7 +23,7 @@ include_directories(${CMAKE_SOURCE_DIR} ${SDFBUILDER_INCLUDE_PATH} ${EIGEN3_INCL
 # Set dependency list (Eigen3 is header only)
 set(TOL_DEPS ${SDFBUILDER_LIBRARIES} ${Boost_LIBRARIES})
 
-# All files for the SDF builder
+# All files for TOL Robogen
 file(GLOB_RECURSE
 	 TOL_SRC
 	 tol_robogen/evolution/*.cpp
@@ -66,6 +66,7 @@ include_directories(${GAZEBO_INCLUDE_DIRS})
 file(GLOB_RECURSE
 	 TOL_GZ_SRC
 	 tol_robogen/gazebo/*.cpp
+	 tol_robogen/gazebo/brain/*.c
 )
 
 add_library(tolmodelcontrol SHARED ${TOL_GZ_SRC})
