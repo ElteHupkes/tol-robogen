@@ -17,6 +17,7 @@ const float CoreComponentModel::WIDTH = inMm(46.5);
 CoreComponentModel::CoreComponentModel(std::string id, bool hasSensors) :
 		PerceptiveComponent(id), hasSensors_(hasSensors) {
 
+	// TODO Sensors
 	if (hasSensors) {
 //		sensor_.reset(new ImuSensor());
 	}

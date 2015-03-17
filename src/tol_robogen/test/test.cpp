@@ -74,7 +74,6 @@ int main(int argc, char *argv[]) {
 	sb::ModelPtr model = bot->toSDFModel("temp_bot");
 
 	model->position(sb::Vector3(0, 0, 0.3));
-	model->rotateAround(sb::Vector3(1, 0, 0), 0.2 * M_PI);
 
 	std::ofstream out;
 	out.open(argv[2]);

@@ -30,6 +30,7 @@ public:
 	 * Returns the XML representation of this motor
 	 */
 	virtual std::string toXML();
+
 protected:
 	/**
 	 * ID of the parent part

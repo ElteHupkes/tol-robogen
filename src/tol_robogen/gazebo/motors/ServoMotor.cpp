@@ -12,8 +12,12 @@ namespace gz = gazebo;
 namespace tol_robogen {
 namespace gazebo {
 
-ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint):
-	Motor(model, joint)
+// TODO Do something with the "gain" parameter that's in Robogen;
+// probably add it to the joint controller.
+
+ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
+		std::string partId, unsigned int ioId):
+	Motor(model, joint, partId, ioId)
 {}
 
 ServoMotor::~ServoMotor() {}

@@ -33,16 +33,14 @@
 #include <vector>
 #include <stdexcept>
 
-// Utility defines taken from Robogen.h
-// For stability's sake I'm increasing everything by a factor 10
-//#define inMm(x) (x/1000.0)
-//#define inGrams(x) (x/1000.0)
-#define inMm(x) (x/100.0)
-#define inGrams(x) (x/100.0)
-
 #include <tol_robogen/tol.h>
 #include <sdf_builder/Types.h>
 #include <sdf_builder/Parts.h>
+
+// Utility defines taken from Robogen.h
+// Use the scaling factor frol tol.h
+#define inMm(x) (TOL_SCALING * x / 1000.0)
+#define inGrams(x) (TOL_SCALING * x / 1000.0)
 
 namespace tol_robogen {
 

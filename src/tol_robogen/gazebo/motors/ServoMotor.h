@@ -15,7 +15,8 @@ namespace gazebo {
 
 class ServoMotor: public Motor {
 public:
-	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint);
+	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
+			std::string partId, unsigned int ioId);
 	virtual ~ServoMotor();
 
 	virtual void update(float networkOutput);

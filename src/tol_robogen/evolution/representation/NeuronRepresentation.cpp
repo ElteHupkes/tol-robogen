@@ -145,13 +145,15 @@ std::string NeuronRepresentation::toXML() {
 		type = "oscillator";
 	}
 
-	out << "<tol:neuron id=\"" << id_ << "\" type=\"" << type << "\">";
-
 	// Sorry for the nested ternary ;)
 	std::string layer = (layer_ == OUTPUT) ? "output"
 					: (layer_ == HIDDEN ? "hidden" : "input");
 
-	out << "<tol:layer>" << layer << "</tol:layer>";
+	out << "<tol:neuron"
+			" id=\"" << id_ << "\""
+			" type=\"" << type << "\""
+			" layer=\"" << layer << "\">";
+
 	out << "<tol:io_pair part_id=\"" << identification_.first
 		<< "\" io_id=\"" << identification_.second << "\" />";
 

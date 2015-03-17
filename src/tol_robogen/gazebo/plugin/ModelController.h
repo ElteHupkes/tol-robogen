@@ -8,7 +8,6 @@
 #ifndef TOL_ROBOGEN_GAZEBO_PLUGIN_MODELCONTROLLER_H_
 #define TOL_ROBOGEN_GAZEBO_PLUGIN_MODELCONTROLLER_H_
 
-#include <boost/bind.hpp>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>
@@ -33,7 +32,26 @@ protected:
 	// Detects motors in the SDF and loads them
 	void loadMotors(sdf::ElementPtr sdf);
 
-protected:
+	// Loads the brain specification and creates the neural network
+	void loadBrain(sdf::ElementPtr sdf);
+
+	/**
+	 * Brain controlling this model
+	 */
+	BrainPtr brain_;
+
+	/**
+	 * Actuation time, in nanoseconds
+	 */
+	unsigned int actuationTime_;
+
+	/**
+	 * Time of the last actuation, in
+	 * seconds and nanoseconds
+	 */
+	unsigned int lastActuationSec_;
+	unsigned int lastActuationNsec_;
+
 	/**
 	 * Motors in this model
 	 */

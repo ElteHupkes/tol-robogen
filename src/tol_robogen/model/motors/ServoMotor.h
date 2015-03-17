@@ -19,15 +19,15 @@ namespace tol_robogen {
  */
 class ServoMotor: public Motor {
 public:
-	ServoMotor(std::string partId, unsigned int ioId, sdf_builder::JointPtr joint):
-		Motor(partId, ioId, "servo", joint) {};
+	static const float DEFAULT_MAX_FORCE_ROTATIONAL;
+	static const float DEFAULT_MAX_FORCE_SERVO;
 
+	ServoMotor(std::string partId, unsigned int ioId,
+			sdf_builder::JointPtr joint, double maxForce);
 	ServoMotor(const ServoMotor & other):
 		Motor(other) {};
 
-	virtual ServoMotor * clone() const {
-		return new ServoMotor(*this);
-	}
+	virtual ServoMotor * clone() const;
 
 	virtual ~ServoMotor() {};
 
