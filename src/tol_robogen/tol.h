@@ -6,7 +6,7 @@
 #define TOL_H_
 
 // Spatial scaling factor
-#define TOL_SCALING 10
+#define TOL_SCALING 10.0
 
 #include <tol_robogen/Types.h>
 

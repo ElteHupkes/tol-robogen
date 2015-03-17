@@ -29,7 +29,7 @@ ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 	joint->axis->limit->lower = MIN_POS_RAD;
 	joint->axis->limit->upper = MAX_POS_RAD;
 
-//	joint->axis->limit->effort = maxForce;
+	joint->axis->limit->effort = maxForce;
 }
 
 ServoMotor* ServoMotor::clone() const {

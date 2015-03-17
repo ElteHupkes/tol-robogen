@@ -36,7 +36,6 @@ void ServoMotor::update(float networkOutput) {
 	// TODO Add motor noise
 	if (velocityDriven_) {
 		double velocity = MIN_VELOCITY + networkOutput * (MAX_VELOCITY - MIN_VELOCITY);
-		std::cout << joint_->GetName() << std::endl;
 		joint_->SetVelocity(0, velocity);
 	} else {
 		// TODO set position target instead, can probably use joint PID controller
