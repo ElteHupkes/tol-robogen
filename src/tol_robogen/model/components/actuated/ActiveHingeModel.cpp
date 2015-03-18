@@ -66,18 +66,20 @@ bool ActiveHingeModel::initModel() {
 	this->fixLinks(hingeRoot_, frame, sb::Vector3(-FRAME_LENGTH / 2, 0, 0));
 
 	// Frame <-> servo (hinge)
-	sb::JointPtr revolve(new sb::RevoluteJoint(frame, servo));
+	// For a parent/child joint in Gazebo, it calls dJointAttach(child, parent);
+	// for equivalency with Robogen frame must thus be child
+	sb::JointPtr revolve(new sb::RevoluteJoint(servo, frame));
+	// Joint position/axis are in child reference frame, so "frame" in this case
 	revolve->axis->xyz(sb::Vector3(0, 1, 0));
-	revolve->position(sb::Vector3(
-			SERVO_LENGTH / 2 - SERVO_ROTATION_OFFSET, 0, 0));
+	revolve->position(sb::Vector3((-FRAME_LENGTH / 2) + FRAME_ROTATION_OFFSET, 0, 0));
 	this->addJoint(revolve);
 
 	// Servo <-> tail
 	this->fixLinks(servo, hingeTail_, sb::Vector3(-SLOT_THICKNESS / 2, 0, 0));
 
-	// Register the hinge as a motor
+	// Register the revolve hinge as a motor
 	MotorPtr motor(new ServoMotor(id_, 0, revolve,
-			ServoMotor::DEFAULT_MAX_FORCE_SERVO, true));
+			ServoMotor::DEFAULT_MAX_FORCE_SERVO, false));
 	this->addMotor(motor);
 
 	// TODO there was a max force / default gain here we should include

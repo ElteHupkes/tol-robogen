@@ -23,21 +23,42 @@ const float ServoMotor::MIN_VELOCITY = -(50.0/60.0) * 2 * M_PI;
 const float ServoMotor::MAX_VELOCITY = (50.0/60.0) * 2 * M_PI;
 
 ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
-		std::string partId, unsigned int ioId, bool velocityDriven):
+		std::string partId, unsigned int ioId):
 	Motor(model, joint, partId, ioId),
-	velocityDriven_(velocityDriven)
+	velocityDriven_(true),
+	gain_(0),
+	lowerLimit_(joint->GetLowerLimit(0).Radian()),
+	upperLimit_(joint->GetUpperLimit(0).Radian())
+{}
+
+ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
+		std::string partId, unsigned int ioId, double gain):
+	Motor(model, joint, partId, ioId),
+	velocityDriven_(false),
+	gain_(gain),
+	lowerLimit_(joint->GetLowerLimit(0).Radian()),
+	upperLimit_(joint->GetUpperLimit(0).Radian())
 {}
 
 ServoMotor::~ServoMotor() {}
 
 void ServoMotor::update(float networkOutput) {
-	//std::cout << "Network output: " << networkOutput << std::endl;
+	std::cout << "Before: " << joint_->GetVelocity(0) << std::endl;
 
 	// TODO Add motor noise
 	if (velocityDriven_) {
 		double velocity = MIN_VELOCITY + networkOutput * (MAX_VELOCITY - MIN_VELOCITY);
 		joint_->SetVelocity(0, velocity);
 	} else {
+//		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);
+//		joint_->SetVelocity(0, MIN_VELOCITY);
+//		auto ctrl = model_->GetJointController();
+//		ctrl->SetVelocityTarget(joint_->GetScopedName(), MAX_VELOCITY);
+
+//		std::cout << "After: " << joint_->GetVelocity(0) << std::endl;
+		auto ctrl = model_->GetJointController();
+		std::cout << ctrl->SetPositionTarget(joint_->GetScopedName(), networkOutput) << std::endl;
+
 		// TODO set position target instead, can probably use joint PID controller
 		//		auto ctrl = model_->GetJointController();
 		//		std::cout << ctrl->SetVelocityTarget(joint_->GetScopedName(), networkOutput) << std::endl;

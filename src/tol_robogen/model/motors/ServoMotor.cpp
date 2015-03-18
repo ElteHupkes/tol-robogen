@@ -23,9 +23,10 @@ ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 {
 	// TODO Does this do what I intend it to?
 	if (!joint->axis->limit) {
-		joint->axis->limit.reset(new sdf_builder::Limit());
+		joint->axis->limit.reset(new sdf_builder::Limit(0, 0));
 	}
 
+	joint->axis->limit->continuous = false;
 	joint->axis->limit->lower = MIN_POS_RAD;
 	joint->axis->limit->upper = MAX_POS_RAD;
 

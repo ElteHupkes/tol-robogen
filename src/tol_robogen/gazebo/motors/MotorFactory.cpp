@@ -51,9 +51,14 @@ MotorPtr MotorFactory::create(sdf::ElementPtr motor,
 		if (veloParam) {
 			veloParam->Get(velocityDriven);
 		} else {
-			velocityDriven = true;
+			velocityDriven = false;
 		}
-		motorObj.reset(new ServoMotor(model, joint, partId, ioId, velocityDriven));
+
+		if (velocityDriven) {
+			motorObj.reset(new ServoMotor(model, joint, partId, ioId));
+		} else {
+			motorObj.reset(new ServoMotor(model, joint, partId, ioId, ServoMotor::DEFAULT_GAIN));
+		}
 	} else {
 		std::cerr << "Motor type '" << type <<
 				"' is unknown." << std::endl;

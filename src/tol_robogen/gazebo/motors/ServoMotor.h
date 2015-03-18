@@ -20,15 +20,24 @@ public:
 	static const float MAX_VELOCITY;
 	static const float DEFAULT_GAIN;
 
-
+	// Constructor without gain - velocity driven
 	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
-			std::string partId, unsigned int ioId, bool velocityDriven);
+			std::string partId, unsigned int ioId);
+
+	// Constructor with gain - position driven
+	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
+			std::string partId, unsigned int ioId, double gain);
 	virtual ~ServoMotor();
 
 	virtual void update(float networkOutput);
 
 protected:
 	bool velocityDriven_;
+
+	// Uper and lower position limits
+	double lowerLimit_;
+	double upperLimit_;
+	double gain_;
 };
 
 } /* namespace gazebo */
