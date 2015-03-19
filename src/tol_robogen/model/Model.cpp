@@ -141,15 +141,20 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 		sb::Posable::RELATIVE_TO_PARENT_FRAME
 	);
 
-	// TODO Set orientation
-	posableGroup_->rotateAround(getSlotAxis(toSlot), 0);
+	// Set orientation
+	if (orientation) {
+		posableGroup_->rotateAround(getSlotAxis(toSlot),
+				0.5 * M_PI * orientation, sb::Posable::RELATIVE_TO_PARENT_FRAME);
+	}
 
-	// TODO Create a fixed link
+	// Create a fixed link at the slot position
 	sb::LinkPtr child = getSlot(toSlot);
 	sb::LinkPtr parent = from->getSlot(fromSlot);
-	// Position of the link is in the child frame, take the child
-	// position and subtract the root position.
-	sb::Vector3 anchor = child->position() - getRootPosition();
+
+	// We need to specify the joint position in the child frame, but the slot
+	// position is in the root frame. Take the slot position, and translate
+	// to the child frame.
+	sb::Vector3 anchor = sb::Util::toLocalFrame(getSlotPosition(toSlot), child.get());
 
 	// Direction vector is also in the child frame, turn to local direction
 	sb::Vector3 axis = sb::Util::toLocalDirection(getSlotAxis(toSlot), child.get());

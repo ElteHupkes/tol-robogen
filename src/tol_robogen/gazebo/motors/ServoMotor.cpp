@@ -43,7 +43,7 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 ServoMotor::~ServoMotor() {}
 
 void ServoMotor::update(float networkOutput) {
-	std::cout << "Before: " << joint_->GetVelocity(0) << std::endl;
+	//std::cout << "Before: " << joint_->GetVelocity(0) << std::endl;
 
 	// TODO Add motor noise
 	if (velocityDriven_) {
@@ -51,14 +51,15 @@ void ServoMotor::update(float networkOutput) {
 		joint_->SetVelocity(0, velocity);
 	} else {
 //		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);
-//		joint_->SetVelocity(0, MIN_VELOCITY);
+		double velocity = MIN_VELOCITY + networkOutput * (MAX_VELOCITY - MIN_VELOCITY);
+		std::cout << "Velocity: " << velocity << std::endl;
+		joint_->SetVelocity(0, velocity);
 //		auto ctrl = model_->GetJointController();
 //		ctrl->SetVelocityTarget(joint_->GetScopedName(), MAX_VELOCITY);
 
 //		std::cout << "After: " << joint_->GetVelocity(0) << std::endl;
-		auto ctrl = model_->GetJointController();
-		std::cout << ctrl->SetPositionTarget(joint_->GetScopedName(), networkOutput) << std::endl;
-
+//		auto ctrl = model_->GetJointController();
+//		std::cout << ctrl->SetPositionTarget(joint_->GetScopedName(), networkOutput) << std::endl;
 		// TODO set position target instead, can probably use joint PID controller
 		//		auto ctrl = model_->GetJointController();
 		//		std::cout << ctrl->SetVelocityTarget(joint_->GetScopedName(), networkOutput) << std::endl;

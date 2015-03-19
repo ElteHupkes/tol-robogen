@@ -70,8 +70,9 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	std::stringstream plugin;
 
 	// Attach model controller plugin with parameters
+	// TODO sensible namespace
 	plugin << "<plugin name=\"control\" filename=\"libtolmodelcontrol.so\">";
-
+	plugin << "<tol:settings xmlns:tol=\"http://elte.me\">";
 	for (auto it = bodyParts_.begin(); it != bodyParts_.end(); ++it) {
 		ModelPtr bodyPart = *it;
 		out->addPosable(bodyPart->getPosableGroup());
@@ -94,6 +95,7 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	}
 
 	plugin << brainXML_;
+	plugin << "</tol:settings>";
 	plugin << "</plugin>\n";
 	sb::ElementPtr pluginElem(new sb::StringElement(plugin.str()));
 	out->addElement(pluginElem);

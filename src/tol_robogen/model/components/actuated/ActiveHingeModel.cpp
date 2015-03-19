@@ -110,23 +110,11 @@ sb::Vector3 ActiveHingeModel::getSlotPosition(unsigned int i) {
 		assert(i <= 2);
 	}
 
-	sb::Vector3 slotPos;
-	if (i == SLOT_A) {
+	sb::Vector3 slotAxis = this->getSlotAxis(i);
+	sb::Vector3 curPos = (i == SLOT_A) ?
+			hingeRoot_->position() : hingeTail_->position();
 
-		sb::Vector3 curPos = hingeRoot_->position();
-		sb::Vector3 slotAxis = this->getSlotAxis(i);
-		slotPos = curPos + slotAxis * (SLOT_THICKNESS / 2);
-
-	} else {
-
-		sb::Vector3 curPos = hingeTail_->position();
-		sb::Vector3 slotAxis = this->getSlotAxis(i);
-		slotPos = curPos + slotAxis * (SLOT_THICKNESS / 2);
-
-	}
-
-	return slotPos;
-
+	return curPos + slotAxis * (SLOT_THICKNESS / 2);
 }
 
 sb::Vector3 ActiveHingeModel::getSlotAxis(unsigned int i) {

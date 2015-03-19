@@ -42,15 +42,23 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 
   // TODO this should be loaded from the world / config
   // For now use 1/25 (i.e. 40ms, i.e. 40,000,000 ns)
-  actuationTime_ = 40e6;
+  actuationTime_ = 1;
 
   std::cout << "Plugin loaded." << std::endl;
-  loadMotors(_sdf);
 
-  // TODO Sensors
+  if (_sdf->HasElement("tol:settings")) {
+	  auto settings = _sdf->GetElement("tol:settings");
 
-  // Load brain, this needs to be done after
-  loadBrain(_sdf);
+	  // Load motors
+	  loadMotors(settings);
+
+	  // TODO Load sensors
+
+	  // Load brain, this needs to be done after the motors and
+	  // sensors so they can be reordered.
+	  loadBrain(settings);
+
+  }
 }
 
 // Called by the world update start event
@@ -59,6 +67,7 @@ void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
 							(_info.simTime.nsec - lastActuationNsec_);
 	if (nsecPassed < actuationTime_) {
 		// Not time to actuate yet
+		std::cout << "Pass" << std::endl;
 		return;
 	}
 

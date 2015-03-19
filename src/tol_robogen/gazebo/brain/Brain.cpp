@@ -293,9 +293,9 @@ void Brain::update(const std::vector<MotorPtr>& motors, double t) {
 	::nn_fetch(neuralNetwork_.get(), &networkOutputs_[0]);
 
 	// Send new signals to the motors
-	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
-		motors[i]->update(networkOutputs_[i]);
-	}
+//	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
+//		motors[i]->update(networkOutputs_[i]);
+//	}
 }
 
 

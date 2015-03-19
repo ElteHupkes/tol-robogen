@@ -15,6 +15,8 @@
 #include <tol_robogen/evolution/representation/RobotRepresentation.h>
 #include <tol_robogen/model/Robot.h>
 
+#include <sdf_builder/util/Util.h>
+
 using namespace tol_robogen;
 namespace sb = sdf_builder;
 
@@ -22,30 +24,36 @@ int main(int argc, char *argv[]) {
 //	ModelPtr core(new CoreComponentModel("my_core", true));
 //	core->initModel();
 //
-//	ModelPtr component(new ActiveHingeModel("my_hinge"));
+//	ModelPtr component(new CoreComponentModel("my_hinge", false));
 //	component->initModel();
 //
 //	ModelPtr brick(new CoreComponentModel("my_brick", false));
 //	brick->initModel();
 //
-//	core->setRootPosition(sb::Vector3(1, 1, 1));
 //	component->attach(core, 0, 0, 0);
+//
+//	component->getPosableGroup()->rotateAround(sb::Vector3(-1, 0, 0), 0.5 * M_PI);
+//
+//
 //	brick->attach(component, 1, 0, 0);
 //
 //	sb::Model model("temp_bot");
 //
-//	// Know for a fact only the component has joints so ignore the
-//	// rest in this test.
+//	// Add component inner joints as well as fixing joint of brick
 //	auto joints = component->joints();
-//	auto itb = joints.begin();
-//	for (; itb != joints.end(); ++itb) {
+//	for (auto itb = joints.begin(); itb != joints.end(); ++itb) {
 //		model.addJoint(*itb);
 //	}
 //
-//	model.addPosable(component->getPosableGroup());
+//	joints = brick->joints();
+//	for (auto itb = joints.begin(); itb != joints.end(); ++itb) {
+//		model.addJoint(*itb);
+//	}
+//
 //	model.addPosable(core->getPosableGroup());
+//	model.addPosable(component->getPosableGroup());
 //	model.addPosable(brick->getPosableGroup());
-//	model.position(sb::Vector3(0, 0, 1));
+//	//model.position(sb::Vector3(0, 0, 0.3));
 //
 //	//model.rotateAround(sb::Vector3(0, 1, 0), 0.5);
 //
@@ -54,7 +62,7 @@ int main(int argc, char *argv[]) {
 //	std::cout << model.toXML();
 //	std::cout << "</sdf>" << std::endl;
 
-//  Full robot test
+    // Full robot test
 	if (argc != 3) {
 		std::cout << "Call with robot reference file and output file." << std::endl;
 		return EXIT_FAILURE;
