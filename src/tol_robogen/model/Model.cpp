@@ -58,6 +58,7 @@ void Model::addLink(sb::LinkPtr body, int id) {
 
 sb::LinkPtr Model::createLink(int label) {
 	sb::LinkPtr b(new sb::Link("link_"+id_+"_"+std::to_string(label)));
+
 	if (label >= 0) {
 		this->addLink(b, label);
 	}
@@ -161,6 +162,20 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 	this->fixLinks(parent, child, anchor, axis);
 
 	return true;
+}
+
+sb::ElementPtr Model::getSurfaceElement() {
+	// TODO Update sdf builder to support friction
+	// and replace this string element
+	sb::ElementPtr surf(new sb::StringElement("<surface><friction><ode>"
+			// TODO This should be configurable like in Robogen!
+			"<mu>1.0</mu>"
+			"<mu2>1.0</mu2>"
+			"<slip1>0.01</slip1>"
+			"<slip2>0.01</slip2>"
+			"</friction></ode></surface>"));
+
+	return surf;
 }
 
 //dxGeom* Model::createCylinderGeom(dBodyID body, float mass,

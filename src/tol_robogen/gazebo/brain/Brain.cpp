@@ -287,15 +287,15 @@ void Brain::update(const std::vector<MotorPtr>& motors, double t) {
 	//::feed(neuralNetwork_.get(), &networkInputs_[0]);
 
 	// Progress the neural network
-	::nn_step(neuralNetwork_.get(), t);
+	::nn_step(neuralNetwork_.get(), t / 5.0);
 
 	// Fetch the new output values
 	::nn_fetch(neuralNetwork_.get(), &networkOutputs_[0]);
 
 	// Send new signals to the motors
-//	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
-//		motors[i]->update(networkOutputs_[i]);
-//	}
+	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
+		motors[i]->update(networkOutputs_[i]);
+	}
 }
 
 

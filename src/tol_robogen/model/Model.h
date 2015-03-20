@@ -163,6 +163,11 @@ public:
 	void setRootAttitude(const sdf_builder::Quaternion& quat);
 
 	/**
+	 * @return Convenience function to return surface element
+	 */
+	sdf_builder::ElementPtr getSurfaceElement();
+
+	/**
 	 * @return the specified body
 	 */
 	sdf_builder::LinkPtr getLink(int id);

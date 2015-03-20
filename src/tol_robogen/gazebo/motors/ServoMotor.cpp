@@ -51,11 +51,11 @@ void ServoMotor::update(float networkOutput) {
 		joint_->SetVelocity(0, velocity);
 	} else {
 //		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);
-		double velocity = MIN_VELOCITY + networkOutput * (MAX_VELOCITY - MIN_VELOCITY);
-		std::cout << "Velocity: " << velocity << std::endl;
-		joint_->SetVelocity(0, velocity);
+		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);
+		joint_->SetVelocity(0, MAX_VELOCITY);
+//		std::cout << "Position: " << position << std::endl;
 //		auto ctrl = model_->GetJointController();
-//		ctrl->SetVelocityTarget(joint_->GetScopedName(), MAX_VELOCITY);
+//		ctrl->SetPositionTarget(joint_->GetScopedName(), upperLimit_);
 
 //		std::cout << "After: " << joint_->GetVelocity(0) << std::endl;
 //		auto ctrl = model_->GetJointController();

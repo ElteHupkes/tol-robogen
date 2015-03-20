@@ -42,7 +42,7 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 
   // TODO this should be loaded from the world / config
   // For now use 1/25 (i.e. 40ms, i.e. 40,000,000 ns)
-  actuationTime_ = 1;
+  actuationTime_ = 40e6;
 
   std::cout << "Plugin loaded." << std::endl;
 
@@ -65,9 +65,9 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
 	unsigned int nsecPassed = (_info.simTime.sec - lastActuationSec_) * 1e9 +
 							(_info.simTime.nsec - lastActuationNsec_);
+
 	if (nsecPassed < actuationTime_) {
 		// Not time to actuate yet
-		std::cout << "Pass" << std::endl;
 		return;
 	}
 

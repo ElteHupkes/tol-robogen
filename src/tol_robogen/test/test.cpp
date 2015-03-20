@@ -30,12 +30,9 @@ int main(int argc, char *argv[]) {
 //	ModelPtr brick(new CoreComponentModel("my_brick", false));
 //	brick->initModel();
 //
-//	component->attach(core, 0, 0, 0);
+//	component->attach(core, 0, 0, 1);
 //
-//	component->getPosableGroup()->rotateAround(sb::Vector3(-1, 0, 0), 0.5 * M_PI);
-//
-//
-//	brick->attach(component, 1, 0, 0);
+//	brick->attach(component, 1, 0, 1);
 //
 //	sb::Model model("temp_bot");
 //
