@@ -23,46 +23,53 @@ const float ServoMotor::MIN_VELOCITY = -(50.0/60.0) * 2 * M_PI;
 const float ServoMotor::MAX_VELOCITY = (50.0/60.0) * 2 * M_PI;
 
 ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
-		std::string partId, unsigned int ioId):
+		std::string partId, unsigned int ioId, bool velocityDriven, double gain):
 	Motor(model, joint, partId, ioId),
-	velocityDriven_(true),
-	gain_(0),
-	lowerLimit_(joint->GetLowerLimit(0).Radian()),
-	upperLimit_(joint->GetUpperLimit(0).Radian())
-{}
-
-ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
-		std::string partId, unsigned int ioId, double gain):
-	Motor(model, joint, partId, ioId),
-	velocityDriven_(false),
+	velocityDriven_(velocityDriven),
 	gain_(gain),
 	lowerLimit_(joint->GetLowerLimit(0).Radian()),
-	upperLimit_(joint->GetUpperLimit(0).Radian())
-{}
+	upperLimit_(joint->GetUpperLimit(0).Radian()),
+	jointController_(model->GetJointController()),
+	jointName_(joint->GetScopedName())
+{
+	// Create a PID with the correct parameters
+	auto pid = gz::common::PID(
+		// Proportional gain
+		0.0,
+
+		// Integral gain
+		0.0,
+
+		// Derivative gain
+		gain * 5
+
+		// Max/min integral values
+		//0.0,
+		//0.0,
+
+		// Max / min force; these are already determined
+		// by the joint's effort limit.
+		//0.0,
+		//0.0
+	);
+
+	if (velocityDriven) {
+		jointController_->SetVelocityPID(jointName_, pid);
+	} else {
+		jointController_->SetPositionPID(jointName_, pid);
+	}
+}
 
 ServoMotor::~ServoMotor() {}
 
-void ServoMotor::update(float networkOutput) {
-	//std::cout << "Before: " << joint_->GetVelocity(0) << std::endl;
-
+void ServoMotor::update(float networkOutput, unsigned int /*step*/) {
 	// TODO Add motor noise
 	if (velocityDriven_) {
 		double velocity = MIN_VELOCITY + networkOutput * (MAX_VELOCITY - MIN_VELOCITY);
-		joint_->SetVelocity(0, velocity);
+		jointController_->SetVelocityTarget(jointName_, velocity);
 	} else {
-//		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);
 		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);
-		joint_->SetVelocity(0, MAX_VELOCITY);
-//		std::cout << "Position: " << position << std::endl;
-//		auto ctrl = model_->GetJointController();
-//		ctrl->SetPositionTarget(joint_->GetScopedName(), upperLimit_);
-
-//		std::cout << "After: " << joint_->GetVelocity(0) << std::endl;
-//		auto ctrl = model_->GetJointController();
-//		std::cout << ctrl->SetPositionTarget(joint_->GetScopedName(), networkOutput) << std::endl;
-		// TODO set position target instead, can probably use joint PID controller
-		//		auto ctrl = model_->GetJointController();
-		//		std::cout << ctrl->SetVelocityTarget(joint_->GetScopedName(), networkOutput) << std::endl;
+		jointController_->SetPositionTarget(jointName_, position);
 	}
 }
 

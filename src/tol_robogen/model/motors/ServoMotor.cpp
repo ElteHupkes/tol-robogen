@@ -10,8 +10,8 @@
 namespace tol_robogen {
 
 // Expressed in Newton*m from kg-cm = ((kg-cm)*g)/100
-const float ServoMotor::DEFAULT_MAX_FORCE_ROTATIONAL = TOL_SCALING * 4 * 9.81 / 100;
-const float ServoMotor::DEFAULT_MAX_FORCE_SERVO = TOL_SCALING * 1.8 * 9.81 / 100;
+const float ServoMotor::DEFAULT_MAX_FORCE_ROTATIONAL = 4 * 9.81 / 100;
+const float ServoMotor::DEFAULT_MAX_FORCE_SERVO = 1.8 * 9.81 / 100;
 
 const float ServoMotor::MIN_POS_RAD = -(45 * M_PI / 180);
 const float ServoMotor::MAX_POS_RAD = (45 * M_PI / 180);

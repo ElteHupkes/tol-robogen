@@ -164,20 +164,6 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 	return true;
 }
 
-sb::ElementPtr Model::getSurfaceElement() {
-	// TODO Update sdf builder to support friction
-	// and replace this string element
-	sb::ElementPtr surf(new sb::StringElement("<surface><friction><ode>"
-			// TODO This should be configurable like in Robogen!
-			"<mu>1.0</mu>"
-			"<mu2>1.0</mu2>"
-			"<slip1>0.01</slip1>"
-			"<slip2>0.01</slip2>"
-			"</friction></ode></surface>"));
-
-	return surf;
-}
-
 //dxGeom* Model::createCylinderGeom(dBodyID body, float mass,
 //		const osg::Vec3& pos, int direction, float radius, float height) {
 //

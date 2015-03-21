@@ -27,8 +27,11 @@ public:
 	/**
 	 * Updates the motor based on the attached output
 	 * of the neural network.
+	 *
+	 * @param Output of the neural network
+	 * @param Actuation time in nanoseconds
 	 */
-	virtual void update(float networkOutput) = 0;
+	virtual void update(float networkOutput, unsigned int step) = 0;
 
 	/**
 	 * @return The part ID

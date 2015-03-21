@@ -24,7 +24,8 @@ public:
 	/**
 	 * Creates a motor for the given model for the given SDF element.
 	 */
-	static MotorPtr create(sdf::ElementPtr motor, ::gazebo::physics::ModelPtr model);
+	static MotorPtr create(sdf::ElementPtr motor, ::gazebo::physics::ModelPtr model,
+			unsigned int actuationTime);
 };
 
 } /* namespace gazebo */

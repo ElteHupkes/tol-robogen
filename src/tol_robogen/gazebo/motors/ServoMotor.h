@@ -20,16 +20,19 @@ public:
 	static const float MAX_VELOCITY;
 	static const float DEFAULT_GAIN;
 
-	// Constructor without gain - velocity driven
+	/**
+	 * @param The model the motor is contained in
+	 * @param The joint driven by the motor
+	 * @param The part ID the motor belongs to
+	 * @param The I/O ID on the part
+	 * @param Whether the motor is velocity driven (the alternative is position driven)
+	 * @param The derivative gain of the motor's PID controller
+	 */
 	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
-			std::string partId, unsigned int ioId);
-
-	// Constructor with gain - position driven
-	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
-			std::string partId, unsigned int ioId, double gain);
+			std::string partId, unsigned int ioId, bool velocityDriven, double gain);
 	virtual ~ServoMotor();
 
-	virtual void update(float networkOutput);
+	virtual void update(float networkOutput, unsigned int step);
 
 protected:
 	bool velocityDriven_;
@@ -38,6 +41,16 @@ protected:
 	double lowerLimit_;
 	double upperLimit_;
 	double gain_;
+
+	/**
+	 * The joint controller of the attaching model
+	 */
+	::gazebo::physics::JointControllerPtr jointController_;
+
+	/**
+	 * Store string joint name for repeated use
+	 */
+	std::string jointName_;
 };
 
 } /* namespace gazebo */

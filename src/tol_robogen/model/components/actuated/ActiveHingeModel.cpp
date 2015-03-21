@@ -34,8 +34,8 @@ ActiveHingeModel::~ActiveHingeModel() {
 bool ActiveHingeModel::initModel() {
 	// Create the 4 components of the hinge
 	hingeRoot_ = this->createLink(B_SLOT_A_ID);
-	sb::LinkPtr frame = this->createLink(B_FRAME_ID);
-	sb::LinkPtr servo = this->createLink(B_SERVO_ID);
+	auto frame = this->createLink(B_FRAME_ID);
+	auto servo = this->createLink(B_SERVO_ID);
 	hingeTail_ = this->createLink(B_SLOT_B_ID);
 
 	// Set the masses, geometries and positions for the various boxes
@@ -55,6 +55,16 @@ bool ActiveHingeModel::initModel() {
 				+ (SERVO_LENGTH / 2 - (SERVO_LENGTH - SERVO_ROTATION_OFFSET));
 	servo->makeBox(MASS_SERVO, SERVO_LENGTH, SLOT_WIDTH, SERVO_HEIGHT);
 	servo->position(sb::Vector3(xServo, 0, 0));
+
+	// Color the servo black so we can easily recognize it
+	sb::ElementPtr color(new sb::StringElement("<material>"
+          "<script>"
+            "<uri>file://media/materials/scripts/gazebo.material</uri>"
+            "<name>Gazebo/Black</name>"
+          "</script>"
+        "</material>"));
+	auto vis = std::dynamic_pointer_cast< sb::Visual >(servo->posables()[1]);
+	vis->addElement(color);
 
 	// Box and position for tail
 	double xTail = xServo + SERVO_LENGTH / 2 + separation + SLOT_THICKNESS / 2;
@@ -81,12 +91,6 @@ bool ActiveHingeModel::initModel() {
 	MotorPtr motor(new ServoMotor(id_, 0, revolve,
 			ServoMotor::DEFAULT_MAX_FORCE_SERVO, false));
 	this->addMotor(motor);
-
-	// TODO there was a max force / default gain here we should include
-	//	this->motor_.reset(
-	//			new ServoMotor(joint, ServoMotor::DEFAULT_MAX_FORCE_SERVO,
-	//					ServoMotor::DEFAULT_GAIN,
-	//					ioPair(this->getId(),0)));
 
 	return true;
 }

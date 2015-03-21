@@ -18,6 +18,10 @@
 namespace tol_robogen {
 namespace gazebo {
 
+// Internal helper function to build neuron params
+void neuronHelper(float* params, unsigned int* types, unsigned int paramIdx,
+		unsigned int typeIdx, const std::string& type, sdf::ElementPtr neuron);
+
 Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors) {
 	// The neural network is initialized with
 	// the following parameters (which are to be determined):
@@ -261,7 +265,7 @@ Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors) {
 Brain::~Brain() {}
 
 // TODO Check for erroneous / missing parameters
-void Brain::neuronHelper(float* params, unsigned int* types, unsigned int paramIdx,
+void neuronHelper(float* params, unsigned int* types, unsigned int paramIdx,
 		unsigned int typeIdx, const std::string& type, sdf::ElementPtr neuron) {
 	if ("sigmoid" == type) {
 		types[typeIdx] = SIGMOID;
@@ -282,19 +286,19 @@ void Brain::neuronHelper(float* params, unsigned int* types, unsigned int paramI
 	}
 }
 
-void Brain::update(const std::vector<MotorPtr>& motors, double t) {
+void Brain::update(const std::vector<MotorPtr>& motors, double t, unsigned int step) {
 	// TODO Enable sensors and feed
 	//::feed(neuralNetwork_.get(), &networkInputs_[0]);
 
 	// Progress the neural network
-	::nn_step(neuralNetwork_.get(), t / 5.0);
+	::nn_step(neuralNetwork_.get(), t);
 
 	// Fetch the new output values
 	::nn_fetch(neuralNetwork_.get(), &networkOutputs_[0]);
 
 	// Send new signals to the motors
 	for (unsigned int i = 0, l = motors.size(); i < l; ++i) {
-		motors[i]->update(networkOutputs_[i]);
+		motors[i]->update(networkOutputs_[i], step);
 	}
 }
 

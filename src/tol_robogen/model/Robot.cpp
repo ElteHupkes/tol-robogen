@@ -12,7 +12,11 @@
 #include <tol_robogen/model/Connection.h>
 #include <tol_robogen/model/ActuatedComponent.h>
 #include <tol_robogen/model/motors/Motor.h>
+
 #include <sdf_builder/Model.h>
+#include <sdf_builder/collision/Collision.h>
+#include <sdf_builder/collision/Surface.h>
+#include <sdf_builder/collision/Friction.h>
 
 #include <sstream>
 #include <iostream>
@@ -64,6 +68,40 @@ void Robot::addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot,
 	to->attach(from, fromSlot, toSlot, orientation);
 }
 
+// Simple internal helper function
+void addSurface(sb::PosableGroupPtr p) {
+	auto posables = p->posables();
+
+	for (auto it = posables.begin(); it != posables.end(); ++it) {
+		if (!std::dynamic_pointer_cast< sb::Link >(*it)) {
+			continue;
+		}
+
+		auto link = std::dynamic_pointer_cast< sb::Link >(*it);
+		auto lp = link->posables();
+
+		for (auto itb = lp.begin(); itb != lp.end(); ++itb) {
+			if (!std::dynamic_pointer_cast< sb::Collision >(*itb)) {
+				continue;
+			}
+
+			auto col = std::dynamic_pointer_cast< sb::Collision >(*itb);
+			if (col->surface) {
+				continue;
+			}
+
+			// Add our default surface settings
+			col->surface.reset(new sb::Surface());
+			auto surf = col->surface;
+			surf->friction.reset(new sb::Friction());
+			surf->friction->friction1 = 1.0;
+			surf->friction->friction2 = 1.0;
+			surf->friction->slip1 = 0.1;
+			surf->friction->slip2 = 0.1;
+		}
+	}
+}
+
 sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	sb::ModelPtr out(new sb::Model(name));
 
@@ -75,7 +113,9 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	plugin << "<tol:settings xmlns:tol=\"http://elte.me\">";
 	for (auto it = bodyParts_.begin(); it != bodyParts_.end(); ++it) {
 		ModelPtr bodyPart = *it;
-		out->addPosable(bodyPart->getPosableGroup());
+		auto group = bodyPart->getPosableGroup();
+		addSurface(group);
+		out->addPosable(group);
 
 		auto joints = bodyPart->joints();
 		for (auto itb = joints.begin(); itb != joints.end(); ++itb) {

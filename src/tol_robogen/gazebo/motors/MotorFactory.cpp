@@ -20,7 +20,7 @@ MotorFactory::MotorFactory() {}
 MotorFactory::~MotorFactory() {}
 
 MotorPtr MotorFactory::create(sdf::ElementPtr motor,
-		::gazebo::physics::ModelPtr model) {
+		::gazebo::physics::ModelPtr model, unsigned int actuationTime) {
 	auto typeParam = motor->GetAttribute("type");
 	auto jointNameParam = motor->GetAttribute("joint");
 	auto partIdParam = motor->GetAttribute("part_id");
@@ -54,11 +54,8 @@ MotorPtr MotorFactory::create(sdf::ElementPtr motor,
 			velocityDriven = false;
 		}
 
-		if (velocityDriven) {
-			motorObj.reset(new ServoMotor(model, joint, partId, ioId));
-		} else {
-			motorObj.reset(new ServoMotor(model, joint, partId, ioId, ServoMotor::DEFAULT_GAIN));
-		}
+		motorObj.reset(new ServoMotor(model, joint, partId, ioId,
+				velocityDriven, ServoMotor::DEFAULT_GAIN));
 	} else {
 		std::cerr << "Motor type '" << type <<
 				"' is unknown." << std::endl;
