@@ -21,14 +21,14 @@ class ServoMotor: public Motor {
 public:
 	static const float DEFAULT_MAX_FORCE_ROTATIONAL;
 	static const float DEFAULT_MAX_FORCE_SERVO;
+	static const float DEFAULT_GAIN;
 	static const float MIN_POS_RAD;
 	static const float MAX_POS_RAD;
 
 	ServoMotor(std::string partId, unsigned int ioId,
-			sdf_builder::JointPtr joint, double maxForce, bool velocityDriven);
-	ServoMotor(const ServoMotor & other):
-		Motor(other),
-		velocityDriven(other.velocityDriven) {};
+			sdf_builder::JointPtr joint, double maxForce,
+			bool velocityDriven, double gain);
+	ServoMotor(const ServoMotor & other);
 
 	virtual ServoMotor * clone() const;
 
@@ -37,6 +37,7 @@ public:
 	virtual std::string toXML();
 
 	bool velocityDriven;
+	double gain;
 };
 
 } /* namespace tol_robogen */

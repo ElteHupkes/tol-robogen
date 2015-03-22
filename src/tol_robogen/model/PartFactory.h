@@ -9,6 +9,7 @@
 #define TOL_ROBOGEN_MODEL_PARTFACTORY_H_
 
 #include <tol_robogen/tol.h>
+#include <tol_robogen/configuration/Configuration.h>
 #include <vector>
 #include <string>
 
@@ -21,7 +22,9 @@ public:
 	/**
 	 * @return New component based on the given type
 	 */
-	static ModelPtr getComponent(std::string type, std::string id, const std::vector<double>& params);
+	static ModelPtr getComponent(std::string type, std::string id,
+			const Configuration & conf,
+			const std::vector<double>& params);
 private:
 	// Singleton
 	PartFactory();

@@ -16,9 +16,10 @@ namespace tol_robogen {
 
 namespace sb = sdf_builder;
 
-Model::Model(std::string id) :
+Model::Model(std::string id, const Configuration & conf) :
 		id_(id),
-		posableGroup_(sb::PosableGroupPtr(new sb::PosableGroup("group_"+id)))
+		posableGroup_(sb::PosableGroupPtr(new sb::PosableGroup("group_"+id))),
+		conf_(conf)
 {}
 
 Model::~Model() {
@@ -50,6 +51,18 @@ void Model::translateRootPosition(const sb::Vector3& translation) {
 
 void Model::setRootAttitude(const sb::Quaternion& quat) {
 	this->posableGroup_->rotation(quat);
+}
+
+double Model::inMm(double x) {
+	return conf_.scaling * x/ 1000;
+}
+
+double Model::inGrams(double x) {
+	return pow(conf_.scaling, 3) * x / 1000;
+}
+
+double Model::inNm(double x) {
+	return pow(conf_.scaling, 4) * x;
 }
 
 void Model::addLink(sb::LinkPtr body, int id) {

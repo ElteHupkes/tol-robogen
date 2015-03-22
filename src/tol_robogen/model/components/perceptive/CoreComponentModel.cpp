@@ -8,14 +8,14 @@ namespace tol_robogen {
 namespace sb = sdf_builder;
 
 // mass of just the brick
-const float CoreComponentModel::BRICK_MASS = inGrams(14.9);
+const float CoreComponentModel::BRICK_MASS = 14.9;
 // mass of brick with electronics (including battery)
-const float CoreComponentModel::CORE_MASS = inGrams(55.4);
-const float CoreComponentModel::WIDTH = inMm(46.5);
+const float CoreComponentModel::CORE_MASS = 55.4;
+const float CoreComponentModel::WIDTH = 46.5;
 
 
-CoreComponentModel::CoreComponentModel(std::string id, bool hasSensors) :
-		PerceptiveComponent(id), hasSensors_(hasSensors) {
+CoreComponentModel::CoreComponentModel(std::string id, const Configuration & conf, bool hasSensors) :
+		PerceptiveComponent(id, conf), hasSensors_(hasSensors) {
 
 	// TODO Sensors
 	if (hasSensors) {
@@ -32,10 +32,11 @@ bool CoreComponentModel::initModel() {
 
 
 	coreComponent_ = this->createLink(B_CORE_COMPONENT_ID);
-	double mass = hasSensors_ ? CORE_MASS : BRICK_MASS;
+	double mass = inGrams(hasSensors_ ? CORE_MASS : BRICK_MASS);
 
 	// Give box geometry
-	coreComponent_->makeBox(mass, WIDTH, WIDTH, WIDTH);
+	double width = inMm(WIDTH);
+	coreComponent_->makeBox(mass, width, width, width);
 
 	// Already positioned at origin
 	return true;
@@ -57,7 +58,7 @@ sb::Vector3 CoreComponentModel::getSlotPosition(unsigned int i) {
 	}
 
 	sb::Vector3 curPos = this->getRootPosition();
-	sb::Vector3 slotAxis = this->getSlotAxis(i) * WIDTH / 2;
+	sb::Vector3 slotAxis = this->getSlotAxis(i) * inMm(WIDTH) / 2;
 	curPos = curPos + slotAxis;
 
 	return curPos;

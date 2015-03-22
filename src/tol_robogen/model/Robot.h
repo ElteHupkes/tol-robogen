@@ -13,6 +13,7 @@
 #include <tol_robogen/model/Connection.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 #include <tol_robogen/evolution/representation/NeuralNetworkRepresentation.h>
+#include <tol_robogen/configuration/Configuration.h>
 
 #include <sdf_builder/Types.h>
 
@@ -33,14 +34,14 @@ public:
 	 * Initialize robot from core component part
 	 * representation.
 	 */
-	Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain);
+	Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config);
 
 	virtual ~Robot();
 
 	/**
 	 * Initializes the robot with the given core.
 	 */
-	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain);
+	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config);
 
 	// TODO copy constructor, assignment operator
 

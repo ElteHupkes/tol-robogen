@@ -9,6 +9,7 @@
 #include <tol_robogen/gazebo/motors/Motors.h>
 
 #include <cstdlib>
+#include <cmath>
 
 namespace gz = gazebo;
 
@@ -46,16 +47,7 @@ MotorPtr MotorFactory::create(sdf::ElementPtr motor,
 	auto type = typeParam->GetAsString();
 
 	if ("servo" == type) {
-		auto veloParam = motor->GetAttribute("velocityDriven");
-		bool velocityDriven;
-		if (veloParam) {
-			veloParam->Get(velocityDriven);
-		} else {
-			velocityDriven = false;
-		}
-
-		motorObj.reset(new ServoMotor(model, joint, partId, ioId,
-				velocityDriven, ServoMotor::DEFAULT_GAIN));
+		motorObj.reset(new ServoMotor(model, joint, partId, ioId, motor));
 	} else {
 		std::cerr << "Motor type '" << type <<
 				"' is unknown." << std::endl;

@@ -8,23 +8,24 @@ namespace sb = sdf_builder;
 
 namespace tol_robogen {
 
-const float ActiveHingeModel::MASS_SERVO = inGrams(9);
-const float ActiveHingeModel::MASS_SLOT = inGrams(7);
-const float ActiveHingeModel::MASS_FRAME = inGrams(1.2);
+// These are all in grams and millimeter
+const float ActiveHingeModel::MASS_SERVO = 9;
+const float ActiveHingeModel::MASS_SLOT = 7;
+const float ActiveHingeModel::MASS_FRAME = 1.2;
 
-const float ActiveHingeModel::SLOT_WIDTH = inMm(34);
-const float ActiveHingeModel::SLOT_THICKNESS = inMm(1.5);
+const float ActiveHingeModel::SLOT_WIDTH = 34;
+const float ActiveHingeModel::SLOT_THICKNESS = 1.5;
 
-const float ActiveHingeModel::FRAME_LENGTH = inMm(18);
-const float ActiveHingeModel::FRAME_HEIGHT = inMm(10);
-const float ActiveHingeModel::FRAME_ROTATION_OFFSET = inMm(14); // Left to right
+const float ActiveHingeModel::FRAME_LENGTH = 18;
+const float ActiveHingeModel::FRAME_HEIGHT = 10;
+const float ActiveHingeModel::FRAME_ROTATION_OFFSET = 14; // Left to right
 
-const float ActiveHingeModel::SERVO_LENGTH = inMm(24.5);
-const float ActiveHingeModel::SERVO_HEIGHT = inMm(10);
-const float ActiveHingeModel::SERVO_ROTATION_OFFSET = inMm(20.5); // Right to left
+const float ActiveHingeModel::SERVO_LENGTH = 24.5;
+const float ActiveHingeModel::SERVO_HEIGHT = 10;
+const float ActiveHingeModel::SERVO_ROTATION_OFFSET = 20.5; // Right to left
 
-ActiveHingeModel::ActiveHingeModel(std::string id) :
-		ActuatedComponent(id)
+ActiveHingeModel::ActiveHingeModel(std::string id, const Configuration & conf) :
+		ActuatedComponent(id, conf)
 {}
 
 ActiveHingeModel::~ActiveHingeModel() {
@@ -41,19 +42,26 @@ bool ActiveHingeModel::initModel() {
 	// Set the masses, geometries and positions for the various boxes
 	float separation = inMm(0.1);
 
+
+	double thickness = inMm(SLOT_THICKNESS);
+	double width = inMm(SLOT_WIDTH);
+	double frameLength = inMm(FRAME_LENGTH);
+	double servoLength = inMm(SERVO_LENGTH);
+	double slotMass = inGrams(MASS_SLOT);
+
 	// Create box for root
-	hingeRoot_->makeBox(MASS_SLOT, SLOT_THICKNESS, SLOT_WIDTH, SLOT_WIDTH);
+	hingeRoot_->makeBox(slotMass, thickness, width, width);
 
 	// Box and position for frame
-	double xFrame = SLOT_THICKNESS / 2 + separation + FRAME_LENGTH / 2 -
-			SLOT_THICKNESS;
-	frame->makeBox(MASS_FRAME, FRAME_LENGTH, SLOT_WIDTH, FRAME_HEIGHT);
+	double xFrame = thickness / 2 + separation + frameLength / 2 -
+			thickness;
+	frame->makeBox(inGrams(MASS_FRAME), frameLength, width, inMm(FRAME_HEIGHT));
 	frame->position(sb::Vector3(xFrame, 0, 0));
 
 	// Box and position for servo
-	double xServo = xFrame + (FRAME_ROTATION_OFFSET - (FRAME_LENGTH / 2))
-				+ (SERVO_LENGTH / 2 - (SERVO_LENGTH - SERVO_ROTATION_OFFSET));
-	servo->makeBox(MASS_SERVO, SERVO_LENGTH, SLOT_WIDTH, SERVO_HEIGHT);
+	double xServo = xFrame + (inMm(FRAME_ROTATION_OFFSET) - (frameLength / 2))
+				+ (servoLength / 2 - (servoLength - inMm(SERVO_ROTATION_OFFSET)));
+	servo->makeBox(inGrams(MASS_SERVO), servoLength, width, inMm(SERVO_HEIGHT));
 	servo->position(sb::Vector3(xServo, 0, 0));
 
 	// Color the servo black so we can easily recognize it
@@ -67,13 +75,13 @@ bool ActiveHingeModel::initModel() {
 	vis->addElement(color);
 
 	// Box and position for tail
-	double xTail = xServo + SERVO_LENGTH / 2 + separation + SLOT_THICKNESS / 2;
-	hingeTail_->makeBox(MASS_SLOT, SLOT_THICKNESS, SLOT_WIDTH, SLOT_WIDTH);
+	double xTail = xServo + servoLength / 2 + separation + thickness / 2;
+	hingeTail_->makeBox(slotMass, thickness, width, width);
 	hingeTail_->position(sb::Vector3(xTail, 0, 0));
 
 	// Create joints to hold pieces in position
 	// root <-> frame
-	this->fixLinks(hingeRoot_, frame, sb::Vector3(-FRAME_LENGTH / 2, 0, 0));
+	this->fixLinks(hingeRoot_, frame, sb::Vector3(-frameLength / 2, 0, 0));
 
 	// Frame <-> servo (hinge)
 	// For a parent/child joint in Gazebo, it calls dJointAttach(child, parent);
@@ -81,15 +89,17 @@ bool ActiveHingeModel::initModel() {
 	sb::JointPtr revolve(new sb::RevoluteJoint(servo, frame));
 	// Joint position/axis are in child reference frame, so "frame" in this case
 	revolve->axis->xyz(sb::Vector3(0, 1, 0));
-	revolve->position(sb::Vector3((-FRAME_LENGTH / 2) + FRAME_ROTATION_OFFSET, 0, 0));
+	revolve->position(sb::Vector3((-frameLength / 2) + inMm(FRAME_ROTATION_OFFSET), 0, 0));
 	this->addJoint(revolve);
 
 	// Servo <-> tail
-	this->fixLinks(servo, hingeTail_, sb::Vector3(-SLOT_THICKNESS / 2, 0, 0));
+	this->fixLinks(servo, hingeTail_, sb::Vector3(-thickness / 2, 0, 0));
 
 	// Register the revolve hinge as a motor
 	MotorPtr motor(new ServoMotor(id_, 0, revolve,
-			ServoMotor::DEFAULT_MAX_FORCE_SERVO, false));
+			inNm(ServoMotor::DEFAULT_MAX_FORCE_SERVO), false,
+			// Gain needs to scale by the same factor as max force
+			inNm(ServoMotor::DEFAULT_GAIN)));
 	this->addMotor(motor);
 
 	return true;
@@ -118,7 +128,7 @@ sb::Vector3 ActiveHingeModel::getSlotPosition(unsigned int i) {
 	sb::Vector3 curPos = (i == SLOT_A) ?
 			hingeRoot_->position() : hingeTail_->position();
 
-	return curPos + slotAxis * (SLOT_THICKNESS / 2);
+	return curPos + slotAxis * (inMm(SLOT_THICKNESS) / 2);
 }
 
 sb::Vector3 ActiveHingeModel::getSlotAxis(unsigned int i) {

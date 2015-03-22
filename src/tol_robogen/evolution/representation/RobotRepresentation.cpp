@@ -505,8 +505,8 @@ bool RobotRepresentation::init(std::string robotTextFile) {
 	return true;
 }
 
-RobotPtr RobotRepresentation::toRobot() const {
-	return RobotPtr(new Robot(bodyTree_, neuralNetwork_));
+RobotPtr RobotRepresentation::toRobot(const Configuration & config) const {
+	return RobotPtr(new Robot(bodyTree_, neuralNetwork_, config));
 }
 
 void RobotRepresentation::getBrainGenome(std::vector<double*> &weights,

@@ -33,7 +33,7 @@ public:
 	static const unsigned int B_CONNECTION_A_ID = 2;
 	static const unsigned int B_CONNECTION_B_ID = 3;
 
-	HingeModel(std::string id);
+	HingeModel(std::string id, const Configuration & conf);
 
 	virtual ~HingeModel();
 

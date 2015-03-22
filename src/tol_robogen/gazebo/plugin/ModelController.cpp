@@ -81,8 +81,11 @@ void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
 
 
 void ModelController::loadMotors(sdf::ElementPtr sdf) {
-	// Use HasElement to prevent SDF from doing AddElement when no motor is present.
-	auto motor = sdf->HasElement("tol:motor") ? sdf->GetElement("tol:motor") : sdf::ElementPtr();
+	if (!sdf->HasElement("tol:motor")) {
+		return;
+	}
+
+	auto motor = sdf->GetElement("tol:motor");
     while (motor) {
     	auto motorObj = MotorFactory::create(motor, this->model, actuationTime_);
     	motors_.push_back(motorObj);

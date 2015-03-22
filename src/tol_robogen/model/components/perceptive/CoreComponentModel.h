@@ -57,7 +57,7 @@ public:
 	 * @param id
 	 * @param hasSensors if true the core component will contain gyro and accelerometer sensors, if false it won't provide any sensor
 	 */
-	CoreComponentModel(std::string id, bool hasSensors);
+	CoreComponentModel(std::string id, const Configuration & conf, bool hasSensors);
 
 	virtual ~CoreComponentModel();
 

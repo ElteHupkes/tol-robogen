@@ -17,17 +17,18 @@ PartFactory::PartFactory() {}
 
 PartFactory::~PartFactory() {}
 
-ModelPtr PartFactory::getComponent(std::string type, std::string id, const std::vector<double> & params) {
+ModelPtr PartFactory::getComponent(std::string type, std::string id,
+		const Configuration & conf, const std::vector<double> & params) {
 	ModelPtr model;
 
 	if (PART_TYPE_CORE_COMPONENT == type) {
-		model.reset(new CoreComponentModel(id, true));
+		model.reset(new CoreComponentModel(id, conf, true));
 	} else if (PART_TYPE_FIXED_BRICK == type) {
-		model.reset(new CoreComponentModel(id, false));
+		model.reset(new CoreComponentModel(id, conf, false));
 	} else if (PART_TYPE_PASSIVE_HINGE == type) {
-		model.reset(new HingeModel(id));
+		model.reset(new HingeModel(id, conf));
 	} else if (PART_TYPE_ACTIVE_HINGE == type) {
-		model.reset(new ActiveHingeModel(id));
+		model.reset(new ActiveHingeModel(id, conf));
 	}
 
 	// TODO Add other models

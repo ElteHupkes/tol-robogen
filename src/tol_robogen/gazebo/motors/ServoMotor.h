@@ -10,6 +10,8 @@
 
 #include <tol_robogen/gazebo/motors/Motor.h>
 
+#include <gazebo/common/common.hh>
+
 namespace tol_robogen {
 namespace gazebo {
 
@@ -29,7 +31,7 @@ public:
 	 * @param The derivative gain of the motor's PID controller
 	 */
 	ServoMotor(::gazebo::physics::ModelPtr model, ::gazebo::physics::JointPtr joint,
-			std::string partId, unsigned int ioId, bool velocityDriven, double gain);
+			std::string partId, unsigned int ioId, sdf::ElementPtr motor);
 	virtual ~ServoMotor();
 
 	virtual void update(float networkOutput, unsigned int step);
@@ -40,7 +42,6 @@ protected:
 	// Uper and lower position limits
 	double lowerLimit_;
 	double upperLimit_;
-	double gain_;
 
 	/**
 	 * The joint controller of the attaching model

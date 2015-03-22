@@ -39,6 +39,7 @@
 #include <tol_robogen/tol.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 #include <tol_robogen/evolution/representation/NeuralNetworkRepresentation.h>
+#include <tol_robogen/configuration/Configuration.h>
 
 namespace tol_robogen {
 
@@ -169,7 +170,7 @@ public:
 	 * Creates a robot that can be converted to SDF from
 	 * this representation.
 	 */
-	RobotPtr toRobot() const;
+	RobotPtr toRobot(const Configuration & config) const;
 
 	/**
 	 * @return the id of the root body part

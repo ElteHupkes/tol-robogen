@@ -23,13 +23,6 @@ include_directories(${CMAKE_SOURCE_DIR} ${SDFBUILDER_INCLUDE_PATH} ${EIGEN3_INCL
 # Set dependency list (Eigen3 is header only)
 set(TOL_DEPS ${SDFBUILDER_LIBRARIES} ${Boost_LIBRARIES})
 
-# All files for TOL Robogen
-file(GLOB_RECURSE
-	 TOL_SRC
-	 tol_robogen/evolution/*.cpp
-	 tol_robogen/model/*.cpp
-)
-
 # Compiler options
 # TODO This currently assumes GCC, add Windows support in due time
 add_definitions(-pedantic -Wno-long-long -Wall -Wextra -Wformat=2
@@ -46,14 +39,22 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb3 -DDEBUG")
 # Release flags
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -funroll-loops -finline-functions -fomit-frame-pointer -DNDEBUG")
 
-# Compile sdfbuilder library
+
+#### TOL Robogen
+# All files for TOL Robogen
+file(GLOB_RECURSE
+	 TOL_SRC
+	 tol_robogen/configuration/*.cpp
+	 tol_robogen/evolution/*.cpp
+	 tol_robogen/model/*.cpp
+)
+
+# Compile tolrobogen library
 add_library(tolrobogen ${TOL_SRC} )
 target_link_libraries(tolrobogen ${TOL_DEPS})
 
-# Test executable
-add_executable(test tol_robogen/test/test.cpp)
-target_link_libraries(test tolrobogen ${TOL_DEPS})
 
+#### TOL Robogen Gazebo
 # Gazebo control plugins
 # Find and include Gazebo
 include (FindPkgConfig)
@@ -71,3 +72,8 @@ file(GLOB_RECURSE
 
 add_library(tolmodelcontrol SHARED ${TOL_GZ_SRC})
 target_link_libraries(tolmodelcontrol ${GAZEBO_LIBRARIES} ${TOL_DEPS})
+
+#### Test
+# Test executable
+add_executable(test tol_robogen/test/test.cpp)
+target_link_libraries(test tolrobogen ${TOL_DEPS})

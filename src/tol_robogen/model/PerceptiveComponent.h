@@ -45,8 +45,8 @@ public:
 	 * Constructor
 	 * @see Model
 	 */
-	PerceptiveComponent(std::string id) :
-		Model(id) {}
+	PerceptiveComponent(std::string id, const Configuration & conf) :
+		Model(id, conf) {}
 
 	/**
 	 * Destructor

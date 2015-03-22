@@ -43,8 +43,8 @@ public:
 	 * Constructor
 	 * @see Model
 	 */
-	ActuatedComponent(std::string id) :
-		Model(id) {}
+	ActuatedComponent(std::string id, const Configuration & conf) :
+		Model(id, conf) {}
 
 	/**
 	 * Destructor

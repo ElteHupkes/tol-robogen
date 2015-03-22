@@ -7,7 +7,6 @@
 
 #include <stdexcept>
 
-#include <tol_robogen/tol.h>
 #include <tol_robogen/model/Robot.h>
 #include <tol_robogen/model/Connection.h>
 #include <tol_robogen/model/ActuatedComponent.h>
@@ -27,18 +26,18 @@ namespace tol_robogen {
 
 Robot::Robot() {}
 
-Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain) {
-	init(core, brain);
+Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config) {
+	init(core, brain, config);
 }
 
-void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain) {
+void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config) {
 	if (coreComponent_) {
 		throw std::runtime_error("This robot has already been initialized "
 				"It is currently not possible to reinitialize a robot,"
 				"please create a new one instead.");
 	}
 
-	coreComponent_ = core->addSubtreeToRobot(this);
+	coreComponent_ = core->addSubtreeToRobot(this, config);
 
 	// TODO Is this sufficient?
 	brainXML_ = brain->toXML();
@@ -91,6 +90,9 @@ void addSurface(sb::PosableGroupPtr p) {
 			}
 
 			// Add our default surface settings
+			// These parameters were taken from RobogenCollision.cpp
+			// TODO Find out if these parameters make sense and what
+			// they change about the simulation.
 			col->surface.reset(new sb::Surface());
 			auto surf = col->surface;
 			surf->friction.reset(new sb::Friction());
@@ -98,6 +100,13 @@ void addSurface(sb::PosableGroupPtr p) {
 			surf->friction->friction2 = 1.0;
 			surf->friction->slip1 = 0.1;
 			surf->friction->slip2 = 0.1;
+
+			// TODO Add same parameters for Bullet
+			sb::StringElementPtr contact(new sb::StringElement("<contact><ode>"
+					"<soft_cfm>0.01</soft_cfm>"
+					"<soft_erp>0.96</soft_erp>"
+					"</ode></contact>"));
+
 		}
 	}
 }

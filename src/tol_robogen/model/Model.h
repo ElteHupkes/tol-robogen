@@ -34,13 +34,14 @@
 #include <stdexcept>
 
 #include <tol_robogen/tol.h>
+#include <tol_robogen/configuration/Configuration.h>
 #include <sdf_builder/Types.h>
 #include <sdf_builder/Parts.h>
 
 // Utility defines taken from Robogen.h
 // Use the scaling factor frol tol.h
-#define inMm(x) (TOL_SCALING * x / 1000.0)
-#define inGrams(x) (TOL_SCALING * x / 1000.0)
+//#define inMm(x) (x / 1000.0)
+//#define inGrams(x) (x / 1000.0)
 
 namespace tol_robogen {
 
@@ -81,7 +82,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Model(std::string id);
+	Model(std::string id, const Configuration & conf);
 
 	/**
 	 * Destructor
@@ -227,6 +228,22 @@ public:
 	bool attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation);
 
 	/**
+	 * Convenience function for a measure in millimeters,
+	 * takes scaling into account.
+	 */
+	double inMm(double x);
+
+	/**
+	 * Convenience scaling function for a measure in grams
+	 */
+	double inGrams(double x);
+
+	/**
+	 * Scales a torque in Netwon meters
+	 */
+	double inNm(double x);
+
+	/**
 	 * Create a capsule geometry for the body
 	 * @param body
 	 * @param mass
@@ -287,6 +304,11 @@ protected:
 	 * The posable group that holds all joints and links
 	 */
 	sdf_builder::PosableGroupPtr posableGroup_;
+
+	/**
+	 * Holds generator configuration
+	 */
+	Configuration conf_;
 };
 
 }

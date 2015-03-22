@@ -36,7 +36,7 @@ public:
 	static const unsigned int B_FRAME_ID = 2;
 	static const unsigned int B_SERVO_ID = 3;
 
-	ActiveHingeModel(std::string id);
+	ActiveHingeModel(std::string id, const Configuration & conf);
 
 	virtual ~ActiveHingeModel();
 

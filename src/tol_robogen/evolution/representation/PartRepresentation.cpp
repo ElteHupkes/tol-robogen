@@ -146,7 +146,8 @@ PartRepresentationPtr PartRepresentation::create(char type,
 }
 
 
-ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent,
+ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, const Configuration & conf,
+		ModelPtr parent,
 		unsigned int fromSlot, unsigned int toSlot) {
 	//convert parameters from [0,1] back to valid range
 	// TODO Check: where are they converted in the first place?
@@ -160,7 +161,7 @@ ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent,
 	}
 
 	// TODO Check for error
-	ModelPtr model = PartFactory::getComponent(this->getType(), id_, params);
+	ModelPtr model = PartFactory::getComponent(this->getType(), id_, conf, params);
 
 	if (!model) {
 		std::cerr << "Error generating model part." << std::endl;
@@ -183,7 +184,7 @@ ModelPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ModelPtr parent,
 
 			int toSlot = 0;
 
-			child->addSubtreeToRobot(robot, model, fromSlot, toSlot);
+			child->addSubtreeToRobot(robot, conf, model, fromSlot, toSlot);
 		}
 	}
 

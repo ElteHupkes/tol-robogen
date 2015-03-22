@@ -34,6 +34,8 @@
 #include <map>
 #include <stdexcept>
 
+#include <tol_robogen/configuration/Configuration.h>
+
 namespace tol_robogen {
 
 /**
@@ -132,11 +134,14 @@ public:
 	 *
 	 * @param The robot to add self to
 	 * @param Parent node. Leave empty if this node is the root node
+	 * @param Configuration object
 	 * @param Connection slot on the parent node, -1 if this node is the root node
 	 * @param Connection slot on this node, -1 if this node is the root node
 	 * @return The model created for this part
 	 */
-	ModelPtr addSubtreeToRobot(Robot* robot, ModelPtr parent = ModelPtr(),
+	ModelPtr addSubtreeToRobot(Robot* robot,
+			const Configuration & conf,
+			ModelPtr parent = ModelPtr(),
 			unsigned int fromSlot = -1, unsigned int toSlot = -1);
 
 	/**

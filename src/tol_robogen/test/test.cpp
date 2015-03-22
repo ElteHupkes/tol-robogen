@@ -8,12 +8,14 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <string>
 
 #include <tol_robogen/model/Models.h>
 #include <sdf_builder/Parts.h>
 #include <sdf_builder/Types.h>
 #include <tol_robogen/evolution/representation/RobotRepresentation.h>
 #include <tol_robogen/model/Robot.h>
+#include <tol_robogen/configuration/Configuration.h>
 
 #include <sdf_builder/util/Util.h>
 
@@ -60,8 +62,8 @@ int main(int argc, char *argv[]) {
 //	std::cout << "</sdf>" << std::endl;
 
     // Full robot test
-	if (argc != 3) {
-		std::cout << "Call with robot reference file and output file." << std::endl;
+	if (argc != 4) {
+		std::cout << "Call with robot reference file, output file and scaling factor." << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -75,7 +77,11 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	RobotPtr bot = referenceBot->toRobot();
+	// Create configuration instance
+	Configuration conf;
+	conf.scaling = std::stod(argv[3]);
+
+	RobotPtr bot = referenceBot->toRobot(conf);
 	sb::ModelPtr model = bot->toSDFModel("temp_bot");
 
 	model->position(sb::Vector3(0, 0, 0.3));
