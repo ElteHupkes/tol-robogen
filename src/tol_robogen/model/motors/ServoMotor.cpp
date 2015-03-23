@@ -59,6 +59,8 @@ std::string ServoMotor::toXML() {
 	std::stringstream attrs;
 	attrs << "velocityDriven=\"" << velocityDriven << "\" "
 		  << "gain=\"" << gain << "\" "
+
+		  // Rotational velocity we need not scale
 		  << "minVelocity=\"" << ServoMotor::MIN_VELOCITY << "\" "
 		  << "maxVelocity=\"" << ServoMotor::MAX_VELOCITY << "\" "
 		  << attributes_;

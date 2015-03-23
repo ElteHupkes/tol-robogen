@@ -96,9 +96,12 @@ bool ActiveHingeModel::initModel() {
 	this->fixLinks(servo, hingeTail_, sb::Vector3(-thickness / 2, 0, 0));
 
 	// Register the revolve hinge as a motor
+	// TODO Need to figure out the correct force / gain scalings
 	MotorPtr motor(new ServoMotor(id_, 0, revolve,
 			inNm(ServoMotor::DEFAULT_MAX_FORCE_SERVO), false,
-			// Gain needs to scale by the same factor as max force
+
+			// To scale the gain, we need to understand how Gazebo's joint
+			// PID controllers work. As far as I can tell, they only
 			inNm(ServoMotor::DEFAULT_GAIN)));
 	this->addMotor(motor);
 

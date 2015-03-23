@@ -106,7 +106,7 @@ void addSurface(sb::PosableGroupPtr p) {
 					"<soft_cfm>0.01</soft_cfm>"
 					"<soft_erp>0.96</soft_erp>"
 					"</ode></contact>"));
-
+			surf->addElement(contact);
 		}
 	}
 }

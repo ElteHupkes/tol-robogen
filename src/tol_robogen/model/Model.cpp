@@ -54,15 +54,27 @@ void Model::setRootAttitude(const sb::Quaternion& quat) {
 }
 
 double Model::inMm(double x) {
-	return conf_.scaling * x/ 1000;
+	return conf_.scaling * x / 1000;
 }
 
 double Model::inGrams(double x) {
 	return pow(conf_.scaling, 3) * x / 1000;
 }
 
+/**
+ * Say we have a factor 10 spatial scaling. This means the
+ * lever arm of the servo will increase a factor 10, so we
+ * which needs to be compensated for to keep the simulation
+ * the same. Additionally, all weights will scale with a
+ * factor 10^3, meaning the maximum force should be
+ * another 10^3 times higher. Finally, the object being
+ * moved needs to cover 10 times the distance, meaning
+ * velocities scale a factor 10, and so we should increase
+ * another factor 10. The total scaling factor for Newton meter
+ * is thus s^5, where s is the spatial scaling factor.
+ */
 double Model::inNm(double x) {
-	return pow(conf_.scaling, 4) * x;
+	return pow(conf_.scaling, 5) * x;
 }
 
 void Model::addLink(sb::LinkPtr body, int id) {
