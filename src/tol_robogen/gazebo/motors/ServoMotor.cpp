@@ -40,13 +40,13 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 		// Create a PID with the correct parameters
 		auto pid = gz::common::PID(
 			// Proportional gain
-			0.0,
+			gain,
 
 			// Integral gain
 			0.0,
 
 			// Derivative gain
-			gain
+			0.0
 		);
 
 		if (velocityDriven_) {

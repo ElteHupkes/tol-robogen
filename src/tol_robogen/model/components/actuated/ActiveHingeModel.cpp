@@ -97,12 +97,22 @@ bool ActiveHingeModel::initModel() {
 
 	// Register the revolve hinge as a motor
 	// TODO Need to figure out the correct force / gain scalings
-	MotorPtr motor(new ServoMotor(id_, 0, revolve,
-			inNm(ServoMotor::DEFAULT_MAX_FORCE_SERVO), false,
+	double torque = inNm(ServoMotor::DEFAULT_MAX_FORCE_SERVO);
+	double maxError = ServoMotor::MAX_POS_RAD - ServoMotor::MIN_POS_RAD;
 
-			// To scale the gain, we need to understand how Gazebo's joint
-			// PID controllers work. As far as I can tell, they only
-			inNm(ServoMotor::DEFAULT_GAIN)));
+	// This is the proportional gain of the motor's PID controller.
+	// The output of Gazebo's PID controllor is applied
+	// as a force directly in the JointController. The result of
+	// the statement below is that the force will be maximal (times
+	// a DEFAULT_GAIN) if the error is maximal, whereas it will of
+	// course be zero if the error is zero. We probably need something
+	// more clever than this; for instance maximum force cannot be applied
+	// at this point. We'll have to use derivative / integral gain for
+	// that, but for testing now this is fine.
+	// TODO Tune this
+	double gain = ServoMotor::DEFAULT_GAIN * torque / maxError;
+	MotorPtr motor(new ServoMotor(id_, 0, revolve,
+			torque, false, gain));
 	this->addMotor(motor);
 
 	return true;

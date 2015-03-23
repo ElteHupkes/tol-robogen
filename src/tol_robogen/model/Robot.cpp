@@ -98,8 +98,8 @@ void addSurface(sb::PosableGroupPtr p) {
 			surf->friction.reset(new sb::Friction());
 			surf->friction->friction1 = 1.0;
 			surf->friction->friction2 = 1.0;
-			surf->friction->slip1 = 0.1;
-			surf->friction->slip2 = 0.1;
+//			surf->friction->slip1 = 0.1;
+//			surf->friction->slip2 = 0.1;
 
 			// TODO Add same parameters for Bullet
 			sb::StringElementPtr contact(new sb::StringElement("<contact><ode>"
