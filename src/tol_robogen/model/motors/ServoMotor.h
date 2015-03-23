@@ -19,11 +19,14 @@ namespace tol_robogen {
  */
 class ServoMotor: public Motor {
 public:
+	// Motor constants
 	static const float DEFAULT_MAX_FORCE_ROTATIONAL;
 	static const float DEFAULT_MAX_FORCE_SERVO;
 	static const float DEFAULT_GAIN;
 	static const float MIN_POS_RAD;
 	static const float MAX_POS_RAD;
+	static const float MIN_VELOCITY;
+	static const float MAX_VELOCITY;
 
 	ServoMotor(std::string partId, unsigned int ioId,
 			sdf_builder::JointPtr joint, double maxForce,

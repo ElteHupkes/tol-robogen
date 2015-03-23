@@ -7,6 +7,8 @@
 
 #include <tol_robogen/gazebo/motors/ServoMotor.h>
 
+#include <iostream>
+
 namespace gz = gazebo;
 
 namespace tol_robogen {
@@ -18,7 +20,9 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 	lowerLimit_(joint->GetLowerLimit(0).Radian()),
 	upperLimit_(joint->GetUpperLimit(0).Radian()),
 	jointController_(model->GetJointController()),
-	jointName_(joint->GetScopedName())
+	jointName_(joint->GetScopedName()),
+	minVelocity_(0),
+	maxVelocity_(0)
 {
 	auto veloParam = motor->GetAttribute("velocityDriven");
 	if (veloParam) {
@@ -51,6 +55,17 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 			jointController_->SetPositionPID(jointName_, pid);
 		}
 	}
+
+	auto minVParam = motor->GetAttribute("minVelocity");
+	auto maxVParam = motor->GetAttribute("maxVelocity");
+
+	if (!minVParam || !maxVParam) {
+		std::cerr << "Missing servo min/max velocity parameters, "
+				"velocity will be zero." << std::endl;
+	} else {
+		minVParam->Get(minVelocity_);
+		maxVParam->Get(maxVelocity_);
+	}
 }
 
 ServoMotor::~ServoMotor() {}
@@ -58,7 +73,7 @@ ServoMotor::~ServoMotor() {}
 void ServoMotor::update(float networkOutput, unsigned int /*step*/) {
 	// TODO Add motor noise
 	if (velocityDriven_) {
-		double velocity = MIN_VELOCITY + networkOutput * (MAX_VELOCITY - MIN_VELOCITY);
+		double velocity = minVelocity_ + networkOutput * (maxVelocity_ - minVelocity_);
 		jointController_->SetVelocityTarget(jointName_, velocity);
 	} else {
 		double position = lowerLimit_ + networkOutput * (upperLimit_ - lowerLimit_);

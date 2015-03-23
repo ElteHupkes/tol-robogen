@@ -17,11 +17,6 @@ namespace gazebo {
 
 class ServoMotor: public Motor {
 public:
-	// Physical constants
-	static const float MIN_VELOCITY;
-	static const float MAX_VELOCITY;
-	static const float DEFAULT_GAIN;
-
 	/**
 	 * @param The model the motor is contained in
 	 * @param The joint driven by the motor
@@ -42,6 +37,10 @@ protected:
 	// Uper and lower position limits
 	double lowerLimit_;
 	double upperLimit_;
+
+	// Velocity limits
+	double minVelocity_;
+	double maxVelocity_;
 
 	/**
 	 * The joint controller of the attaching model

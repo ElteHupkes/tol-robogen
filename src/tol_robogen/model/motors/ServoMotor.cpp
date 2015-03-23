@@ -20,6 +20,12 @@ const float ServoMotor::DEFAULT_GAIN = 0.5;
 const float ServoMotor::MIN_POS_RAD = -(45 * M_PI / 180);
 const float ServoMotor::MAX_POS_RAD = (45 * M_PI / 180);
 
+// 50 rpm converted to rad/s
+// 	note, max velocity should really be 100 rpm, but only with 0 torque
+// 	50 rpms is a compromise
+const float ServoMotor::MIN_VELOCITY = -(50.0/60.0) * 2 * M_PI;
+const float ServoMotor::MAX_VELOCITY = (50.0/60.0) * 2 * M_PI;
+
 ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 		sdf_builder::JointPtr joint, double maxForce,
 		bool velocityDriven, double gain):
@@ -53,6 +59,8 @@ std::string ServoMotor::toXML() {
 	std::stringstream attrs;
 	attrs << "velocityDriven=\"" << velocityDriven << "\" "
 		  << "gain=\"" << gain << "\" "
+		  << "minVelocity=\"" << ServoMotor::MIN_VELOCITY << "\" "
+		  << "maxVelocity=\"" << ServoMotor::MAX_VELOCITY << "\" "
 		  << attributes_;
 
 	attributes_ = attrs.str();

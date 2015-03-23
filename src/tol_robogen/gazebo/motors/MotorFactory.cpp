@@ -21,7 +21,7 @@ MotorFactory::MotorFactory() {}
 MotorFactory::~MotorFactory() {}
 
 MotorPtr MotorFactory::create(sdf::ElementPtr motor,
-		::gazebo::physics::ModelPtr model, unsigned int actuationTime) {
+		::gazebo::physics::ModelPtr model, unsigned int /*actuationTime*/) {
 	auto typeParam = motor->GetAttribute("type");
 	auto jointNameParam = motor->GetAttribute("joint");
 	auto partIdParam = motor->GetAttribute("part_id");
