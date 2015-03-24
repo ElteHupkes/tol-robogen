@@ -25,23 +25,23 @@
  *
  * @(#) $Id$
  */
+#include <tol_robogen/model/Component.h>
 #include <map>
 #include <sstream>
 #include <stdexcept>
 
 #include <tol_robogen/model/Connection.h>
-#include <tol_robogen/model/Model.h>
 
 namespace tol_robogen{
 
-Connection::Connection(ModelPtr from, ModelPtr to, int toSlot, int fromSlot):
+Connection::Connection(ComponentPtr from, ComponentPtr to, int toSlot, int fromSlot):
 		from_(from),
 		fromSlot_(fromSlot),
 		to_(to),
 		toSlot_(toSlot)
 {}
 
-ModelPtr Connection::getFrom(){
+ComponentPtr Connection::getFrom(){
 	return from_;
 }
 
@@ -49,7 +49,7 @@ int Connection::getFromSlot(){
 	return fromSlot_;
 }
 
-ModelPtr Connection::getTo(){
+ComponentPtr Connection::getTo(){
 	return to_;
 }
 

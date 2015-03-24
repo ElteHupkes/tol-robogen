@@ -4,14 +4,14 @@
 #ifndef TOL_ROBOGEN_HINGE_MODEL_H_
 #define TOL_ROBOGEN_HINGE_MODEL_H_
 
-#include <tol_robogen/model/Model.h>
+#include <tol_robogen/model/Component.h>
 
 namespace tol_robogen {
 
 /**
  * A Hinge is modelled with 4 boxes and a hinge joint
  */
-class HingeModel: public Model {
+class HingeModel: public Component {
 
 public:
 

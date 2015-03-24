@@ -25,8 +25,8 @@
  *
  * @(#) $Id$
  */
-#ifndef SDFB_MODEL_H_
-#define SDFB_MODEL_H_
+#ifndef SDFB_COMPONENT_H_
+#define SDFB_COMPONENT_H_
 
 #include <iostream>
 #include <map>
@@ -36,6 +36,7 @@
 #include <tol_robogen/tol.h>
 #include <tol_robogen/configuration/Configuration.h>
 #include <sdf_builder/Types.h>
+#include <tol_robogen/model/io/IO.h>
 #include <sdf_builder/Parts.h>
 
 // Utility defines taken from Robogen.h
@@ -75,19 +76,19 @@ namespace tol_robogen {
  * larger chunks I'd need inertia tensors for every perceivable combination,
  * which I reckon is rather undoable.
  */
-class Model {
+class Component {
 
 public:
 
 	/**
 	 * Constructor
 	 */
-	Model(std::string id, const Configuration & conf);
+	Component(std::string id, const Configuration & conf);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Model();
+	virtual ~Component();
 
 	/**
 	 * @return true if the model initialization completed successfully
@@ -225,7 +226,7 @@ public:
 	 * @param The slot on this model
 	 * @param The orientation, increments of 90 degrees
 	 */
-	bool attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation);
+	bool attach(ComponentPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation);
 
 	/**
 	 * Convenience function for a measure in millimeters,
@@ -242,6 +243,16 @@ public:
 	 * Scales a torque in Netwon meters
 	 */
 	double inNm(double x);
+
+	/**
+	 * Returns all this component's sensors and actuators
+	 */
+	virtual const std::vector< IOPtr > & getIO();
+
+	/**
+	 * Register a sensor or actuator
+	 */
+	void addIO(IOPtr io);
 
 	/**
 	 * Create a capsule geometry for the body
@@ -309,6 +320,11 @@ protected:
 	 * Holds generator configuration
 	 */
 	Configuration conf_;
+
+	/**
+	 * Registered motors for this component
+	 */
+	std::vector< IOPtr > io_;
 };
 
 }

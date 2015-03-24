@@ -9,7 +9,6 @@
 #include <tol_robogen/gazebo/motors/Motors.h>
 
 #include <cstdlib>
-#include <cmath>
 
 namespace gz = gazebo;
 
@@ -23,7 +22,7 @@ MotorFactory::~MotorFactory() {}
 MotorPtr MotorFactory::create(sdf::ElementPtr motor,
 		::gazebo::physics::ModelPtr model, unsigned int /*actuationTime*/) {
 	auto typeParam = motor->GetAttribute("type");
-	auto jointNameParam = motor->GetAttribute("joint");
+	auto jointNameParam = motor->GetAttribute("ref");
 	auto partIdParam = motor->GetAttribute("part_id");
 	auto ioIdParam = motor->GetAttribute("io_id");
 

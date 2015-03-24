@@ -2,7 +2,7 @@
  * TODO License
  */
 #include <tol_robogen/model/components/actuated/ActiveHingeModel.h>
-#include <tol_robogen/model/motors/ServoMotor.h>
+#include <tol_robogen/model/io/ServoMotor.h>
 
 namespace sb = sdf_builder;
 
@@ -25,7 +25,7 @@ const float ActiveHingeModel::SERVO_HEIGHT = 10;
 const float ActiveHingeModel::SERVO_ROTATION_OFFSET = 20.5; // Right to left
 
 ActiveHingeModel::ActiveHingeModel(std::string id, const Configuration & conf) :
-		ActuatedComponent(id, conf)
+		Component(id, conf)
 {}
 
 ActiveHingeModel::~ActiveHingeModel() {
@@ -110,10 +110,10 @@ bool ActiveHingeModel::initModel() {
 	// at this point. We'll have to use derivative / integral gain for
 	// that, but for testing now this is fine.
 	// TODO Tune this
-	double gain = ServoMotor::DEFAULT_GAIN * torque / maxError;
-	MotorPtr motor(new ServoMotor(id_, 0, revolve,
+	double gain = 2 * torque / maxError;
+	IOPtr motor(new ServoMotor(id_, 0, revolve,
 			torque, false, gain));
-	this->addMotor(motor);
+	this->addIO(motor);
 
 	return true;
 }

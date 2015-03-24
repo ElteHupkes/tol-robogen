@@ -139,9 +139,9 @@ public:
 	 * @param Connection slot on this node, -1 if this node is the root node
 	 * @return The model created for this part
 	 */
-	ModelPtr addSubtreeToRobot(Robot* robot,
+	ComponentPtr addSubtreeToRobot(Robot* robot,
 			const Configuration & conf,
-			ModelPtr parent = ModelPtr(),
+			ComponentPtr parent = ComponentPtr(),
 			unsigned int fromSlot = -1, unsigned int toSlot = -1);
 
 	/**

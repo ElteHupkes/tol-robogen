@@ -5,42 +5,48 @@
  *      Author: elte
  */
 
-#include <tol_robogen/model/motors/Motor.h>
-
+#include <tol_robogen/model/io/IO.h>
 #include <sstream>
 
 namespace sb = sdf_builder;
 
 namespace tol_robogen {
 
-Motor::Motor(std::string partId, unsigned int ioId, std::string type, sdf_builder::JointPtr joint):
+IO::IO(std::string ioType, std::string partId, unsigned int ioId,
+		std::string type, std::string ref):
+	ioType_(ioType),
 	partId_(partId),
 	ioId_(ioId),
 	type_(type),
-	joint_(joint)
+	ref_(ref)
 {}
 
-Motor::Motor(const Motor & other):
+IO::IO(const IO & other):
 		partId_(other.partId_),
 		ioId_(other.ioId_),
 		type_(other.type_),
-		joint_(other.joint_)
+		ref_(other.ref_),
+		ioType_(other.ioType_)
 {}
 
-Motor * Motor::clone() const {
-	return new Motor(*this);
+IO * IO::clone() const {
+	return new IO(*this);
 }
 
-Motor::~Motor() {}
+IO::~IO() {}
 
-std::string Motor::toXML() {
+std::string IO::attributes() {
+	return "";
+}
+
+std::string IO::toXML() {
 	std::stringstream out;
-	out << "<tol:motor "
+	out << "<tol:" << ioType_ << " "
 		<< "type=\"" << type_ << "\" "
-		<< "joint=\"" << joint_->name() << "\" "
+		<< "ref=\"" << ref_ << "\" "
 		<< "part_id=\"" << partId_ << "\" "
 		<< "io_id=\"" << ioId_ << "\" "
-		<< attributes_
+		<< this->attributes()
 		<< " />"
 		<< std::endl;
 	return out.str();

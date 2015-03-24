@@ -2,8 +2,7 @@
  *
  */
 
-#include <tol_robogen/model/motors/ServoMotor.h>
-
+#include <tol_robogen/model/io/ServoMotor.h>
 #include <iostream>
 #include <sstream>
 
@@ -28,9 +27,10 @@ const float ServoMotor::MAX_VELOCITY = (50.0/60.0) * 2 * M_PI;
 
 ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 		sdf_builder::JointPtr joint, double maxForce,
-		bool velocityDriven, double gain):
-	Motor(partId, ioId, "servo", joint),
+		bool velocityDriven, double gain, double noise):
+	IO("motor", partId, ioId, "servo", joint->name()),
 	gain(gain),
+	noise(noise),
 	velocityDriven(velocityDriven)
 {
 	// TODO Does this do what I intend it to?
@@ -46,27 +46,26 @@ ServoMotor::ServoMotor(std::string partId, unsigned int ioId,
 }
 
 ServoMotor::ServoMotor(const ServoMotor & other):
-	Motor(other),
+	IO(other),
 	velocityDriven(other.velocityDriven),
-	gain(other.gain)
+	gain(other.gain),
+	noise(other.noise)
 {}
 
 ServoMotor* ServoMotor::clone() const {
 	return new ServoMotor(*this);
 }
 
-std::string ServoMotor::toXML() {
+std::string ServoMotor::attributes() {
 	std::stringstream attrs;
 	attrs << "velocityDriven=\"" << velocityDriven << "\" "
 		  << "gain=\"" << gain << "\" "
 
 		  // Rotational velocity we need not scale
 		  << "minVelocity=\"" << ServoMotor::MIN_VELOCITY << "\" "
-		  << "maxVelocity=\"" << ServoMotor::MAX_VELOCITY << "\" "
-		  << attributes_;
+		  << "maxVelocity=\"" << ServoMotor::MAX_VELOCITY << "\" ";
 
-	attributes_ = attrs.str();
-	return Motor::toXML();
+	return attrs.str();
 }
 
 }

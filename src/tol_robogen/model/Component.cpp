@@ -8,56 +8,57 @@
 
 #include <iostream>
 
-#include <tol_robogen/model/Model.h>
 #include <sdf_builder/util/Util.h>
 #include <sdf_builder/joint/FixedJoint.h>
+
+#include <tol_robogen/model/Component.h>
 
 namespace tol_robogen {
 
 namespace sb = sdf_builder;
 
-Model::Model(std::string id, const Configuration & conf) :
+Component::Component(std::string id, const Configuration & conf) :
 		id_(id),
 		posableGroup_(sb::PosableGroupPtr(new sb::PosableGroup("group_"+id))),
 		conf_(conf)
 {}
 
-Model::~Model() {
+Component::~Component() {
 
 }
 
-const std::string &Model::getId(){
+const std::string &Component::getId(){
 	return id_;
 }
 
-const sb::Vector3 & Model::getRootPosition() {
+const sb::Vector3 & Component::getRootPosition() {
 	return posableGroup_->position();
 }
 
-const sb::Quaternion & Model::getRootAttitude() {
+const sb::Quaternion & Component::getRootAttitude() {
 	return posableGroup_->rotation();
 }
 
-void Model::setRootPosition(const sb::Vector3& pos) {
+void Component::setRootPosition(const sb::Vector3& pos) {
 	posableGroup_->position(pos);
 }
 
-void Model::translateRootPosition(const sb::Vector3& translation) {
+void Component::translateRootPosition(const sb::Vector3& translation) {
 
 	sb::Vector3 newPosition = this->getRootPosition() + translation;
 	this->setRootPosition(newPosition);
 
 }
 
-void Model::setRootAttitude(const sb::Quaternion& quat) {
+void Component::setRootAttitude(const sb::Quaternion& quat) {
 	this->posableGroup_->rotation(quat);
 }
 
-double Model::inMm(double x) {
+double Component::inMm(double x) {
 	return conf_.scaling * x / 1000;
 }
 
-double Model::inGrams(double x) {
+double Component::inGrams(double x) {
 	return pow(conf_.scaling, 3) * x / 1000;
 }
 
@@ -73,15 +74,17 @@ double Model::inGrams(double x) {
  * another factor 10. The total scaling factor for Newton meter
  * is thus s^5, where s is the spatial scaling factor.
  */
-double Model::inNm(double x) {
+double Component::inNm(double x) {
 	return pow(conf_.scaling, 5) * x;
 }
 
-void Model::addLink(sb::LinkPtr body, int id) {
+void Component::addLink(sb::LinkPtr body, int id) {
 	this->links_.insert(std::pair<int, sb::LinkPtr>(id, body));
 }
 
-sb::LinkPtr Model::createLink(int label) {
+
+
+sb::LinkPtr Component::createLink(int label) {
 	sb::LinkPtr b(new sb::Link("link_"+id_+"_"+std::to_string(label)));
 
 	if (label >= 0) {
@@ -93,31 +96,31 @@ sb::LinkPtr Model::createLink(int label) {
 	return b;
 }
 
-sb::LinkPtr Model::createLink() {
+sb::LinkPtr Component::createLink() {
 	return this->createLink(-1);
 }
 
-const std::vector< sb::JointPtr > & Model::getJoints() {
+const std::vector< sb::JointPtr > & Component::getJoints() {
 	return joints_;
 }
 
-const sb::PosableGroupPtr & Model::getPosableGroup() {
+const sb::PosableGroupPtr & Component::getPosableGroup() {
 	return posableGroup_;
 }
 
-void Model::addJoint(sb::JointPtr joint) {
+void Component::addJoint(sb::JointPtr joint) {
 	joints_.push_back(joint);
 
 	// Do *NOT* add the joint to the posables, its pose is relative
 	// to the child frame.
 }
 
-const std::vector< sb::JointPtr > & Model::joints() {
+const std::vector< sb::JointPtr > & Component::joints() {
 	return joints_;
 }
 
 
-sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
+sb::JointPtr Component::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
 		const sb::Vector3& anchor, const sb::Vector3& axis) {
 	sb::JointPtr joint(new sb::FixedJoint(parent, child));
 	joint->position(anchor);
@@ -126,7 +129,7 @@ sb::JointPtr Model::fixLinks(sb::LinkPtr parent, sb::LinkPtr child,
 	return joint;
 }
 
-bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation) {
+bool Component::attach(ComponentPtr from, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation) {
 	if (orientation > 3){
 		std::cerr << "Specified orientation to parent slot is not"\
 				" between 0 and 3." << std::endl;
@@ -189,7 +192,21 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 	return true;
 }
 
-//dxGeom* Model::createCylinderGeom(dBodyID body, float mass,
+/**
+ * @return the available motors
+ */
+const std::vector< IOPtr > & Component::getIO() {
+	return io_;
+}
+
+/**
+ * Adds a motor
+ */
+void Component::addIO(IOPtr io) {
+	io_.push_back(io);
+}
+
+//dxGeom* Component::createCylinderGeom(dBodyID body, float mass,
 //		const osg::Vec3& pos, int direction, float radius, float height) {
 //
 //	dMass massOde;
@@ -229,7 +246,7 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 //
 //}
 
-//dxGeom* Model::createCapsuleGeom(dBodyID body, float mass, const osg::Vec3& pos,
+//dxGeom* Component::createCapsuleGeom(dBodyID body, float mass, const osg::Vec3& pos,
 //		int direction, float radius, float height) {
 //
 //	dMass massOde;
@@ -269,7 +286,7 @@ bool Model::attach(ModelPtr from, unsigned int fromSlot, unsigned int toSlot, un
 //
 //}
 
-//dJointID Model::fixBodies(dBodyID b1, dBodyID b2, const osg::Vec3& /*axis*/) {
+//dJointID Component::fixBodies(dBodyID b1, dBodyID b2, const osg::Vec3& /*axis*/) {
 //	dJointID joint = dJointCreateFixed(this->getPhysicsWorld(), 0);
 //	dJointAttach(joint, b1, b2);
 //	dJointSetFixed(joint);

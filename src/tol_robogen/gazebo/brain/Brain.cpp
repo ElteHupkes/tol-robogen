@@ -7,6 +7,7 @@
 
 #include <tol_robogen/gazebo/brain/Brain.h>
 #include <tol_robogen/gazebo/motors/Motor.h>
+#include <tol_robogen/gazebo/sensors/Sensor.h>
 
 #include <iostream>
 #include <algorithm>
@@ -22,7 +23,7 @@ namespace gazebo {
 void neuronHelper(float* params, unsigned int* types, unsigned int paramIdx,
 		unsigned int typeIdx, const std::string& type, sdf::ElementPtr neuron);
 
-Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors) {
+Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors, std::vector< SensorPtr > & sensors) {
 	// The neural network is initialized with
 	// the following parameters (which are to be determined):
 	// Number of inputs
@@ -93,7 +94,30 @@ Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors) {
 				throw std::runtime_error("Robot brain error");
 			}
 
-			// TODO match with sensors
+			// Find the index of the corresponding sensor in the sensor list
+			unsigned int sensorIndex;
+			for (sensorIndex = 0; sensorIndex < sensors.size(); ++sensorIndex) {
+				auto sensor = motors[sensorIndex];
+				if (sensor->partId() == partId && sensor->ioId() == ioId) {
+					break;
+				}
+			}
+
+			if (sensorIndex >= motors.size()) {
+				std::cerr << "Sensor for part " << partId <<
+						"with IO ID " << ioId << " could not be located"
+						<< std::endl;
+				throw std::runtime_error("Robot brain error");
+			}
+
+			// If the motor is not at the correct index in the motor
+			// array, swap with whatever's there. In the end this must
+			// mean that every motor is at its correct position.
+			if (nOutputs != sensorIndex) {
+				std::iter_swap(sensors.begin() + nOutputs,
+						sensors.begin() + sensorIndex);
+			}
+
 			positionMap[neuronId] = nInputs;
 			nInputs++;
 		} else if ("output" == layer) {
@@ -286,9 +310,15 @@ void neuronHelper(float* params, unsigned int* types, unsigned int paramIdx,
 	}
 }
 
-void Brain::update(const std::vector<MotorPtr>& motors, double t, unsigned int step) {
-	// TODO Enable sensors and feed
-	//::feed(neuralNetwork_.get(), &networkInputs_[0]);
+void Brain::update(const std::vector<MotorPtr>& motors,
+		const std::vector<SensorPtr>& sensors,
+		double t, unsigned int step) {
+
+	// Read sensor data and feed the neural network
+	for (unsigned int i = 0, l = sensors.size(); i < l; ++i) {
+		networkInputs_[i] = sensors[i]->read();
+	}
+	::nn_feed(neuralNetwork_.get(), &networkInputs_[0]);
 
 	// Progress the neural network
 	::nn_step(neuralNetwork_.get(), t);

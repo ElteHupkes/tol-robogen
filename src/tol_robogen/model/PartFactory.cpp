@@ -17,9 +17,9 @@ PartFactory::PartFactory() {}
 
 PartFactory::~PartFactory() {}
 
-ModelPtr PartFactory::getComponent(std::string type, std::string id,
+ComponentPtr PartFactory::getComponent(std::string type, std::string id,
 		const Configuration & conf, const std::vector<double> & params) {
-	ModelPtr model;
+	ComponentPtr model;
 
 	if (PART_TYPE_CORE_COMPONENT == type) {
 		model.reset(new CoreComponentModel(id, conf, true));

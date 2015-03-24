@@ -29,12 +29,12 @@
 #ifndef TOL_ROBOGEN_CORE_COMPONENTMODEL_H_
 #define TOL_ROBOGEN_CORE_COMPONENTMODEL_H_
 
-#include <tol_robogen/model/PerceptiveComponent.h>
+#include <tol_robogen/model/Component.h>
 //#include "model/sensors/ImuSensor.h"
 
 namespace tol_robogen {
 
-class CoreComponentModel: public PerceptiveComponent {
+class CoreComponentModel: public Component {
 
 public:
 	static const float BRICK_MASS;

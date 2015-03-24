@@ -3,9 +3,13 @@
  */
 #include <tol_robogen/model/components/perceptive/CoreComponentModel.h>
 
-namespace tol_robogen {
+#include <sdf_builder/sensor/Sensor.h>
+
+#include <tol_robogen/model/io/Sensor.h>
 
 namespace sb = sdf_builder;
+
+namespace tol_robogen {
 
 // mass of just the brick
 const float CoreComponentModel::BRICK_MASS = 14.9;
@@ -15,28 +19,38 @@ const float CoreComponentModel::WIDTH = 46.5;
 
 
 CoreComponentModel::CoreComponentModel(std::string id, const Configuration & conf, bool hasSensors) :
-		PerceptiveComponent(id, conf), hasSensors_(hasSensors) {
+		Component(id, conf), hasSensors_(hasSensors)
+{}
 
-	// TODO Sensors
-	if (hasSensors) {
-//		sensor_.reset(new ImuSensor());
-	}
-
-}
-
-CoreComponentModel::~CoreComponentModel() {
-
-}
+CoreComponentModel::~CoreComponentModel()
+{}
 
 bool CoreComponentModel::initModel() {
-
-
 	coreComponent_ = this->createLink(B_CORE_COMPONENT_ID);
 	double mass = inGrams(hasSensors_ ? CORE_MASS : BRICK_MASS);
 
 	// Give box geometry
 	double width = inMm(WIDTH);
 	coreComponent_->makeBox(mass, width, width, width);
+
+	if (hasSensors_) {
+		// Add IMU;
+		sb::SensorPtr imu(new sb::Sensor("core_imu", "imu"));
+		imu->updateRate = conf_.updateRate;
+		imu->topic = id_+"_imu";
+
+		// TODO Specify noise parameters
+
+		// Add the SDF sensor object to the core link
+		coreComponent_->addPosable(imu);
+
+		// Register all six outputs of the IMU sensor with
+		// the neural network.
+		for (unsigned int i = 0; i < 6; ++i) {
+			IOPtr io(new Sensor(id_, i, "imu", imu));
+			this->addIO(io);
+		}
+	}
 
 	// Already positioned at origin
 	return true;

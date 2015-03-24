@@ -29,12 +29,12 @@
 #ifndef CONNECTION_H_
 #define CONNECTION_H_
 
+#include <tol_robogen/model/Component.h>
 #include <map>
 #include <stdexcept>
 #include <memory>
 
 #include <tol_robogen/Types.h>
-#include <tol_robogen/model/Model.h>
 
 namespace tol_robogen {
 
@@ -51,14 +51,13 @@ public:
  */
 class Connection {
 public:
-	Connection(ModelPtr from, ModelPtr to,
+	Connection(ComponentPtr from, ComponentPtr to,
 			int fromSlot, int toSlot);
 
 	/**
-	 * TODO remove once toOde is in place
 	 * @return from body part
 	 */
-	ModelPtr getFrom();
+	ComponentPtr getFrom();
 
 	/**
 	 * TODO remove once toOde is in place
@@ -70,7 +69,7 @@ public:
 	 * TODO remove once toOde is in place
 	 * @return to body part
 	 */
-	ModelPtr getTo();
+	ComponentPtr getTo();
 
 	/**
 	 * TODO remove once toOde is in place
@@ -82,7 +81,7 @@ private:
 	/**
 	 * Parent body part
 	 */
-	ModelPtr from_;
+	ComponentPtr from_;
 
 	/**
 	 * Slot used for connection at parent body part
@@ -92,7 +91,7 @@ private:
 	/**
 	 * Child body part
 	 */
-	ModelPtr to_;
+	ComponentPtr to_;
 
 	/**
 	 * Slot used for connection at child body part

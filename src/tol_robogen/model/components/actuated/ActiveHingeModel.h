@@ -4,14 +4,14 @@
 #ifndef TOLROBOGEN_ACTIVE_HINGE_MODEL_H_
 #define TOLROBOGEN_ACTIVE_HINGE_MODEL_H_
 
-#include <tol_robogen/model/ActuatedComponent.h>
+#include <tol_robogen/model/Component.h>
 
 namespace tol_robogen {
 
 /**
  * An active hinge is modelled with 4 boxes and a hinge joint
  */
-class ActiveHingeModel: public ActuatedComponent {
+class ActiveHingeModel: public Component {
 
 public:
 

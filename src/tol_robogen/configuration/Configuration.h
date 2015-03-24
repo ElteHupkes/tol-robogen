@@ -21,7 +21,27 @@ public:
 	virtual ~Configuration();
 
 public:
-	double scaling = 10.0;
+	/**
+	 * Number of seconds between sensor updates /
+	 * neural network feeds.
+	 */
+	double updateRate = 0.025;
+
+	/**
+	 * World scaling factor; scaling currently isn't
+	 * really reliable.
+	 */
+	double scaling = 1.0;
+
+	/**
+	 * The level of motor noise
+	 */
+	double motorNoiseLevel = 0;
+
+	/**
+	 * The level of sensor noise
+	 */
+	double sensorNoiseLevel = 0;
 };
 
 } /* namespace sdf_builder */

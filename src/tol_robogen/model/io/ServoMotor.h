@@ -5,10 +5,12 @@
  *      Author: elte
  */
 
-#ifndef TOL_ROBOGEN_MODEL_MOTORS_SERVOMOTOR_H_
-#define TOL_ROBOGEN_MODEL_MOTORS_SERVOMOTOR_H_
+#ifndef TOL_ROBOGEN_MODEL_IO_SERVOMOTOR_H_
+#define TOL_ROBOGEN_MODEL_IO_SERVOMOTOR_H_
 
-#include <tol_robogen/model/motors/Motor.h>
+#include <tol_robogen/model/io/IO.h>
+#include <sdf_builder/Types.h>
+#include <sdf_builder/joint/Joint.h>
 
 namespace sb = sdf_builder;
 
@@ -17,7 +19,7 @@ namespace tol_robogen {
 /**
  * Thin wrapper over motor that sets a servo type
  */
-class ServoMotor: public Motor {
+class ServoMotor: public IO {
 public:
 	// Motor constants
 	static const float DEFAULT_MAX_FORCE_ROTATIONAL;
@@ -30,19 +32,20 @@ public:
 
 	ServoMotor(std::string partId, unsigned int ioId,
 			sdf_builder::JointPtr joint, double maxForce,
-			bool velocityDriven, double gain);
+			bool velocityDriven, double gain, double noise = 0.0);
 	ServoMotor(const ServoMotor & other);
 
 	virtual ServoMotor * clone() const;
 
 	virtual ~ServoMotor() {};
 
-	virtual std::string toXML();
+	virtual std::string attributes();
 
 	bool velocityDriven;
 	double gain;
+	double noise;
 };
 
 } /* namespace tol_robogen */
 
-#endif /* TOL_ROBOGEN_MODEL_MOTORS_SERVOMOTOR_H_ */
+#endif /* TOL_ROBOGEN_MODEL_IO_SERVOMOTOR_H_ */

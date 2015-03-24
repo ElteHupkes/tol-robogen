@@ -7,21 +7,18 @@
 
 namespace tol_robogen {
 	class Robot;
-	class Model;
-	class Motor;
+	class Component;
+	class IO;
+	class Sensor;
 	class Connection;
 	class RobotRepresentation;
 	class PartRepresentation;
 	class NeuralNetworkRepresentation;
 	class NeuronRepresentation;
-	class ActuatedComponent;
-	class PerceptiveComponent;
 
 	typedef std::shared_ptr< Robot > RobotPtr;
-	typedef std::shared_ptr< Model > ModelPtr;
-	typedef std::shared_ptr< Motor > MotorPtr;
-	typedef std::shared_ptr< ActuatedComponent > ActuatedComponentPtr;
-	typedef std::shared_ptr< PerceptiveComponent > PerceptiveComponentPtr;
+	typedef std::shared_ptr< Component > ComponentPtr;
+	typedef std::shared_ptr< IO > IOPtr;
 	typedef std::shared_ptr< Connection > ConnectionPtr;
 	typedef std::shared_ptr< PartRepresentation > PartRepresentationPtr;
 	typedef std::shared_ptr< RobotRepresentation > RobotRepresentationPtr;

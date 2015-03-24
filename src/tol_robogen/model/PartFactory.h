@@ -22,7 +22,7 @@ public:
 	/**
 	 * @return New component based on the given type
 	 */
-	static ModelPtr getComponent(std::string type, std::string id,
+	static ComponentPtr getComponent(std::string type, std::string id,
 			const Configuration & conf,
 			const std::vector<double>& params);
 private:

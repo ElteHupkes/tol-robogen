@@ -8,6 +8,7 @@
 #include <tol_robogen/gazebo/Types.h>
 #include <tol_robogen/gazebo/plugin/ModelController.h>
 #include <tol_robogen/gazebo/motors/MotorFactory.h>
+#include <tol_robogen/gazebo/sensors/SensorFactory.h>
 #include <tol_robogen/gazebo/brain/Brain.h>
 
 #include <boost/bind.hpp>
@@ -76,7 +77,7 @@ void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
 	lastActuationNsec_ = _info.simTime.nsec;
 
 	// TODO Sensors
-	brain_->update(motors_, _info.simTime.Double(), actuationTime_);
+	brain_->update(motors_, sensors_, _info.simTime.Double(), actuationTime_);
 }
 
 
@@ -93,6 +94,18 @@ void ModelController::loadMotors(sdf::ElementPtr sdf) {
     }
 }
 
+void ModelController::loadSensors(sdf::ElementPtr sdf) {
+	if (!sdf->HasElement("tol:sensor")) {
+		return;
+	}
+
+	auto sensor = sdf->GetElement("tol:sensor");
+	while (sensor) {
+		auto sensorObj = SensorFactory::create(sensor, this->model);
+		sensor = sensor->GetNextElement("tol:sensor");
+	}
+}
+
 void ModelController::loadBrain(sdf::ElementPtr sdf) {
 	auto brain = sdf->GetElement("tol:brain");
 
@@ -101,7 +114,7 @@ void ModelController::loadBrain(sdf::ElementPtr sdf) {
 		return;
 	}
 
-	brain_.reset(new Brain(brain, motors_));
+	brain_.reset(new Brain(brain, motors_, sensors_));
 }
 
 } /* namespace gazebo */

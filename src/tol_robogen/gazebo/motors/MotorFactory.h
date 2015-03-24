@@ -9,7 +9,6 @@
 #define TOL_ROBOGEN_GAZEBO_MOTORS_MOTORFACTORY_H_
 
 #include <tol_robogen/gazebo/Types.h>
-#include <tol_robogen/configuration/Configuration.h>
 
 #include <gazebo/common/common.hh>
 

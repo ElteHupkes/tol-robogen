@@ -9,11 +9,10 @@
 
 #include <tol_robogen/model/Robot.h>
 #include <tol_robogen/model/Connection.h>
-#include <tol_robogen/model/ActuatedComponent.h>
-#include <tol_robogen/model/motors/Motor.h>
-
 #include <sdf_builder/Model.h>
 #include <sdf_builder/collision/Collision.h>
+#include <tol_robogen/model/Component.h>
+#include <tol_robogen/model/io/IO.h>
 #include <sdf_builder/collision/Surface.h>
 #include <sdf_builder/collision/Friction.h>
 
@@ -45,7 +44,7 @@ void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brai
 
 Robot::~Robot() {}
 
-const std::vector< ModelPtr >& Robot::getBodyParts() const {
+const std::vector< ComponentPtr >& Robot::getBodyParts() const {
 	return bodyParts_;
 }
 
@@ -53,11 +52,11 @@ const std::vector< ConnectionPtr >& Robot::getBodyConnections() const {
 	return bodyConnections_;
 }
 
-void Robot::addBodyPart(ModelPtr bodyPart) {
+void Robot::addBodyPart(ComponentPtr bodyPart) {
 	bodyParts_.push_back(bodyPart);
 }
 
-void Robot::addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation) {
+void Robot::addBodyConnection(ComponentPtr from, ComponentPtr to, unsigned int fromSlot, unsigned int toSlot, unsigned int orientation) {
 	// Store the connection so we at least may have access to the geometry later
 	bodyConnections_.push_back(ConnectionPtr(new Connection(from, to, fromSlot, toSlot)));
 
@@ -98,14 +97,19 @@ void addSurface(sb::PosableGroupPtr p) {
 			surf->friction.reset(new sb::Friction());
 			surf->friction->friction1 = 1.0;
 			surf->friction->friction2 = 1.0;
-//			surf->friction->slip1 = 0.1;
-//			surf->friction->slip2 = 0.1;
+			surf->friction->slip1 = 0.1;
+			surf->friction->slip2 = 0.1;
 
-			// TODO Add same parameters for Bullet
-			sb::StringElementPtr contact(new sb::StringElement("<contact><ode>"
-					"<soft_cfm>0.01</soft_cfm>"
-					"<soft_erp>0.96</soft_erp>"
-					"</ode></contact>"));
+			sb::StringElementPtr contact(new sb::StringElement("<contact>"
+					"<ode>"
+						"<soft_cfm>0.01</soft_cfm>"
+						"<soft_erp>0.96</soft_erp>"
+					"</ode>"
+					"<bullet>"
+						"<soft_cfm>0.01</soft_cfm>"
+						"<soft_erp>0.96</soft_erp>"
+					"</bullet>"
+					"</contact>"));
 			surf->addElement(contact);
 		}
 	}
@@ -121,7 +125,7 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	plugin << "<plugin name=\"control\" filename=\"libtolmodelcontrol.so\">";
 	plugin << "<tol:settings xmlns:tol=\"http://elte.me\">";
 	for (auto it = bodyParts_.begin(); it != bodyParts_.end(); ++it) {
-		ModelPtr bodyPart = *it;
+		ComponentPtr bodyPart = *it;
 		auto group = bodyPart->getPosableGroup();
 		addSurface(group);
 		out->addPosable(group);
@@ -131,13 +135,10 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 			out->addJoint(*itb);
 		}
 
-		ActuatedComponentPtr actuated = std::dynamic_pointer_cast< ActuatedComponent >(bodyPart);
-		if (actuated) {
-			// Add motor elements
-			auto motors = actuated->getMotors();
-			for (auto itb = motors.begin(); itb != motors.end(); ++itb) {
-				plugin << (*itb)->toXML();
-			}
+		// Add I/O elements
+		auto io = bodyPart->getIO();
+		for (auto itb = io.begin(); itb != io.end(); ++itb) {
+			plugin << (*itb)->toXML();
 		}
 
 		// TODO Add sensors

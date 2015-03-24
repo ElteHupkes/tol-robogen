@@ -9,13 +9,13 @@
 #define TOL_ROBOGEN_ROBOT_H_
 
 #include <tol_robogen/tol.h>
-#include <tol_robogen/model/Model.h>
 #include <tol_robogen/model/Connection.h>
 #include <tol_robogen/evolution/representation/PartRepresentation.h>
 #include <tol_robogen/evolution/representation/NeuralNetworkRepresentation.h>
 #include <tol_robogen/configuration/Configuration.h>
 
 #include <sdf_builder/Types.h>
+#include <tol_robogen/model/Component.h>
 
 namespace tol_robogen {
 
@@ -48,7 +48,7 @@ public:
 	/**
 	 *  @return  the body parts of which the robot is composed of
 	 */
-	const std::vector< ModelPtr >& getBodyParts()
+	const std::vector< ComponentPtr >& getBodyParts()
 			const;
 
 	/**
@@ -60,12 +60,12 @@ public:
 	/**
 	 * Adds a new body part
 	 */
-	void addBodyPart(ModelPtr bodyPart);
+	void addBodyPart(ComponentPtr bodyPart);
 
 	/**
 	 * Adds a new body connection
 	 */
-	void addBodyConnection(ModelPtr from, ModelPtr to, unsigned int fromSlot,
+	void addBodyConnection(ComponentPtr from, ComponentPtr to, unsigned int fromSlot,
 			unsigned int toSlot, unsigned int orientation);
 
 	/**
@@ -77,7 +77,7 @@ protected:
 	/**
 	 * Robot body parts
 	 */
-	std::vector< ModelPtr > bodyParts_;
+	std::vector< ComponentPtr > bodyParts_;
 
 	/**
 	 * Connections between the body parts.
@@ -87,7 +87,7 @@ protected:
 	/**
 	 * The core component of the robot
 	 */
-	ModelPtr coreComponent_;
+	ComponentPtr coreComponent_;
 
 	/**
 	 * Simplest possible representation of the brain.

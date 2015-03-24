@@ -29,10 +29,20 @@ public:
 	void OnUpdate(const ::gazebo::common::UpdateInfo & _info);
 
 protected:
-	// Detects motors in the SDF and loads them
+	/**
+	 * Detects and loads motors in the plugin spec
+	 */
 	void loadMotors(sdf::ElementPtr sdf);
 
-	// Loads the brain specification and creates the neural network
+	/**
+	 * Detecs and loads sensors in the plugin spec
+	 */
+	void loadSensors(sdf::ElementPtr sdf);
+
+	/**
+	 * Loads the brain specification and creates
+	 * the neural network.
+	 */
 	void loadBrain(sdf::ElementPtr sdf);
 
 	/**
@@ -56,6 +66,11 @@ protected:
 	 * Motors in this model
 	 */
 	std::vector< MotorPtr > motors_;
+
+	/**
+	 * Sensors in this model
+	 */
+	std::vector< SensorPtr > sensors_;
 
     // Pointer to the model
     ::gazebo::physics::ModelPtr model;

@@ -24,16 +24,17 @@ public:
 	/**
 	 * @param The brain node
 	 * @param Reference to motor list, will be reordered
-	 * @param The brain update interval in nanoseconds
+	 * @param Reference to the sensor list, will be reordered
 	 */
-	Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors);
+	Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors, std::vector< SensorPtr > & sensors);
 	virtual ~Brain();
 
 	/**
 	* @param Reference to motor list
 	* TODO sensors
 	*/
-	void update(const std::vector< MotorPtr > & motors, double t, unsigned int step);
+	void update(const std::vector< MotorPtr > & motors, const std::vector< SensorPtr > & sensors,
+			double t, unsigned int step);
 
 	// Input / output arrays used for the neural network,
 	// these are stored with the object so they do not need
