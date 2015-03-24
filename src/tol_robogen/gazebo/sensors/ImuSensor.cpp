@@ -22,7 +22,8 @@ ImuSensor::ImuSensor(::gazebo::physics::ModelPtr model, ::gazebo::sensors::Senso
 	this->castSensor_ = boost::dynamic_pointer_cast<gz::sensors::ImuSensor>(sensor);
 
 	if (!this->castSensor_) {
-		throw std::runtime_error("Creating an IMU sensor with a non-IMU sensor object.");
+		std::cerr << "Creating an IMU sensor with a non-IMU sensor object." << std::endl;
+		throw std::runtime_error("Sensor error");
 	}
 }
 

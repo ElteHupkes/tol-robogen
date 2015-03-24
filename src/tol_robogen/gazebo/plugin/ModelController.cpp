@@ -53,7 +53,8 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 	  // Load motors
 	  loadMotors(settings);
 
-	  // TODO Load sensors
+	  // Load sensors
+	  loadSensors(settings);
 
 	  // Load brain, this needs to be done after the motors and
 	  // sensors so they can be reordered.
@@ -102,6 +103,7 @@ void ModelController::loadSensors(sdf::ElementPtr sdf) {
 	auto sensor = sdf->GetElement("tol:sensor");
 	while (sensor) {
 		auto sensorObj = SensorFactory::create(sensor, this->model);
+		sensors_.push_back(sensorObj);
 		sensor = sensor->GetNextElement("tol:sensor");
 	}
 }

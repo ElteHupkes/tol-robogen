@@ -25,7 +25,7 @@ public:
 	 * Number of seconds between sensor updates /
 	 * neural network feeds.
 	 */
-	double updateRate = 0.025;
+	double actuationTime = 0.025;
 
 	/**
 	 * World scaling factor; scaling currently isn't

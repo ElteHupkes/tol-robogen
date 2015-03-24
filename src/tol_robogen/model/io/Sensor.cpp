@@ -12,11 +12,16 @@
 namespace tol_robogen {
 
 Sensor::Sensor(std::string partId, unsigned int ioId,
-		std::string type,
-		sdf_builder::SensorPtr sensor):
-	IO("sensor", partId, ioId, type, sensor->name())
+		std::string type, sdf_builder::SensorPtr sensor,
+		sdf_builder::LinkPtr link):
+	IO("sensor", partId, ioId, type, sensor->name()),
+	link_(link)
 {}
 
 Sensor::~Sensor() {}
+
+std::string Sensor::attributes() {
+	return "link=\""+link_->name()+"\"";
+}
 
 } /* namespace tol_robogen */

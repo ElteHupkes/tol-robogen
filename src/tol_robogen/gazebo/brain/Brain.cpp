@@ -97,13 +97,13 @@ Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors, std::vector
 			// Find the index of the corresponding sensor in the sensor list
 			unsigned int sensorIndex;
 			for (sensorIndex = 0; sensorIndex < sensors.size(); ++sensorIndex) {
-				auto sensor = motors[sensorIndex];
+				auto sensor = sensors[sensorIndex];
 				if (sensor->partId() == partId && sensor->ioId() == ioId) {
 					break;
 				}
 			}
 
-			if (sensorIndex >= motors.size()) {
+			if (sensorIndex >= sensors.size()) {
 				std::cerr << "Sensor for part " << partId <<
 						"with IO ID " << ioId << " could not be located"
 						<< std::endl;
@@ -317,6 +317,7 @@ void Brain::update(const std::vector<MotorPtr>& motors,
 	// Read sensor data and feed the neural network
 	for (unsigned int i = 0, l = sensors.size(); i < l; ++i) {
 		networkInputs_[i] = sensors[i]->read();
+		//std::cout << "Sensor " << i << ", " << networkInputs_[i] << std::endl;
 	}
 	::nn_feed(neuralNetwork_.get(), &networkInputs_[0]);
 
