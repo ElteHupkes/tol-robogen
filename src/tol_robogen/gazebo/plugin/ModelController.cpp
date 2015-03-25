@@ -67,7 +67,20 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 
 	// Connect to the update event of the core (IMU) sensor
 	auto sensor = driver->gzSensor();
-	sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
+
+	// We cannot get the publisher directly from the sensor, but under
+	// the condition that the driver doesn't override the topic it
+	// publishes on manually we can construct it the same way IMUSensor.cc
+	// does.
+	std::string topicName = "~/"+sensor->GetParentName()+"/"+sensor->GetName()+"/imu";
+	boost::replace_all(topicName, "::", "/");
+
+	this->transportNode = gz::transport::NodePtr(new gz::transport::Node());
+	this->transportNode->Init(sensor->GetWorldName());
+	this->coreSubscriber = this->transportNode->Subscribe(
+			topicName, &ModelController::OnUpdate, this);
+
+	//sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
 }
 
 // Called by the world update start event
@@ -88,7 +101,7 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 //	brain_->update(motors_, sensors_, _info.simTime.Double(), actuationTime_);
 //}
 
-void ModelController::OnUpdate() {
+void ModelController::OnUpdate(ConstIMUPtr & /*msg*/) {
 	std::cout << "Update!" << std::endl;
 }
 

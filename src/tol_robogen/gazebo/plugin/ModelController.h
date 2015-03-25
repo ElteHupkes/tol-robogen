@@ -31,7 +31,7 @@ public:
 	/**
 	 * Called when the driver sensor updates
 	 */
-	void OnUpdate();
+	void OnUpdate(ConstIMUPtr & msg);
 protected:
 	/**
 	 * Detects and loads motors in the plugin spec
@@ -83,6 +83,11 @@ protected:
 
     // Pointer to the update event connection
     ::gazebo::event::ConnectionPtr updateConnection;
+
+private:
+    // Pointer to the core subscriber event and transport node
+    ::gazebo::transport::SubscriberPtr coreSubscriber;
+    ::gazebo::transport::NodePtr transportNode;
 };
 
 } /* namespace gazebo */
