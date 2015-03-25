@@ -60,7 +60,7 @@ std::string ServoMotor::attributes() {
 	std::stringstream attrs;
 	attrs << "velocityDriven=\"" << velocityDriven << "\" "
 		  << "gain=\"" << gain << "\" "
-
+		  << "noise=\"" << noise << "\" "
 		  // Rotational velocity we need not scale
 		  << "minVelocity=\"" << ServoMotor::MIN_VELOCITY << "\" "
 		  << "maxVelocity=\"" << ServoMotor::MAX_VELOCITY << "\" ";

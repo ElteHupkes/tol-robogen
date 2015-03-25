@@ -42,6 +42,9 @@ protected:
 	double minVelocity_;
 	double maxVelocity_;
 
+	// Motor noise
+	double noise_;
+
 	/**
 	 * The joint controller of the attaching model
 	 */

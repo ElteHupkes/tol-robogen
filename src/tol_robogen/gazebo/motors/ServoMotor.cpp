@@ -7,6 +7,8 @@
 
 #include <tol_robogen/gazebo/motors/ServoMotor.h>
 
+#include <gazebo/math/Rand.hh>
+
 #include <iostream>
 
 namespace gz = gazebo;
@@ -22,13 +24,13 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 	jointController_(model->GetJointController()),
 	jointName_(joint->GetScopedName()),
 	minVelocity_(0),
-	maxVelocity_(0)
+	maxVelocity_(0),
+	noise_(0),
+	velocityDriven_(false)
 {
 	auto veloParam = motor->GetAttribute("velocityDriven");
 	if (veloParam) {
 		veloParam->Get(velocityDriven_);
-	} else {
-		velocityDriven_ = false;
 	}
 
 	auto gainParam = motor->GetAttribute("gain");
@@ -56,6 +58,11 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 		}
 	}
 
+	auto noiseParam = motor->GetAttribute("noise");
+	if (noiseParam) {
+		noiseParam->Get(noise_);
+	}
+
 	auto minVParam = motor->GetAttribute("minVelocity");
 	auto maxVParam = motor->GetAttribute("maxVelocity");
 
@@ -71,7 +78,10 @@ ServoMotor::ServoMotor(gz::physics::ModelPtr model, gz::physics::JointPtr joint,
 ServoMotor::~ServoMotor() {}
 
 void ServoMotor::update(float networkOutput, unsigned int /*step*/) {
-	// TODO Add motor noise
+	// Motor noise in range +/- noiseLevel * actualValue
+	networkOutput += ((2 * gz::math::Rand::GetDblUniform() * noise_) -
+				noise_) * networkOutput;
+
 	if (velocityDriven_) {
 		double velocity = minVelocity_ + networkOutput * (maxVelocity_ - minVelocity_);
 		jointController_->SetVelocityTarget(jointName_, velocity);

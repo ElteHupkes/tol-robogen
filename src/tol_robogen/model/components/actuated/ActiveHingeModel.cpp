@@ -110,7 +110,7 @@ bool ActiveHingeModel::initModel() {
 	// at this point. We'll have to use derivative / integral gain for
 	// that, but for testing now this is fine.
 	// TODO Tune this
-	double gain = 2 * torque / maxError;
+	double gain = torque / maxError;
 	IOPtr motor(new ServoMotor(id_, 0, revolve,
 			torque, false, gain));
 	this->addIO(motor);

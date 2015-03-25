@@ -39,6 +39,7 @@ ModelController::~ModelController()
 void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
 	// Store the pointer to the model
 	this->model = _parent;
+	this->world = _parent->GetWorld();
 
 	std::cout << "Plugin loaded." << std::endl;
 
@@ -54,55 +55,36 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 	loadMotors(settings);
 
 	// Load sensors
-	auto driver = loadSensors(settings);
+	loadSensors(settings);
 
 	// Load brain, this needs to be done after the motors and
 	// sensors so they can be reordered.
 	loadBrain(settings);
 
-	if (!driver) {
+	if (!this->driver) {
 		std::cerr << "No driving sensor was found, robot will be still." << std::endl;
 		return;
 	}
 
 	// Connect to the update event of the core (IMU) sensor
-	auto sensor = driver->gzSensor();
+	auto sensor = this->driver->gzSensor();
 
-	// We cannot get the publisher directly from the sensor, but under
-	// the condition that the driver doesn't override the topic it
-	// publishes on manually we can construct it the same way IMUSensor.cc
-	// does.
-	std::string topicName = "~/"+sensor->GetParentName()+"/"+sensor->GetName()+"/imu";
-	boost::replace_all(topicName, "::", "/");
+	this->driverUpdate = sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
 
-	this->transportNode = gz::transport::NodePtr(new gz::transport::Node());
-	this->transportNode->Init(sensor->GetWorldName());
-	this->coreSubscriber = this->transportNode->Subscribe(
-			topicName, &ModelController::OnUpdate, this);
-
-	//sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
+	// TODO Pretty sure this just forces the sensor to be always
+	// on again; can we make it work without this?
+	sensor->SetActive(true);
 }
 
-// Called by the world update start event
-//void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
-//	unsigned int nsecPassed = (_info.simTime.sec - lastActuationSec_) * 1e9 +
-//							(_info.simTime.nsec - lastActuationNsec_);
-//
-//	if (nsecPassed < actuationTime_) {
-//		// Not time to actuate yet
-//		return;
-//	}
-//
-//	// Update simulation time
-//	lastActuationSec_ = _info.simTime.sec;
-//	lastActuationNsec_ = _info.simTime.nsec;
-//
-//	// TODO Sensors
-//	brain_->update(motors_, sensors_, _info.simTime.Double(), actuationTime_);
-//}
+// Called when the driver sensor (i.e. core component) updates
+void ModelController::OnUpdate() {
+	auto simTime = this->world->GetSimTime();
+	unsigned int nsecPassed = (simTime.sec - lastActuationSec_) * 1e9 +
+								(simTime.nsec - lastActuationNsec_);
 
-void ModelController::OnUpdate(ConstIMUPtr & /*msg*/) {
-	std::cout << "Update!" << std::endl;
+	lastActuationSec_ = simTime.sec;
+	lastActuationNsec_ = simTime.nsec;
+	brain_->update(motors_, sensors_, simTime.Double(), nsecPassed);
 }
 
 void ModelController::loadMotors(sdf::ElementPtr sdf) {
@@ -118,11 +100,10 @@ void ModelController::loadMotors(sdf::ElementPtr sdf) {
     }
 }
 
-SensorPtr ModelController::loadSensors(sdf::ElementPtr sdf) {
-	SensorPtr driver;
+void ModelController::loadSensors(sdf::ElementPtr sdf) {
 
 	if (!sdf->HasElement("tol:sensor")) {
-		return driver;
+		return;
 	}
 
 	auto sensor = sdf->GetElement("tol:sensor");
@@ -135,14 +116,12 @@ SensorPtr ModelController::loadSensors(sdf::ElementPtr sdf) {
 			sensor->GetAttribute("driver")->Get(isDriver);
 
 			if (isDriver) {
-				driver = sensorObj;
+				this->driver = sensorObj;
 			}
 		}
 
 		sensor = sensor->GetNextElement("tol:sensor");
 	}
-
-	return driver;
 }
 
 void ModelController::loadBrain(sdf::ElementPtr sdf) {

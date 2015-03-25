@@ -31,7 +31,7 @@ public:
 	/**
 	 * Called when the driver sensor updates
 	 */
-	void OnUpdate(ConstIMUPtr & msg);
+	void OnUpdate();
 protected:
 	/**
 	 * Detects and loads motors in the plugin spec
@@ -40,10 +40,8 @@ protected:
 
 	/**
 	 * Detecs and loads sensors in the plugin spec.
-	 *
-	 * @return The driving sensor, if any is found
 	 */
-	SensorPtr loadSensors(sdf::ElementPtr sdf);
+	void loadSensors(sdf::ElementPtr sdf);
 
 	/**
 	 * Loads the brain specification and creates
@@ -81,13 +79,14 @@ protected:
     // Pointer to the model
     ::gazebo::physics::ModelPtr model;
 
-    // Pointer to the update event connection
-    ::gazebo::event::ConnectionPtr updateConnection;
+    // Pointer to the world
+	::gazebo::physics::WorldPtr world;
 
+    // Pointer to the driver sensor
+    SensorPtr driver;
 private:
-    // Pointer to the core subscriber event and transport node
-    ::gazebo::transport::SubscriberPtr coreSubscriber;
-    ::gazebo::transport::NodePtr transportNode;
+    // Driver update event pointer
+    ::gazebo::event::ConnectionPtr driverUpdate;
 };
 
 } /* namespace gazebo */
