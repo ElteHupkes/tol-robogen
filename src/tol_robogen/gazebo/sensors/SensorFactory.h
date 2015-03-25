@@ -25,7 +25,8 @@ public:
 	 * Creates a new sensor in the given model, from the
 	 * given SDF element pointer.
 	 */
-	static SensorPtr create(sdf::ElementPtr sensor, ::gazebo::physics::ModelPtr model);
+	static SensorPtr create(sdf::ElementPtr sensor,
+			::gazebo::physics::ModelPtr model);
 };
 
 } /* namespace gazebo */

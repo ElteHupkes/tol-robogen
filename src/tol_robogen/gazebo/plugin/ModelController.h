@@ -11,6 +11,7 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>
+#include <gazebo/msgs/msgs.hh>
 
 #include <tol_robogen/gazebo/Types.h>
 
@@ -26,8 +27,11 @@ public:
 
 public:
 	void Load(::gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-	void OnUpdate(const ::gazebo::common::UpdateInfo & _info);
 
+	/**
+	 * Called when the driver sensor updates
+	 */
+	void OnUpdate();
 protected:
 	/**
 	 * Detects and loads motors in the plugin spec
@@ -35,9 +39,11 @@ protected:
 	void loadMotors(sdf::ElementPtr sdf);
 
 	/**
-	 * Detecs and loads sensors in the plugin spec
+	 * Detecs and loads sensors in the plugin spec.
+	 *
+	 * @return The driving sensor, if any is found
 	 */
-	void loadSensors(sdf::ElementPtr sdf);
+	SensorPtr loadSensors(sdf::ElementPtr sdf);
 
 	/**
 	 * Loads the brain specification and creates

@@ -37,6 +37,11 @@ public:
 	 */
 	unsigned int ioId();
 
+	/**
+	 * @return The attached Gazebo sensor
+	 */
+	::gazebo::sensors::SensorPtr gzSensor();
+
 protected:
 	/**
 	 * The model this motor is part of

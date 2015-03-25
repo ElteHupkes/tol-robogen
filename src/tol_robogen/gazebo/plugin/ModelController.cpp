@@ -5,13 +5,17 @@
  *      Author: elte
  */
 
-#include <tol_robogen/gazebo/Types.h>
 #include <tol_robogen/gazebo/plugin/ModelController.h>
 #include <tol_robogen/gazebo/motors/MotorFactory.h>
 #include <tol_robogen/gazebo/sensors/SensorFactory.h>
+#include <tol_robogen/gazebo/sensors/Sensor.h>
 #include <tol_robogen/gazebo/brain/Brain.h>
 
+#include <gazebo/transport/transport.hh>
+#include <gazebo/sensors/sensors.hh>
+
 #include <boost/bind.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include <iostream>
 #include <stdexcept>
@@ -33,54 +37,60 @@ ModelController::~ModelController()
 {}
 
 void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
-  // Store the pointer to the model
-  this->model = _parent;
+	// Store the pointer to the model
+	this->model = _parent;
 
-  // Listen to the update event. This event is broadcast every
-  // simulation iteration.
-  this->updateConnection = gz::event::Events::ConnectWorldUpdateBegin(
-      boost::bind(&ModelController::OnUpdate, this, _1));
+	std::cout << "Plugin loaded." << std::endl;
 
-  // TODO this should be loaded from the world / config
-  // For now use 1/25 (i.e. 40ms, i.e. 40,000,000 ns)
-  actuationTime_ = 40e6;
-
-  std::cout << "Plugin loaded." << std::endl;
-
-  if (_sdf->HasElement("tol:settings")) {
-	  auto settings = _sdf->GetElement("tol:settings");
-
-	  // Load motors
-	  loadMotors(settings);
-
-	  // Load sensors
-	  loadSensors(settings);
-
-	  // Load brain, this needs to be done after the motors and
-	  // sensors so they can be reordered.
-	  loadBrain(settings);
-
-  }
-}
-
-// Called by the world update start event
-void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
-	unsigned int nsecPassed = (_info.simTime.sec - lastActuationSec_) * 1e9 +
-							(_info.simTime.nsec - lastActuationNsec_);
-
-	if (nsecPassed < actuationTime_) {
-		// Not time to actuate yet
+	if (!_sdf->HasElement("tol:robot_config")) {
+		std::cerr << "No `tol:robot_config` element found, controller not initialized."
+			  << std::endl;
 		return;
 	}
 
-	// Update simulation time
-	lastActuationSec_ = _info.simTime.sec;
-	lastActuationNsec_ = _info.simTime.nsec;
+	auto settings = _sdf->GetElement("tol:robot_config");
 
-	// TODO Sensors
-	brain_->update(motors_, sensors_, _info.simTime.Double(), actuationTime_);
+	// Load motors
+	loadMotors(settings);
+
+	// Load sensors
+	auto driver = loadSensors(settings);
+
+	// Load brain, this needs to be done after the motors and
+	// sensors so they can be reordered.
+	loadBrain(settings);
+
+	if (!driver) {
+		std::cerr << "No driving sensor was found, robot will be still." << std::endl;
+		return;
+	}
+
+	// Connect to the update event of the core (IMU) sensor
+	auto sensor = driver->gzSensor();
+	sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
 }
 
+// Called by the world update start event
+//void ModelController::OnUpdate(const gz::common::UpdateInfo & _info) {
+//	unsigned int nsecPassed = (_info.simTime.sec - lastActuationSec_) * 1e9 +
+//							(_info.simTime.nsec - lastActuationNsec_);
+//
+//	if (nsecPassed < actuationTime_) {
+//		// Not time to actuate yet
+//		return;
+//	}
+//
+//	// Update simulation time
+//	lastActuationSec_ = _info.simTime.sec;
+//	lastActuationNsec_ = _info.simTime.nsec;
+//
+//	// TODO Sensors
+//	brain_->update(motors_, sensors_, _info.simTime.Double(), actuationTime_);
+//}
+
+void ModelController::OnUpdate() {
+	std::cout << "Update!" << std::endl;
+}
 
 void ModelController::loadMotors(sdf::ElementPtr sdf) {
 	if (!sdf->HasElement("tol:motor")) {
@@ -95,17 +105,31 @@ void ModelController::loadMotors(sdf::ElementPtr sdf) {
     }
 }
 
-void ModelController::loadSensors(sdf::ElementPtr sdf) {
+SensorPtr ModelController::loadSensors(sdf::ElementPtr sdf) {
+	SensorPtr driver;
+
 	if (!sdf->HasElement("tol:sensor")) {
-		return;
+		return driver;
 	}
 
 	auto sensor = sdf->GetElement("tol:sensor");
 	while (sensor) {
 		auto sensorObj = SensorFactory::create(sensor, this->model);
 		sensors_.push_back(sensorObj);
+
+		if (sensor->HasAttribute("driver")) {
+			bool isDriver;
+			sensor->GetAttribute("driver")->Get(isDriver);
+
+			if (isDriver) {
+				driver = sensorObj;
+			}
+		}
+
 		sensor = sensor->GetNextElement("tol:sensor");
 	}
+
+	return driver;
 }
 
 void ModelController::loadBrain(sdf::ElementPtr sdf) {

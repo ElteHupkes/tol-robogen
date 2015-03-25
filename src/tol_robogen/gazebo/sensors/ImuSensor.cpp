@@ -30,6 +30,7 @@ ImuSensor::ImuSensor(::gazebo::physics::ModelPtr model, ::gazebo::sensors::Senso
 ImuSensor::~ImuSensor() {}
 
 float ImuSensor::read() {
+	std::cout << this->castSensor_->GetLinearAcceleration() << std::endl;
 	if (ioId_ < 3) {
 		return this->castSensor_->GetLinearAcceleration()[ioId_];
 	} else if(ioId_ < 6) {

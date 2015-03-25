@@ -29,5 +29,9 @@ unsigned int Sensor::ioId() {
 	return ioId_;
 }
 
+::gazebo::sensors::SensorPtr Sensor::gzSensor() {
+	return sensor_;
+}
+
 } /* namespace gazebo */
 } /* namespace tol_robogen */

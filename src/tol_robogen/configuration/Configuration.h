@@ -8,30 +8,23 @@
 #ifndef TOL_ROBOGEN_CONFIGURATION_H_
 #define TOL_ROBOGEN_CONFIGURATION_H_
 
+#include <string>
+
 namespace tol_robogen {
 
 /**
- * A configuration class tied to neither the representation
- * nor the Gazebo part, which is convenient for passing
- * config around.
+ * A configuration class used when Robots are generated.
  */
 class Configuration {
 public:
 	Configuration();
 	virtual ~Configuration();
 
-public:
 	/**
 	 * Number of seconds between sensor updates /
 	 * neural network feeds.
 	 */
 	double actuationTime = 0.025;
-
-	/**
-	 * World scaling factor; scaling currently isn't
-	 * really reliable.
-	 */
-	double scaling = 1.0;
 
 	/**
 	 * The level of motor noise
@@ -42,6 +35,13 @@ public:
 	 * The level of sensor noise
 	 */
 	double sensorNoiseLevel = 0;
+
+	/**
+	 * World scaling factor; scaling currently isn't
+	 * reliable, I advice against using this for other
+	 * purposes than visual model checks.
+	 */
+	double scaling = 1.0;
 };
 
 } /* namespace sdf_builder */

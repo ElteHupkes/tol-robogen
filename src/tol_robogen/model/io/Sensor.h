@@ -28,13 +28,19 @@ public:
 	 */
 	Sensor(std::string partId, unsigned int ioId,
 			std::string type, sdf_builder::SensorPtr sensor,
-			sdf_builder::LinkPtr link);
+			sdf_builder::LinkPtr link, bool driver = false);
 	virtual ~Sensor();
 
 protected:
 	virtual std::string attributes();
 
 	sdf_builder::LinkPtr link_;
+
+	/**
+	 * Whether or not this is the main (i.e. update driving) sensor
+	 * for the robot.
+	 */
+	bool driver_;
 };
 
 } /* namespace tol_robogen */

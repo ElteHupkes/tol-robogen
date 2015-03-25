@@ -121,31 +121,34 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 	std::stringstream plugin;
 
 	// Attach model controller plugin with parameters
-	// TODO sensible namespace
 	plugin << "<plugin name=\"control\" filename=\"libtolmodelcontrol.so\">";
-	plugin << "<tol:settings xmlns:tol=\"http://elte.me\">";
+	plugin << "<tol:robot_config xmlns:tol=\"https://github.com/ElteHupkes/tol-robogen\">";
+
 	for (auto it = bodyParts_.begin(); it != bodyParts_.end(); ++it) {
 		ComponentPtr bodyPart = *it;
 		auto group = bodyPart->getPosableGroup();
+
+		// Add collision surface parameters
 		addSurface(group);
+
+		// Add body parts
 		out->addPosable(group);
 
+		// Add joints
 		auto joints = bodyPart->joints();
 		for (auto itb = joints.begin(); itb != joints.end(); ++itb) {
 			out->addJoint(*itb);
 		}
 
-		// Add I/O elements
+		// Add I/O descriptors
 		auto io = bodyPart->getIO();
 		for (auto itb = io.begin(); itb != io.end(); ++itb) {
 			plugin << (*itb)->toXML();
 		}
-
-		// TODO Add sensors
 	}
 
 	plugin << brainXML_;
-	plugin << "</tol:settings>";
+	plugin << "</tol:robot_config>";
 	plugin << "</plugin>\n";
 	sb::ElementPtr pluginElem(new sb::StringElement(plugin.str()));
 	out->addElement(pluginElem);

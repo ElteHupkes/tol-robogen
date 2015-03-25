@@ -22,7 +22,8 @@ SensorFactory::SensorFactory()
 SensorFactory::~SensorFactory()
 {}
 
-SensorPtr SensorFactory::create(sdf::ElementPtr sensor, ::gazebo::physics::ModelPtr model) {
+SensorPtr SensorFactory::create(sdf::ElementPtr sensor,
+		::gazebo::physics::ModelPtr model) {
 	auto typeParam = sensor->GetAttribute("type");
 	auto nameParam = sensor->GetAttribute("ref");
 	auto partIdParam = sensor->GetAttribute("part_id");
@@ -56,15 +57,17 @@ SensorPtr SensorFactory::create(sdf::ElementPtr sensor, ::gazebo::physics::Model
 		throw std::runtime_error("Sensor error");
 	}
 
+	SensorPtr out;
+
 	auto type = typeParam->GetAsString();
 	if ("imu" == type) {
-		SensorPtr out(new ImuSensor(model, gzSensor, partId, ioId));
-		return out;
+		out.reset(new ImuSensor(model, gzSensor, partId, ioId));
 	} else {
 		std::cerr << "Sensor type '" << type << "' is not supported." << std::endl;
+		throw std::runtime_error("Sensor error");
 	}
 
-	throw std::runtime_error("Not yet implemented");
+	return out;
 }
 
 } /* namespace gazebo */

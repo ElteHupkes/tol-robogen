@@ -37,14 +37,10 @@ bool CoreComponentModel::initModel() {
 		// Add IMU;
 		sb::SensorPtr imu(new sb::Sensor("core_imu", "imu"));
 		imu->updateRate = 1.0 / conf_.actuationTime;
-		imu->topic = id_+"_imu";
 
-		// Needs to be always on for arbitrary actuation time; if
-		// we decide to instead update based on the IMU this can
-		// probably be turned off.
-		// TODO Think about this as it might lead to a performance
-		// increase.
-		imu->alwaysOn = true;
+		// The robot will be driven by the core component's update,
+		// so no need to keep the sensor always on!
+		imu->alwaysOn = false;
 
 		// TODO Specify noise parameters
 
@@ -54,7 +50,7 @@ bool CoreComponentModel::initModel() {
 		// Register all six outputs of the IMU sensor with
 		// the neural network.
 		for (unsigned int i = 0; i < 6; ++i) {
-			IOPtr io(new Sensor(id_, i, "imu", imu, coreComponent_));
+			IOPtr io(new Sensor(id_, i, "imu", imu, coreComponent_, i == 0));
 			this->addIO(io);
 		}
 	}
