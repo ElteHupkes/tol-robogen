@@ -25,11 +25,11 @@ namespace tol_robogen {
 
 Robot::Robot() {}
 
-Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config) {
+Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config) {
 	init(core, brain, config);
 }
 
-void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config) {
+void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config) {
 	if (coreComponent_) {
 		throw std::runtime_error("This robot has already been initialized "
 				"It is currently not possible to reinitialize a robot,"

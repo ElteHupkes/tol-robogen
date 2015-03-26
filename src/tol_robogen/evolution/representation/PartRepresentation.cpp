@@ -146,7 +146,7 @@ PartRepresentationPtr PartRepresentation::create(char type,
 }
 
 
-ComponentPtr PartRepresentation::addSubtreeToRobot(Robot* robot, const Configuration & conf,
+ComponentPtr PartRepresentation::addSubtreeToRobot(Robot* robot, ConfigurationPtr conf,
 		ComponentPtr parent,
 		unsigned int fromSlot, unsigned int toSlot) {
 	//convert parameters from [0,1] back to valid range

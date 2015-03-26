@@ -3,5 +3,6 @@
 
 // Includes all sensor types for convenience
 #include <tol_robogen/gazebo/sensors/ImuSensor.h>
+#include <tol_robogen/gazebo/sensors/LightSensor.h>
 
 #endif

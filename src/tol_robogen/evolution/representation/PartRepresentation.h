@@ -140,7 +140,7 @@ public:
 	 * @return The model created for this part
 	 */
 	ComponentPtr addSubtreeToRobot(Robot* robot,
-			const Configuration & conf,
+			ConfigurationPtr conf,
 			ComponentPtr parent = ComponentPtr(),
 			unsigned int fromSlot = -1, unsigned int toSlot = -1);
 

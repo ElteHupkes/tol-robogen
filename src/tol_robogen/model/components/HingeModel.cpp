@@ -44,7 +44,7 @@ const float HingeModel::CONNECTION_ROTATION_OFFSET = 18.5;
 
 // Center of rotation 18.5 from the slot
 
-HingeModel::HingeModel(std::string id, const Configuration & conf) :
+HingeModel::HingeModel(std::string id, ConfigurationPtr conf) :
 		Component(id, conf)
 {}
 

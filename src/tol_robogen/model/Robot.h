@@ -34,14 +34,14 @@ public:
 	 * Initialize robot from core component part
 	 * representation.
 	 */
-	Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config);
+	Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config);
 
 	virtual ~Robot();
 
 	/**
 	 * Initializes the robot with the given core.
 	 */
-	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, const Configuration & config);
+	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config);
 
 	// TODO copy constructor, assignment operator
 

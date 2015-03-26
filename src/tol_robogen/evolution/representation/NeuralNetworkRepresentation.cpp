@@ -448,6 +448,7 @@ bool NeuralNetworkRepresentation::getLinearRepresentation(
 std::string NeuralNetworkRepresentation::toXML() {
 	std::stringstream out;
 	out << "<tol:brain>";
+
 	for (auto it = neurons_.begin(); it != neurons_.end(); ++it) {
 		out << it->second->toXML() << '\n';
 	}

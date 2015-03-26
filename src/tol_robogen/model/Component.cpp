@@ -17,7 +17,7 @@ namespace tol_robogen {
 
 namespace sb = sdf_builder;
 
-Component::Component(std::string id, const Configuration & conf) :
+Component::Component(std::string id, ConfigurationPtr conf) :
 		id_(id),
 		posableGroup_(sb::PosableGroupPtr(new sb::PosableGroup("group_"+id))),
 		conf_(conf)
@@ -55,11 +55,11 @@ void Component::setRootAttitude(const sb::Quaternion& quat) {
 }
 
 double Component::inMm(double x) {
-	return conf_.scaling * x / 1000;
+	return conf_->scaling * x / 1000;
 }
 
 double Component::inGrams(double x) {
-	return pow(conf_.scaling, 3) * x / 1000;
+	return pow(conf_->scaling, 3) * x / 1000;
 }
 
 /**
@@ -75,7 +75,7 @@ double Component::inGrams(double x) {
  * is thus s^5, where s is the spatial scaling factor.
  */
 double Component::inNm(double x) {
-	return pow(conf_.scaling, 5) * x;
+	return pow(conf_->scaling, 5) * x;
 }
 
 void Component::addLink(sb::LinkPtr body, int id) {

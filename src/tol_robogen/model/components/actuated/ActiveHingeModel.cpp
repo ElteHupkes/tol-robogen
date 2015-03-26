@@ -24,7 +24,7 @@ const float ActiveHingeModel::SERVO_LENGTH = 24.5;
 const float ActiveHingeModel::SERVO_HEIGHT = 10;
 const float ActiveHingeModel::SERVO_ROTATION_OFFSET = 20.5; // Right to left
 
-ActiveHingeModel::ActiveHingeModel(std::string id, const Configuration & conf) :
+ActiveHingeModel::ActiveHingeModel(std::string id, ConfigurationPtr conf) :
 		Component(id, conf)
 {}
 

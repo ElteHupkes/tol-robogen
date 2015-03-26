@@ -18,7 +18,7 @@ PartFactory::PartFactory() {}
 PartFactory::~PartFactory() {}
 
 ComponentPtr PartFactory::getComponent(std::string type, std::string id,
-		const Configuration & conf, const std::vector<double> & params) {
+		ConfigurationPtr conf, const std::vector<double> & params) {
 	ComponentPtr model;
 
 	if (PART_TYPE_CORE_COMPONENT == type) {
@@ -29,6 +29,8 @@ ComponentPtr PartFactory::getComponent(std::string type, std::string id,
 		model.reset(new HingeModel(id, conf));
 	} else if (PART_TYPE_ACTIVE_HINGE == type) {
 		model.reset(new ActiveHingeModel(id, conf));
+	} else if (PART_TYPE_LIGHT_SENSOR == type) {
+		model.reset(new LightSensorModel(id, conf, true));
 	}
 
 	// TODO Add other models
@@ -36,7 +38,7 @@ ComponentPtr PartFactory::getComponent(std::string type, std::string id,
 	if (!model) {
 		std::cerr << "Part type '" << type << "' could not be resolved!"
 				<< std::endl;
-		throw std::runtime_error("");
+		throw std::runtime_error("Part error");
 	}
 
 	// Initialize the model

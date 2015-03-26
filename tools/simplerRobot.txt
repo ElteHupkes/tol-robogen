@@ -1,5 +1,6 @@
 0 E Core 0
 	0 ActiveHinge Hip1 0 
+	2 LightSensor Light1 0
 
 
 

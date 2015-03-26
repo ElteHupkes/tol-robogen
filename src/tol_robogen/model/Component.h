@@ -83,7 +83,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Component(std::string id, const Configuration & conf);
+	Component(std::string id, ConfigurationPtr conf);
 
 	/**
 	 * Destructor
@@ -319,7 +319,7 @@ protected:
 	/**
 	 * Holds generator configuration
 	 */
-	Configuration conf_;
+	ConfigurationPtr conf_;
 
 	/**
 	 * Registered motors for this component

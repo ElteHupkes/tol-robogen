@@ -62,7 +62,11 @@ SensorPtr SensorFactory::create(sdf::ElementPtr sensor,
 	auto type = typeParam->GetAsString();
 	if ("imu" == type) {
 		out.reset(new ImuSensor(model, gzSensor, partId, ioId));
-	} else {
+	} else if ("light" == type) {
+		out.reset(new LightSensor(model, gzSensor, partId, ioId));
+	}
+
+	if (!out) {
 		std::cerr << "Sensor type '" << type << "' is not supported." << std::endl;
 		throw std::runtime_error("Sensor error");
 	}

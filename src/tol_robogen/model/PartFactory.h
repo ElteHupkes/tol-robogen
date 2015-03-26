@@ -23,7 +23,7 @@ public:
 	 * @return New component based on the given type
 	 */
 	static ComponentPtr getComponent(std::string type, std::string id,
-			const Configuration & conf,
+			ConfigurationPtr conf,
 			const std::vector<double>& params);
 private:
 	// Singleton

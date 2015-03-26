@@ -18,7 +18,7 @@ const float CoreComponentModel::CORE_MASS = 55.4;
 const float CoreComponentModel::WIDTH = 46.5;
 
 
-CoreComponentModel::CoreComponentModel(std::string id, const Configuration & conf, bool hasSensors) :
+CoreComponentModel::CoreComponentModel(std::string id, ConfigurationPtr conf, bool hasSensors) :
 		Component(id, conf), hasSensors_(hasSensors)
 {}
 
@@ -36,7 +36,7 @@ bool CoreComponentModel::initModel() {
 	if (hasSensors_) {
 		// Add IMU;
 		sb::SensorPtr imu(new sb::Sensor("core_imu", "imu"));
-		imu->updateRate = 1.0 / conf_.actuationTime;
+		imu->updateRate = 1.0 / conf_->actuationTime;
 
 		// The robot will be driven by the core component's update,
 		// so no need to keep the sensor always on!
@@ -177,19 +177,5 @@ sb::Vector3 CoreComponentModel::getSlotOrientation(unsigned int i) {
 	return quat * tangent;
 
 }
-
-//void CoreComponentModel::getSensors(
-//		std::vector<boost::shared_ptr<Sensor> >& sensors) {
-//	if (sensor_ != NULL) {
-//		sensor_->getSensors(sensors);
-//	}
-//}
-//
-//void CoreComponentModel::updateSensors(boost::shared_ptr<Environment>& env) {
-//	if (sensor_ != NULL) {
-//		sensor_->update(this->getRootPosition(), this->getRootAttitude(),
-//				env->getTimeElapsed());
-//	}
-//}
 
 }

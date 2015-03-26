@@ -170,7 +170,7 @@ public:
 	 * Creates a robot that can be converted to SDF from
 	 * this representation.
 	 */
-	RobotPtr toRobot(const Configuration & config) const;
+	RobotPtr toRobot(ConfigurationPtr config) const;
 
 	/**
 	 * @return the id of the root body part
