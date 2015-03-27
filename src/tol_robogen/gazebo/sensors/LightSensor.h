@@ -24,12 +24,31 @@ public:
 	 */
 	virtual float read();
 
+	/**
+	 * Called when the camera sensor is updated
+	 */
+	void OnUpdate();
+
 private:
 	/**
 	 * Sensor dynamically casted to correct type,
 	 * so it needs to happen only once.
 	 */
 	::gazebo::sensors::CameraSensorPtr castSensor_;
+
+	/**
+	 * Size of the data which we determine once
+	 */
+	unsigned int dataSize_;
+
+	/**
+	 * Last calculated average
+	 */
+	float lastValue_;
+
+private:
+    // Pointer to the update connection
+    ::gazebo::event::ConnectionPtr updateConnection_;
 };
 
 } /* namespace gazebo */

@@ -69,7 +69,7 @@ void ModelController::Load(gz::physics::ModelPtr _parent, sdf::ElementPtr _sdf) 
 	// Connect to the update event of the core (IMU) sensor
 	auto sensor = this->driver->gzSensor();
 
-	this->driverUpdate = sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
+	this->updateConnection_ = sensor->ConnectUpdated(boost::bind(&ModelController::OnUpdate, this));
 
 	// TODO Pretty sure this just forces the sensor to be always
 	// on again; can we make it work without this?

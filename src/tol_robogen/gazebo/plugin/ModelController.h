@@ -86,7 +86,7 @@ protected:
     SensorPtr driver;
 private:
     // Driver update event pointer
-    ::gazebo::event::ConnectionPtr driverUpdate;
+    ::gazebo::event::ConnectionPtr updateConnection_;
 };
 
 } /* namespace gazebo */

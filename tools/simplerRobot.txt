@@ -1,7 +1,5 @@
 0 E Core 0
-	0 ActiveHinge Hip1 0 
 	2 LightSensor Light1 0
 
 
 
-Hip1 0 Oscillator 0.8 -0.8 1

@@ -11,6 +11,8 @@
 
 #include <tol_robogen/model/io/Sensor.h>
 
+#include <sstream>
+
 namespace sb = sdf_builder;
 
 namespace tol_robogen {
@@ -39,13 +41,22 @@ bool LightSensorModel::initModel() {
 	cam->alwaysOn = true;
 	cam->visualize = true;
 
-	// TODO Noise values
-	cam->addString("<camera>"
+	std::stringstream camDetails;
+	camDetails << "<camera>"
 			"<image>"
 			"<width>1</width>"
 			"<height>1</height>"
+			"<format>R8G8B8</format>"
 			"</image>"
-			"</camera>");
+			// TODO Decide cutoff; between 0.01mm and 50m is quite
+			// arbitrary.
+			"<clip><near>" << inMm(0.01) << "</near>"
+			"<far>" << inMm(50000) << "</far></clip>"
+			"</camera>";
+
+	// TODO Noise values
+
+	cam->addString(camDetails.str());
 	this->sensorRoot_->addPosable(cam);
 
 	IOPtr io(new Sensor(id_, 0, "light", cam, sensorRoot_));

@@ -38,7 +38,7 @@ void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brai
 
 	coreComponent_ = core->addSubtreeToRobot(this, config);
 
-	// TODO Is this sufficient?
+	// Store brain XML directly without intermediate representation
 	brainXML_ = brain->toXML();
 }
 
