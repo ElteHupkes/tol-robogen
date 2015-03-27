@@ -1,6 +1,7 @@
 0 E Core 0
 	2 LightSensor Light1 0
 	0 TouchSensor Touch1 0
+	1 ActiveHinge Hip1 0
 
 
 

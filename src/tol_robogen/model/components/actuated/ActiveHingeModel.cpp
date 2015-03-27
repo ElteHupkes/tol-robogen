@@ -42,7 +42,6 @@ bool ActiveHingeModel::initModel() {
 	// Set the masses, geometries and positions for the various boxes
 	float separation = inMm(0.1);
 
-
 	double thickness = inMm(SLOT_THICKNESS);
 	double width = inMm(SLOT_WIDTH);
 	double frameLength = inMm(FRAME_LENGTH);
@@ -61,18 +60,17 @@ bool ActiveHingeModel::initModel() {
 	// Box and position for servo
 	double xServo = xFrame + (inMm(FRAME_ROTATION_OFFSET) - (frameLength / 2))
 				+ (servoLength / 2 - (servoLength - inMm(SERVO_ROTATION_OFFSET)));
-	servo->makeBox(inGrams(MASS_SERVO), servoLength, width, inMm(SERVO_HEIGHT));
+	auto servoGroup = servo->makeBox(inGrams(MASS_SERVO), servoLength, width, inMm(SERVO_HEIGHT));
 	servo->position(sb::Vector3(xServo, 0, 0));
 
 	// Color the servo black so we can easily recognize it
-	sb::ElementPtr color(new sb::StringElement("<material>"
-          "<script>"
-            "<uri>file://media/materials/scripts/gazebo.material</uri>"
-            "<name>Gazebo/Black</name>"
-          "</script>"
-        "</material>"));
-	auto vis = std::dynamic_pointer_cast< sb::Visual >(servo->posables()[1]);
-	vis->addElement(color);
+	auto vis = std::dynamic_pointer_cast< sb::Visual >(servoGroup->posables()[1]);
+	vis->addString("<material>"
+	  "<script>"
+		"<uri>file://media/materials/scripts/gazebo.material</uri>"
+		"<name>Gazebo/Black</name>"
+	  "</script>"
+	"</material>");
 
 	// Box and position for tail
 	double xTail = xServo + servoLength / 2 + separation + thickness / 2;
@@ -195,11 +193,5 @@ sb::Vector3 ActiveHingeModel::getSlotOrientation(unsigned int i) {
 	return quat * axis;
 
 }
-
-//void ActiveHingeModel::getMotors(
-//		std::vector<boost::shared_ptr<Motor> >& motors) {
-//	motors.resize(1);
-//	motors[0] = this->motor_;
-//}
 
 }

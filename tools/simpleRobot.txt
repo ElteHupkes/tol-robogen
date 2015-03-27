@@ -7,6 +7,7 @@
 		0 FixedBrick UpperLeg2 1
 			0 ActiveHinge Knee2 0 
 				0 FixedBrick LowerLeg2 0 
+					0 TouchSensor Touch1 0
 	2 LightSensor Light1 0
 
 
