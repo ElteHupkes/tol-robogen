@@ -38,10 +38,6 @@ bool CoreComponentModel::initModel() {
 		sb::SensorPtr imu(new sb::Sensor("core_imu", "imu"));
 		imu->updateRate = 1.0 / conf_->actuationTime;
 
-		// The robot will be driven by the core component's update,
-		// so no need to keep the sensor always on!
-		imu->alwaysOn = false;
-
 		// TODO Specify noise parameters
 
 		// Add the SDF sensor object to the core link

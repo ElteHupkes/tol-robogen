@@ -64,6 +64,8 @@ SensorPtr SensorFactory::create(sdf::ElementPtr sensor,
 		out.reset(new ImuSensor(model, gzSensor, partId, ioId));
 	} else if ("light" == type) {
 		out.reset(new LightSensor(model, gzSensor, partId, ioId));
+	} else if ("touch" == type) {
+		out.reset(new TouchSensor(model, gzSensor, partId, ioId));
 	}
 
 	if (!out) {

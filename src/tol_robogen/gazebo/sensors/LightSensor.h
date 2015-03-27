@@ -46,7 +46,6 @@ private:
 	 */
 	float lastValue_;
 
-private:
     // Pointer to the update connection
     ::gazebo::event::ConnectionPtr updateConnection_;
 };

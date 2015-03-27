@@ -31,6 +31,8 @@ ComponentPtr PartFactory::getComponent(std::string type, std::string id,
 		model.reset(new ActiveHingeModel(id, conf));
 	} else if (PART_TYPE_LIGHT_SENSOR == type) {
 		model.reset(new LightSensorModel(id, conf, true));
+	} else if (PART_TYPE_TOUCH_SENSOR == type) {
+		model.reset(new TouchSensorModel(id, conf));
 	}
 
 	// TODO Add other models
