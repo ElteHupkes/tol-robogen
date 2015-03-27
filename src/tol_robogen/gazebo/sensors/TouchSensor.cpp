@@ -38,7 +38,6 @@ TouchSensor::~TouchSensor()
 
 void TouchSensor::OnUpdate() {
 	auto contacts = this->castSensor_->GetContacts();
-	std::cout << "# of contacts: " << contacts.contact_size() << std::endl;
 	this->lastValue_ = contacts.contact_size() > 0;
 }
 
