@@ -41,7 +41,7 @@ public:
 	/**
 	 * Initializes the robot with the given core.
 	 */
-	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config);
+	void init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain);
 
 	// TODO copy constructor, assignment operator
 
@@ -91,9 +91,14 @@ protected:
 
 	/**
 	 * Simplest possible representation of the brain.
-	 * @todo We might need an actual brain structure instead
+	 * TODO We might need an actual brain structure instead
 	 */
 	std::string brainXML_;
+
+	/**
+	 * Holds system configuration the bot was created with
+	 */
+	ConfigurationPtr conf_;
 
 };
 

@@ -25,18 +25,20 @@ namespace tol_robogen {
 
 Robot::Robot() {}
 
-Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config) {
-	init(core, brain, config);
+Robot::Robot(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config):
+	conf_(config)
+{
+	init(core, brain);
 }
 
-void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain, ConfigurationPtr config) {
+void Robot::init(PartRepresentationPtr core, NeuralNetworkRepresentationPtr brain) {
 	if (coreComponent_) {
 		throw std::runtime_error("This robot has already been initialized "
 				"It is currently not possible to reinitialize a robot,"
 				"please create a new one instead.");
 	}
 
-	coreComponent_ = core->addSubtreeToRobot(this, config);
+	coreComponent_ = core->addSubtreeToRobot(this, conf_);
 
 	// Store brain XML directly without intermediate representation
 	brainXML_ = brain->toXML();
@@ -66,8 +68,9 @@ void Robot::addBodyConnection(ComponentPtr from, ComponentPtr to, unsigned int f
 	to->attach(from, fromSlot, toSlot, orientation);
 }
 
-// Simple internal helper function
-void addSurface(sb::PosableGroupPtr p) {
+// Internal helper function to add preconfigured physical contact
+// and friction parameters to all surfaces.
+void addSurface(sb::PosableGroupPtr p, ConfigurationPtr conf) {
 	auto posables = p->posables();
 
 	for (auto it = posables.begin(); it != posables.end(); ++it) {
@@ -95,22 +98,24 @@ void addSurface(sb::PosableGroupPtr p) {
 			col->surface.reset(new sb::Surface());
 			auto surf = col->surface;
 			surf->friction.reset(new sb::Friction());
-			surf->friction->friction1 = 1.0;
-			surf->friction->friction2 = 1.0;
-			surf->friction->slip1 = 0.1;
-			surf->friction->slip2 = 0.1;
+			surf->friction->friction1 = conf->surfaceFriction2;
+			surf->friction->friction2 = conf->surfaceFriction1;
+			surf->friction->slip1 = conf->surfaceSlip1;
+			surf->friction->slip2 = conf->surfaceSlip2;
 
-			sb::StringElementPtr contact(new sb::StringElement("<contact>"
+			std::stringstream contact;
+			contact << "<contact>"
 					"<ode>"
-						"<soft_cfm>0.01</soft_cfm>"
-						"<soft_erp>0.96</soft_erp>"
+						"<soft_cfm>" << conf->surfaceSoftCfm << "</soft_cfm>"
+						"<soft_erp>" << conf->surfaceSoftErp << "</soft_erp>"
 					"</ode>"
 					"<bullet>"
-						"<soft_cfm>0.01</soft_cfm>"
-						"<soft_erp>0.96</soft_erp>"
+						"<soft_cfm>" << conf->surfaceSoftCfm << "</soft_cfm>"
+						"<soft_erp>" << conf->surfaceSoftErp << "</soft_erp>"
 					"</bullet>"
-					"</contact>"));
-			surf->addElement(contact);
+					"</contact>";
+
+			surf->addString(contact.str());
 		}
 	}
 }
@@ -129,7 +134,7 @@ sb::ModelPtr Robot::toSDFModel(const std::string & name) {
 		auto group = bodyPart->getPosableGroup();
 
 		// Add collision surface parameters
-		addSurface(group);
+		addSurface(group, conf_);
 
 		// Add body parts
 		out->addPosable(group);

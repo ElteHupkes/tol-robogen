@@ -42,6 +42,16 @@ public:
 	 * purposes than visual model checks.
 	 */
 	double scaling = 1.0;
+
+	// Phycics parameters; got these from
+	// RobogenCollision.cpp originally
+	double surfaceFriction1 = 1.0;
+	double surfaceFriction2 = 1.0;
+	double surfaceSlip1 = 0.1;
+	double surfaceSlip2 = 0.1;
+	double surfaceSoftCfm = 0.01;
+	double surfaceSoftErp = 0.96;
+
 };
 
 } /* namespace sdf_builder */
