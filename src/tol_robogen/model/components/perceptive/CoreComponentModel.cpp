@@ -35,10 +35,9 @@ bool CoreComponentModel::initModel() {
 
 	if (hasSensors_) {
 		// Add IMU;
-		sb::SensorPtr imu(new sb::Sensor("core_imu", "imu"));
-		imu->updateRate = 1.0 / conf_->actuationTime;
+		auto imu = this->createSensor("core_imu", "imu");
 
-		// TODO Specify noise parameters
+		// TODO Specify sensor noise
 
 		// Add the SDF sensor object to the core link
 		coreComponent_->addPosable(imu);

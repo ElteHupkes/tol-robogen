@@ -43,6 +43,12 @@ public:
 	 */
 	double scaling = 1.0;
 
+	/**
+	 * Turn sensor visualization on model generation
+	 * on or off.
+	 */
+	bool visualizeSensors = true;
+
 	// Phycics parameters; got these from
 	// RobogenCollision.cpp originally
 	double surfaceFriction1 = 1.0;

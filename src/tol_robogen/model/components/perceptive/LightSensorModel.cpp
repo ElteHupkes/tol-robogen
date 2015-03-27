@@ -36,10 +36,7 @@ bool LightSensorModel::initModel() {
 			inMm(SENSOR_BASE_WIDTH), inMm(SENSOR_BASE_WIDTH));
 
 	// We implement the light sensor as a 1px camera
-	sb::SensorPtr cam(new sb::Sensor("light_sensor", "camera"));
-	cam->updateRate = 1.0 / conf_->actuationTime;
-	cam->alwaysOn = true;
-	cam->visualize = true;
+	auto cam = this->createSensor("light_sensor", "camera");
 
 	std::stringstream camDetails;
 	camDetails << "<camera>"

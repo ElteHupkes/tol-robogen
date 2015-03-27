@@ -206,6 +206,15 @@ void Component::addIO(IOPtr io) {
 	io_.push_back(io);
 }
 
+sdf_builder::SensorPtr Component::createSensor(std::string name,
+		std::string type) {
+	sb::SensorPtr sensor(new sb::Sensor(name, type));
+	sensor->updateRate = 1.0 / conf_->actuationTime;
+	sensor->visualize = conf_->visualizeSensors;
+
+	return sensor;
+}
+
 //dxGeom* Component::createCylinderGeom(dBodyID body, float mass,
 //		const osg::Vec3& pos, int direction, float radius, float height) {
 //
@@ -283,14 +292,6 @@ void Component::addIO(IOPtr io) {
 //	dGeomSetBody(g, body);
 //
 //	return g;
-//
-//}
-
-//dJointID Component::fixBodies(dBodyID b1, dBodyID b2, const osg::Vec3& /*axis*/) {
-//	dJointID joint = dJointCreateFixed(this->getPhysicsWorld(), 0);
-//	dJointAttach(joint, b1, b2);
-//	dJointSetFixed(joint);
-//	return joint;
 //
 //}
 

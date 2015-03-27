@@ -182,6 +182,16 @@ public:
 	sdf_builder::LinkPtr createLink();
 
 	/**
+	 * Create an sdfb sensor and set basic parameters such as the
+	 * update rate. Note that you still need to add this sensor to the
+	 * adequate link.
+	 * @param The sensor name
+	 * @param The sensor SDF type (which might not be equal to the tolrobogen type).
+	 * @return An SDF-builder sensor
+	 */
+	sdf_builder::SensorPtr createSensor(std::string name, std::string type);
+
+	/**
 	 * Convenience method to create a joint to fix two links together.
 	 * The joint is added to the joint list.
 	 *
