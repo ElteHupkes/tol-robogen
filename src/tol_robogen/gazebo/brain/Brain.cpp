@@ -223,15 +223,15 @@ Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors, std::vector
 		}
 
 		auto src = srcParam->GetAsString();
-		auto dst = srcParam->GetAsString();
+		auto dst = dstParam->GetAsString();
 
 		if (!layerMap.count(src)) {
-			std::cerr << "Source neuron '" << src << "' is unknown.";
+			std::cerr << "Source neuron '" << src << "' is unknown." << std::endl;
 			throw std::runtime_error("Robot brain error");
 		}
 
 		if (!layerMap.count(dst)) {
-			std::cerr << "Destination neuron '" << dst << "' is unknown.";
+			std::cerr << "Destination neuron '" << dst << "' is unknown." << std::endl;
 			throw std::runtime_error("Robot brain error");
 		}
 
@@ -251,7 +251,7 @@ Brain::Brain(sdf::ElementPtr node, std::vector< MotorPtr > & motors, std::vector
 		}
 
 		if ("input" == dstLayer) {
-			std::cerr << "Destination neuron '" << dst << "' is an input neuron.";
+			std::cerr << "Destination neuron '" << dst << "' is an input neuron." << std::endl;
 			throw std::runtime_error("Robot brain error");
 		} else if ("hidden" == dstLayer) {
 			// Offset by outputs if hidden neuron
