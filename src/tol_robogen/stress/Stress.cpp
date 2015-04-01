@@ -14,14 +14,25 @@ class Stress : public WorldPlugin
       // simulation iteration.
       this->updateConnection = event::Events::ConnectWorldUpdateBegin(
           boost::bind(&Stress::OnUpdate, this, _1));
+
+      lastSec = -1;
   }
 
   public: void OnUpdate(const common::UpdateInfo & _info)
   {
-	if (_info.simTime.sec >= 6) {
-		std::cout << "6 seconds passed after: " << _info.realTime.Double() << std::endl;
+	int sec = _info.simTime.sec;
+	if (sec != lastSec) {
+		std::cout << sec << "...";
+		std::cout.flush();
+		lastSec = sec;
+
+		if (lastSec >= 6) {
+			std::cout << "\nFinal time: " << _info.realTime.Double() << std::endl;
+		}
 	}
   }
+
+  private: int lastSec;
 
   // Pointer to the update event connection
   private: event::ConnectionPtr updateConnection;
