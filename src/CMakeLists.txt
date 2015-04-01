@@ -77,3 +77,7 @@ target_link_libraries(tolmodelcontrol ${GAZEBO_LIBRARIES} ${TOL_DEPS})
 # Test executable
 add_executable(test tol_robogen/test/test.cpp)
 target_link_libraries(test tolrobogen ${TOL_DEPS})
+
+#### Stress test
+add_library(tolstress SHARED tol_robogen/stress/Stress.cpp)
+target_link_libraries(tolstress ${GAZEBO_LIBRARIES} ${BOOST_LIBRARIES})
